@@ -1,0 +1,65 @@
+@import "variable";
+@import "mixins";
+@import "bordered";
+
+.@{tablePrefixCls} {
+  .border();
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background: @tableBgColor;
+  &-header {
+    background: @tableHeaderBg;
+    color: @tableHeaderText;
+    overflow-y: scroll;
+  }
+  &-body {
+    color: @textColor;
+    overflow-y: scroll;
+  }
+  .table {
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  .thead {
+  }
+  .tbody {
+    position: relative;
+    & > .tr {
+      background: @tableHeaderBg;
+      &:hover {
+        background: @tableRowHoverColor;
+      }
+    }
+    & > .tr:nth-child(2n) {
+      background: @tableBodyNthColor;
+      &:hover {
+        background: @tableRowHoverColor;
+      }
+    }
+  }
+  .tr {
+    overflow: hidden;
+    //white-space: nowrap;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
+  .th, .td {
+    text-align: center;
+    vertical-align: middle;
+    overflow: hidden;
+  }
+  .th {
+    height: @tableThHeight;
+    line-height: @tableThHeight;
+  }
+  .td {
+    //padding: @tdPadding;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+  }
+}

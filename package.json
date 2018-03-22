@@ -1,0 +1,42 @@
+{
+  "name": "fast-table",
+  "version": "1.0.0",
+  "description": "react table fast",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "babel src -d lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Paul-Long/fast-table.git"
+  },
+  "keywords": [
+    "react",
+    "table",
+    "fast"
+  ],
+  "author": "Paul",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Paul-Long/fast-table/issues"
+  },
+  "homepage": "https://github.com/Paul-Long/fast-table#readme",
+  "dependencies": {
+    "add-dom-event-listener": "^1.0.2",
+    "classnames": "^2.2.5",
+    "hoist-non-react-statics": "^2.5.0",
+    "lodash": "^4.17.5",
+    "prop-types": "^15.6.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "shallowequal": "^1.0.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "less": "^3.0.1"
+  }
+}

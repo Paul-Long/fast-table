@@ -1,0 +1,83 @@
+@import (reference) "variable";
+
+.border() {
+  &:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    transform-origin: 0 0;
+    transform: scale(1);
+    box-sizing: border-box;
+    pointer-events: none;
+    border-width: 1px;
+    border-style: solid;
+    border-color: @tableBorderColor;
+  }
+}
+
+.border-0() {
+  .border();
+  &:before {
+    border: 0;
+  }
+}
+
+.border-top() {
+  .border();
+  &:before {
+    border: 0;
+    border-top: 1px solid @tableBorderColor;
+  }
+}
+
+.border-left() {
+  .border();
+  &:before {
+    border: 0;
+    border-left: 1px solid @tableBorderColor;
+  }
+}
+
+.border-right() {
+  .border();
+  &:before {
+    border: 0;
+    border-right: 1px solid @tableBorderColor;
+  }
+}
+
+.border-bottom() {
+  .border();
+  &:before {
+    border: 0;
+    border-bottom: 1px solid @tableBorderColor;
+  }
+}
+
+.border-right-bottom() {
+  .border();
+  &:before {
+    border: 0;
+    border-bottom: 1px solid @tableBorderColor;
+    border-right: 1px solid @tableBorderColor;
+  }
+}
+
+.opacity-background(@color, @opacity) {
+  &:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border-radius: 4px;
+    pointer-events: none;
+    background-color: @color;
+    opacity: @opacity;
+  }
+}

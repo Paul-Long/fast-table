@@ -1,0 +1,9 @@
+@import (reference) "variable";
+@import (reference) "mixins";
+
+.@{tablePrefixCls}.bordered {
+  .th, .td {
+    position: relative;
+    .border-right-bottom();
+  }
+}
