@@ -5,6 +5,11 @@ import TableRow from './TableRow';
 import {connect} from './mini-store';
 
 class BaseTable extends React.PureComponent {
+    handleRowHover = (isHover, key) => {
+        this.props.store.setState({
+            currentHoverKey: isHover ? key : null
+        });
+    };
     renderRows = (datas) => {
         const rows = [];
         const {
@@ -42,7 +47,8 @@ class BaseTable extends React.PureComponent {
                     columns: leafColumns,
                     ref: rowRef(record, i),
                     components: table.components,
-                    height: getRowHeight(record, i) * rowHeight
+                    height: getRowHeight(record, i) * rowHeight,
+                    onHover: this.handleRowHover
                 };
                 rows.push(<TableRow {...props} />);
             }

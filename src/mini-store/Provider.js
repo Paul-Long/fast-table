@@ -2,21 +2,21 @@ import React, {Children, Component} from 'react';
 import {storeShape} from './PropTypes';
 
 export default class Provider extends Component {
-    static propTypes = {
-        store: storeShape.isRequired,
+  static propTypes = {
+    store: storeShape.isRequired,
+  };
+
+  static childContextTypes = {
+    miniStore: storeShape.isRequired,
+  };
+
+  getChildContext() {
+    return {
+      miniStore: this.props.store,
     };
+  }
 
-    static childContextTypes = {
-        miniStore: storeShape.isRequired,
-    };
-
-    getChildContext() {
-        return {
-            miniStore: this.props.store,
-        };
-    }
-
-    render() {
-        return Children.only(this.props.children)
-    }
+  render() {
+    return Children.only(this.props.children)
+  }
 }

@@ -19,6 +19,12 @@
     color: @textColor;
     overflow-y: scroll;
   }
+  &-hover {
+    background: @tableRowHoverColor;
+    & > .td {
+      background: @tableRowHoverColor !important;
+    }
+  }
   .table {
     border-collapse: separate;
     border-spacing: 0;
@@ -29,23 +35,17 @@
     position: relative;
     & > .tr {
       background: @tableHeaderBg;
-      &:hover {
-        background: @tableRowHoverColor;
-      }
     }
     & > .tr:nth-child(2n) {
       background: @tableBodyNthColor;
-      &:hover {
-        background: @tableRowHoverColor;
-      }
     }
   }
   .tr {
     overflow: hidden;
-    //white-space: nowrap;
     display: flex;
     flex-direction: row;
     width: 100%;
+    border: 0;
   }
   .th, .td {
     text-align: center;
