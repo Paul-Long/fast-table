@@ -2,7 +2,11 @@
   "name": "fast-table",
   "version": "1.0.0",
   "description": "react table fast",
-  "main": "lib/index.js",
+  "main": "./lib/index.js",
+  "files": [
+    "lib",
+    "theme/*.less"
+  ],
   "scripts": {
     "build": "babel src -d lib"
   },
