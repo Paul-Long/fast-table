@@ -23,7 +23,8 @@ class BaseTable extends React.PureComponent {
       prefixCls,
       rowRef,
       getRowHeight,
-      rowHeight
+      rowHeight,
+      bordered
     } = table.props;
     const columnManager = table.columnManager;
     datas.forEach((record, i) => {
@@ -47,7 +48,7 @@ class BaseTable extends React.PureComponent {
           columns: leafColumns,
           ref: rowRef(record, i),
           components: table.components,
-          height: getRowHeight(record, i) * rowHeight,
+          height: getRowHeight(record, i) * rowHeight - (bordered ? 1 : 0),
           onHover: this.handleRowHover
         };
         rows.push(<TableRow {...props} />);

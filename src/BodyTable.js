@@ -23,7 +23,7 @@ function BodyTable(props, {table}) {
     />
   );
   const style = {
-    height: showHeader ? `calc(100% - ${headerRowHeight}px)` : '100%',
+    height: showHeader ? `calc(100% - ${headerRowHeight + 1}px)` : '100%',
     overflowY: hasScroll ? 'scroll' : 'auto'
   };
   if (!fixedHeader) {
