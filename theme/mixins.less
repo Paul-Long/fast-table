@@ -6,15 +6,16 @@
     position: absolute;
     left: 0;
     top: 0;
-    width: 100%;
-    height: 100%;
+    width: 200%;
+    height: 200%;
     transform-origin: 0 0;
-    transform: scale(1);
+    transform: scale(0.5);
     box-sizing: border-box;
     pointer-events: none;
-    border-width: 1px;
+    border-width: 2px;
     border-style: solid;
     border-color: @tableBorderColor;
+    z-index: 10;
   }
 }
 
@@ -29,7 +30,7 @@
   .border();
   &:before {
     border: 0;
-    border-top: 1px solid @tableBorderColor;
+    border-top: 2px solid @tableBorderColor;
   }
 }
 
@@ -37,7 +38,7 @@
   .border();
   &:before {
     border: 0;
-    border-left: 1px solid @tableBorderColor;
+    border-left: 2px solid @tableBorderColor;
   }
 }
 
@@ -45,7 +46,7 @@
   .border();
   &:before {
     border: 0;
-    border-right: 1px solid @tableBorderColor;
+    border-right: 2px solid @tableBorderColor;
   }
 }
 
@@ -53,7 +54,7 @@
   .border();
   &:before {
     border: 0;
-    border-bottom: 1px solid @tableBorderColor;
+    border-bottom: 2px solid @tableBorderColor;
   }
 }
 
@@ -61,8 +62,8 @@
   .border();
   &:before {
     border: 0;
-    border-bottom: 1px solid @tableBorderColor;
-    border-right: 1px solid @tableBorderColor;
+    border-bottom: 2px solid @tableBorderColor;
+    border-right: 2px solid @tableBorderColor;
   }
 }
 

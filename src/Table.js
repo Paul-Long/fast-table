@@ -11,7 +11,7 @@ import ColumnManager from './ColumnManager';
 import {addEventListener, debounce} from './Utils';
 import {create, Provider} from './mini-store';
 
-import '../theme/table.less';
+import '../theme/table.css';
 
 class Table extends React.PureComponent {
   constructor(props) {

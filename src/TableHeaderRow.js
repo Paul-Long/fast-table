@@ -12,7 +12,7 @@ function TableHeaderRow({row, index, height, components, columns, rowHeight}) {
         const {column, className, ...cellProps} = cell;
         cellProps.style = Object.assign({}, column.style);
         if (column.align) {
-          cellProps.style = {textAlign: column.dataIndex || i};
+          cellProps.style.textAlign = column.align;
         }
         if (column.width) {
           let style = cellProps.style || {};
@@ -22,7 +22,6 @@ function TableHeaderRow({row, index, height, components, columns, rowHeight}) {
           cellProps.style.flex = 1;
         }
         cellProps.style.height = rowHeight;
-        cellProps.style.lineHeight = `${rowHeight}px`;
         const cellClass = classNames('th', className);
         return (
           <HeaderCell

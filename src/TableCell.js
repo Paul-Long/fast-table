@@ -27,7 +27,6 @@ class TableCell extends React.PureComponent {
       style.flex = 1;
     }
     style.height = height;
-    style.lineHeight = `${height}px`;
     return style;
   };
 

@@ -40,7 +40,6 @@ class TableRow extends React.PureComponent {
     });
     return cells;
   };
-
   render() {
     const {
       components,
