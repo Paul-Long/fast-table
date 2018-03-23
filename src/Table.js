@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import merge from 'lodash/merge';
 import sum from 'lodash/sum';
+import maxBy from 'lodash/maxBy';
 import shallowEqual from 'shallowequal';
 
 import HeadTable from './HeadTable';
@@ -18,9 +19,12 @@ class Table extends React.PureComponent {
     super(props);
     this.columnManager = new ColumnManager(props.columns);
     this.lastScrollTop = 0;
+    const columns = this.columnManager.groupedColumns();
+    const maxRowSpan = maxBy(columns, 'rowSpan')['rowSpan'];
     this.store = create({
       currentHoverKey: null,
       hasScroll: false,
+      headHeight: maxRowSpan * props.headerRowHeight,
       fixedColumnsHeadRowsHeight: [],
       ...this.resetBodyHeight()
     });
@@ -34,11 +38,11 @@ class Table extends React.PureComponent {
         saveRef: this.saveRef,
         columnManager: this.columnManager,
         components: merge({
-          table: 'div',
+          table: 'table',
           header: {
-            wrapper: 'div',
-            row: 'div',
-            cell: 'div'
+            wrapper: 'thead',
+            row: 'tr',
+            cell: 'th'
           },
           body: {
             wrapper: 'div',

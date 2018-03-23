@@ -2,12 +2,10 @@
 @import (reference) "mixins";
 
 .@{tablePrefixCls}.bordered {
-  .tr {
-    position: relative;
-    .border-bottom();
-  }
   .th, .td {
     position: relative;
-    .border-right();
+    .border-right-bottom();
+    //border-right: 1px solid @tableBorderColor;
+    //border-bottom: 1px solid @tableBorderColor;
   }
 }

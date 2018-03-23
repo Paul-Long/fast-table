@@ -5,13 +5,14 @@ import {connect} from './mini-store';
 
 function BodyTable(props, {table}) {
   const {saveRef} = table;
-  const {prefixCls, fixedHeader, showHeader, headerRowHeight} = table.props;
+  const {prefixCls, fixedHeader, showHeader} = table.props;
   const {
     fixed,
     columns,
     getRowKey,
     hasScroll,
-    handleBodyScroll
+    handleBodyScroll,
+    headHeight
   } = props;
   const baseTable = (
     <BaseTable
@@ -23,7 +24,7 @@ function BodyTable(props, {table}) {
     />
   );
   const style = {
-    height: showHeader ? `calc(100% - ${headerRowHeight + 1}px)` : '100%',
+    height: showHeader ? `calc(100% - ${headHeight + 1}px)` : '100%',
     overflowY: hasScroll ? 'scroll' : 'auto'
   };
   if (!fixedHeader) {
@@ -44,9 +45,10 @@ function BodyTable(props, {table}) {
 }
 
 export default connect((state, props) => {
-  const {hasScroll} = state;
+  const {hasScroll, headHeight} = state;
   return {
-    hasScroll
+    hasScroll,
+    headHeight
   }
 })(BodyTable)
 BodyTable.contextTypes = {
