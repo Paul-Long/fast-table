@@ -20,7 +20,8 @@ class Table extends React.PureComponent {
     this.columnManager = new ColumnManager(props.columns);
     this.lastScrollTop = 0;
     const columns = this.columnManager.groupedColumns();
-    const maxRowSpan = maxBy(columns, 'rowSpan')['rowSpan'];
+    let maxRowSpan = maxBy(columns, 'rowSpan');
+    maxRowSpan = maxRowSpan ? maxRowSpan['rowSpan'] : 1;
     this.store = create({
       currentHoverKey: null,
       hasScroll: false,
@@ -86,8 +87,7 @@ class Table extends React.PureComponent {
     );
     const {fixedColumnsBodyRowsHeight, tops, bodyHeight} = this.resetBodyHeight();
     const state = this.store.getState();
-    if (shallowEqual(state.fixedColumnsHeadRowsHeight, fixedColumnsHeadRowsHeight) &&
-      shallowEqual(state.fixedColumnsBodyRowsHeight, fixedColumnsBodyRowsHeight)) {
+    if (this.props.showHeader && shallowEqual(state.fixedColumnsHeadRowsHeight, fixedColumnsHeadRowsHeight)) {
       return;
     }
     const hasScroll = this['bodyTable'].getBoundingClientRect().height < bodyHeight;
