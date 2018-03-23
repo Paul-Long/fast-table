@@ -42,13 +42,13 @@ class Table extends React.PureComponent {
           table: 'div',
           header: {
             wrapper: 'div',
-            row: 'tr',
-            cell: 'td'
+            row: 'div',
+            cell: 'div'
           },
           body: {
             wrapper: 'div',
-            row: 'tr',
-            cell: 'td'
+            row: 'div',
+            cell: 'div'
           }
         }, this.props.components)
       }
