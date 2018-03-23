@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import TableHeader from './TableHeader';
 import TableRow from './TableRow';
+import ColGroup from './ColGroup';
 import {connect} from './mini-store';
 
 class BaseTable extends React.PureComponent {
@@ -77,6 +78,7 @@ class BaseTable extends React.PureComponent {
     }
     return (
       <Table className='table'>
+        <ColGroup columns={columns} fixed={fixed}/>
         {hasHead && <TableHeader columns={columns} fixed={fixed}/>}
         {body}
       </Table>

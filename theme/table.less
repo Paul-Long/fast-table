@@ -8,6 +8,7 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  line-height: 1.5;
   background: @tableBgColor;
   &-header {
     background: @tableHeaderBg;
@@ -26,12 +27,18 @@
   .table {
     width: 100%;
     color: inherit;
-    border-collapse: separate;
     border-spacing: 0;
+    border: 0;
+    border-collapse: collapse;
   }
   .thead {
+    & > tr {
+      display: table-row;
+      width: auto;
+    }
   }
   .tbody {
+    display: block;
     position: relative;
     & > .tr > .td {
       background: @tableBgColor;
@@ -54,11 +61,5 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     box-sizing: border-box;
-  }
-  .th {
-    padding: @thPadding;
-  }
-  .td {
-    padding: @tdPadding;
   }
 }
