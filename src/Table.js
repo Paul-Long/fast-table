@@ -38,11 +38,11 @@ class Table extends React.PureComponent {
         saveRef: this.saveRef,
         columnManager: this.columnManager,
         components: merge({
-          table: 'table',
+          table: 'div',
           header: {
-            wrapper: 'thead',
-            row: 'tr',
-            cell: 'th'
+            wrapper: 'div',
+            row: 'div',
+            cell: 'div'
           },
           body: {
             wrapper: 'div',

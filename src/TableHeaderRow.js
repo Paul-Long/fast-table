@@ -7,7 +7,7 @@ function TableHeaderRow({row, index, height, components, columns, rowHeight}) {
   const HeaderCell = components.header.cell;
   const columnSize = columns.length;
   return (
-    <HeaderRow>
+    <HeaderRow className='tr'>
       {row.map((cell, index) => {
         const {column, ...cellProps} = cell;
         const {key, dataIndex, style, align, width} = column;

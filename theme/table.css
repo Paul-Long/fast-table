@@ -1,29 +1,8 @@
 .vt.bordered .th,
 .vt.bordered .td {
   position: relative;
-}
-.vt.bordered .th:before,
-.vt.bordered .td:before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 200%;
-  height: 200%;
-  transform-origin: 0 0;
-  transform: scale(0.5);
-  box-sizing: border-box;
-  pointer-events: none;
-  border-width: 1px;
-  border-style: solid;
-  border-color: #fff;
-  z-index: 10;
-}
-.vt.bordered .th:before,
-.vt.bordered .td:before {
-  border: 0;
-  border-bottom: 1px solid #fff;
   border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
 }
 .vt {
   overflow: hidden;
@@ -46,7 +25,7 @@
   background: #193D37 !important;
 }
 
-.vt table {
+.vt .table {
   width: 100%;
   color: inherit;
   border-collapse: separate;
