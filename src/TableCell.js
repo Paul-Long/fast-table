@@ -32,7 +32,7 @@ class TableCell extends React.PureComponent {
     } else {
       style.flex = 1;
     }
-    style.height = height;
+    // style.height = height;
     return style;
   };
 

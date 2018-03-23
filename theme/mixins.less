@@ -12,7 +12,7 @@
     transform: scale(0.5);
     box-sizing: border-box;
     pointer-events: none;
-    border-width: 2px;
+    border-width: @beforeBorderSize;
     border-style: solid;
     border-color: @tableBorderColor;
     z-index: 10;
@@ -30,7 +30,7 @@
   .border();
   &:before {
     border: 0;
-    border-top: 2px solid @tableBorderColor;
+    border-top: @beforeBorderSize solid @tableBorderColor;
   }
 }
 
@@ -38,7 +38,7 @@
   .border();
   &:before {
     border: 0;
-    border-left: 2px solid @tableBorderColor;
+    border-left: @beforeBorderSize solid @tableBorderColor;
   }
 }
 
@@ -46,7 +46,7 @@
   .border();
   &:before {
     border: 0;
-    border-right: 2px solid @tableBorderColor;
+    border-right: @beforeBorderSize solid @tableBorderColor;
   }
 }
 
@@ -54,7 +54,7 @@
   .border();
   &:before {
     border: 0;
-    border-bottom: 2px solid @tableBorderColor;
+    border-bottom: @beforeBorderSize solid @tableBorderColor;
   }
 }
 
@@ -62,8 +62,8 @@
   .border();
   &:before {
     border: 0;
-    border-bottom: 2px solid @tableBorderColor;
-    border-right: 2px solid @tableBorderColor;
+    border-bottom: @beforeBorderSize solid @tableBorderColor;
+    border-right: @beforeBorderSize solid @tableBorderColor;
   }
 }
 

@@ -47,7 +47,8 @@ class TableRow extends React.PureComponent {
       prefixCls,
       hovered,
       top,
-      className
+      className,
+      height
     } = this.props;
     const BodyRow = components.body.row;
     const rowClass = classNames(
@@ -59,7 +60,8 @@ class TableRow extends React.PureComponent {
       });
     const style = {
       position: 'absolute',
-      top
+      top,
+      height
     };
     return (
       <BodyRow

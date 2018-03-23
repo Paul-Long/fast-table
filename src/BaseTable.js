@@ -53,7 +53,7 @@ class BaseTable extends React.PureComponent {
           columns: leafColumns,
           ref: rowRef(record, i),
           components: table.components,
-          height: getRowHeight(record, i) * rowHeight - (bordered ? 1 : 0),
+          height: getRowHeight(record, i) * rowHeight,
           onHover: this.handleRowHover
         };
         rows.push(<TableRow {...props} />);
