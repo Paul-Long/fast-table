@@ -8,24 +8,19 @@ function TableHeaderRow({row, index, height, components, columns, rowHeight}) {
   const columnSize = columns.length;
   return (
     <HeaderRow className='tr'>
-      {row.map((cell, i) => {
-        const {column, className, ...cellProps} = cell;
-        cellProps.style = Object.assign({}, column.style);
-        if (column.align) {
-          cellProps.style.textAlign = column.align;
-        }
-        if (column.width) {
-          let style = cellProps.style || {};
-          style.flex = `${i + 1 === columnSize ? 1 : 0} 1 ${isNumber(column.width) ? column.width + 'px' : column.width}`;
-          cellProps.style = style;
-        } else {
-          cellProps.style.flex = 1;
+      {row.map((cell, index) => {
+        const {column, ...cellProps} = cell;
+        const {key, dataIndex, style, align, width} = column;
+        cellProps.style = Object.assign({flex: 1}, style);
+        align && (cellProps.style.textAlign = align);
+        if (width) {
+          cellProps.style.flex = `${index + 1 === columnSize ? 1 : 0} 1 ${isNumber(width) ? width + 'px' : width}`;
         }
         cellProps.style.height = rowHeight;
-        const cellClass = classNames('th', className);
+        const cellClass = classNames('th');
         return (
           <HeaderCell
-            key={column.key || column.dataIndex || i}
+            key={key || dataIndex || index}
             {...cellProps}
             className={cellClass}
           />

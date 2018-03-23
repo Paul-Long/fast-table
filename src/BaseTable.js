@@ -24,7 +24,8 @@ class BaseTable extends React.PureComponent {
       rowRef,
       getRowHeight,
       rowHeight,
-      bordered
+      bordered,
+      rowClassName
     } = table.props;
     const columnManager = table.columnManager;
     datas.forEach((record, i) => {
@@ -37,12 +38,16 @@ class BaseTable extends React.PureComponent {
         } else {
           leafColumns = columnManager.leafColumns();
         }
+        const className = typeof rowClassName === 'function'
+          ? rowClassName(record, i)
+          : rowClassName;
         const key = getRowKey(record, i);
         const props = {
           key,
           record,
           fixed,
           prefixCls,
+          className,
           rowKey: key,
           index: i,
           columns: leafColumns,

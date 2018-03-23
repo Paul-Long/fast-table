@@ -184,6 +184,7 @@ class Table extends React.PureComponent {
 
   renderTable = (options) => {
     const {columns, fixed} = options;
+    console.log(columns);
     const headTable = (
       <HeadTable
         key='head'
@@ -239,9 +240,12 @@ Table.propTypes = {
 
   rowRef: PropTypes.func,
   getRowHeight: PropTypes.func,
+  rowClassName: PropTypes.func,
 
   rowHeight: PropTypes.number,
-  headerRowHeight: PropTypes.number
+  headerRowHeight: PropTypes.number,
+
+  style: PropTypes.object
 };
 
 Table.defaultProps = {
@@ -255,9 +259,12 @@ Table.defaultProps = {
 
   rowRef: () => null,
   getRowHeight: () => 1,
+  rowClassName: () => '',
 
   rowHeight: 30,
-  headerRowHeight: 35
+  headerRowHeight: 35,
+
+  style: {}
 };
 
 Table.childContextTypes = {

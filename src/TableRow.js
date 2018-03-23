@@ -40,24 +40,30 @@ class TableRow extends React.PureComponent {
     });
     return cells;
   };
+
   render() {
     const {
       components,
       prefixCls,
       hovered,
-      top
+      top,
+      className
     } = this.props;
     const BodyRow = components.body.row;
-    const cls = classNames('tr', `${prefixCls}-row`, {
-      [`${prefixCls}-hover`]: hovered
-    });
+    const rowClass = classNames(
+      'tr',
+      `${prefixCls}-row`,
+      className,
+      {
+        [`${prefixCls}-hover`]: hovered
+      });
     const style = {
       position: 'absolute',
       top
     };
     return (
       <BodyRow
-        className={cls}
+        className={rowClass}
         style={style}
         onMouseEnter={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}
