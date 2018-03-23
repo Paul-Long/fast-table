@@ -15,14 +15,20 @@ class TableCell extends React.PureComponent {
     const {
       column,
       height,
-      isLast
+      isLast,
+      record,
+      index
     } = this.props;
-    let style = Object.assign({}, column.bodyStyle);
-    if (column.align) {
-      style.textAlign = column.align;
+    const {bodyStyle, align, width} = column;
+    let style = {};
+    if (typeof bodyStyle === 'function') {
+      style = bodyStyle(record, index) || {};
+    } else {
+      style = Object.assign({}, bodyStyle);
     }
-    if (column.width) {
-      style.flex = `${isLast ? 1 : 0} 1 ${isNumber(column.width) ? column.width + 'px' : column.width}`;
+    align && (style.textAlign = column.align);
+    if (width) {
+      style.flex = `${isLast ? 1 : 0} 1 ${isNumber(width) ? width + 'px' : width}`;
     } else {
       style.flex = 1;
     }
@@ -32,12 +38,12 @@ class TableCell extends React.PureComponent {
 
   getClassName = () => {
     const {record, index, column} = this.props;
-    const {tdClassName} = column;
+    const {className} = column;
     let cls = '';
-    if (typeof tdClassName === 'function') {
-      cls = tdClassName(column, record, index);
-    } else if (tdClassName === 'string') {
-      cls = tdClassName;
+    if (typeof className === 'function') {
+      cls = className(column, record, index);
+    } else if (className === 'string') {
+      cls = className;
     }
     return classNames('td', cls);
   };
