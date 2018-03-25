@@ -32,7 +32,6 @@
   border: 0;
   border-collapse: collapse;
 }
-
 .vt .thead > tr {
   display: table-row;
   width: auto;
@@ -62,4 +61,5 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   box-sizing: border-box;
+  padding: 0;
 }

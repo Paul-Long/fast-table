@@ -37,6 +37,7 @@ class Table extends React.PureComponent {
       table: {
         props: this.props,
         saveRef: this.saveRef,
+        saveColumnRef: this.saveColumnRef,
         columnManager: this.columnManager,
         components: merge({
           table: 'table',
@@ -85,9 +86,19 @@ class Table extends React.PureComponent {
     const fixedColumnsHeadRowsHeight = [].map.call(
       headRows, row => row.getBoundingClientRect().height || 'auto'
     );
+    const columnRefs = this.columnRefs || {};
+    const colWidthMap = {};
+    Object.keys(columnRefs).forEach((key) => {
+      const node = columnRefs[key];
+      colWidthMap[key] = node.getBoundingClientRect().width;
+    });
+    console.log('Table.js -> ', colWidthMap);
     const {fixedColumnsBodyRowsHeight, tops, bodyHeight} = this.resetBodyHeight();
     const state = this.store.getState();
-    if (this.props.showHeader && shallowEqual(state.fixedColumnsHeadRowsHeight, fixedColumnsHeadRowsHeight)) {
+    if (
+      (this.props.showHeader && shallowEqual(state.fixedColumnsHeadRowsHeight, fixedColumnsHeadRowsHeight)) &&
+      shallowEqual(state.colWidthMap, colWidthMap)
+    ) {
       return;
     }
     const hasScroll = this['bodyTable'].getBoundingClientRect().height < bodyHeight;
@@ -95,6 +106,7 @@ class Table extends React.PureComponent {
       hasScroll,
       fixedColumnsHeadRowsHeight,
       tops,
+      colWidthMap,
       bodyHeight,
       ...this.resetRenderInterval(0, this['bodyTable'].clientHeight, bodyHeight, fixedColumnsBodyRowsHeight)
     });
@@ -154,6 +166,11 @@ class Table extends React.PureComponent {
 
   saveRef = (name) => (node) => {
     this[name] = node;
+  };
+
+  saveColumnRef = (dataIndex) => (node) => {
+    this.columnRefs = this.columnRefs || {};
+    this.columnRefs[dataIndex] = node;
   };
 
   getClassName = () => {

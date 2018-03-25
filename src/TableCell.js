@@ -14,7 +14,6 @@ class TableCell extends React.PureComponent {
   getStyle = () => {
     const {
       column,
-      height,
       isLast,
       record,
       index
@@ -27,12 +26,14 @@ class TableCell extends React.PureComponent {
       style = Object.assign({}, bodyStyle);
     }
     align && (style.textAlign = column.align);
-    if (width) {
-      style.flex = `${isLast ? 1 : 0} 1 ${isNumber(width) ? width + 'px' : width}`;
+    let w = this.props.width || width;
+    if (w) {
+      style.flex = `${isLast ? 1 : 0} 1 ${isNumber(w) ? w + 'px' : w}`;
+      style.minWidth = w;
+      style.maxWidth = w;
     } else {
       style.flex = 1;
     }
-    // style.height = height;
     return style;
   };
 

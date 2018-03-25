@@ -54,6 +54,7 @@ export default function TableHeader(props, {table}) {
             rowHeight={headerRowHeight - (bordered ? 1 : 0)}
             components={components}
             isLast={index + 1 === columnSize}
+            saveColumnRef={table.saveColumnRef}
           />
         ))
       }
