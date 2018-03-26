@@ -1,7 +1,6 @@
 .vt.bordered .tr {
   position: relative;
 }
-
 .vt.bordered .tr:before {
   content: '';
   position: absolute;
@@ -15,19 +14,17 @@
   pointer-events: none;
   border-width: 1px;
   border-style: solid;
-  border-color: #fff;
+  border-color: #000000;
   z-index: 10;
 }
-
 .vt.bordered .tr:before {
   border: 0;
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid #000000;
 }
 .vt.bordered .th,
 .vt.bordered .td {
   position: relative;
 }
-
 .vt.bordered .th:before,
 .vt.bordered .td:before {
   content: '';
@@ -42,17 +39,16 @@
   pointer-events: none;
   border-width: 1px;
   border-style: solid;
-  border-color: #fff;
+  border-color: #000000;
   z-index: 10;
 }
-
 .vt.bordered .th:before,
 .vt.bordered .td:before {
   border: 0;
   width: 1px;
   right: 0;
   left: auto;
-  border-right: 1px solid #fff;
+  border-right: 1px solid #000000;
 }
 .vt {
   overflow: hidden;
