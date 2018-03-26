@@ -74,13 +74,6 @@ class Table extends React.PureComponent {
     }
   }
 
-  componentDidUpdate() {
-    this.handleWindowResize();
-    if (!this.resizeEvent) {
-      this.resizeEvent = addEventListener(window, 'resize', this.debouncedWindowResize);
-    }
-  }
-
   handleWindowResize = () => {
     this.syncFixedTableRowHeight();
   };
@@ -96,13 +89,13 @@ class Table extends React.PureComponent {
       hasScroll,
       tops,
       bodyHeight,
-      ...this.resetRenderInterval(0, this['bodyTable'].clientHeight, bodyHeight, fixedColumnsBodyRowsHeight)
+      ...this.resetRenderInterval(this.lastScrollTop || this['bodyTable'].scrollTop, this['bodyTable'].clientHeight, bodyHeight, fixedColumnsBodyRowsHeight)
     });
   };
 
   handleBodyScroll = (e) => {
     const target = e.target;
-    if (this.lastScrollTop !== target.scrollTop && target !== this['headTabl']) {
+    if (this.lastScrollTop !== target.scrollTop && target !== this['headTable']) {
       const result = this.resetRenderInterval(target.scrollTop, target.clientHeight, target.scrollHeight);
       this.store.setState(result);
     }

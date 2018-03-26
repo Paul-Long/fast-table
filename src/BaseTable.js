@@ -66,7 +66,7 @@ class BaseTable extends React.PureComponent {
   renderFooter = () => {
     const {footer, footerHeight} = this.context.table.props;
     return footer ? (
-      <div style={{height: footerHeight, color: 'inherit'}}>
+      <div style={{position: 'absolute', bottom: 0, height: footerHeight, color: 'inherit'}}>
         {footer(this.props.dataSource)}
       </div>
     ) : null;
