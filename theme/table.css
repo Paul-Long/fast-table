@@ -1,8 +1,58 @@
+.vt.bordered .tr {
+  position: relative;
+}
+
+.vt.bordered .tr:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 200%;
+  height: 200%;
+  transform-origin: 0 0;
+  transform: scale(0.5);
+  box-sizing: border-box;
+  pointer-events: none;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #fff;
+  z-index: 10;
+}
+
+.vt.bordered .tr:before {
+  border: 0;
+  border-bottom: 1px solid #fff;
+}
 .vt.bordered .th,
 .vt.bordered .td {
   position: relative;
+}
+
+.vt.bordered .th:before,
+.vt.bordered .td:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 200%;
+  height: 200%;
+  transform-origin: 0 0;
+  transform: scale(0.5);
+  box-sizing: border-box;
+  pointer-events: none;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #fff;
+  z-index: 10;
+}
+
+.vt.bordered .th:before,
+.vt.bordered .td:before {
+  border: 0;
+  width: 1px;
+  right: 0;
+  left: auto;
   border-right: 1px solid #fff;
-  border-bottom: 1px solid #fff;
 }
 .vt {
   overflow: hidden;
@@ -11,6 +61,7 @@
   flex-direction: column;
   box-sizing: border-box;
   background: #172422;
+  color: #ffebc8;
 }
 .vt-header {
   background: #16211f;

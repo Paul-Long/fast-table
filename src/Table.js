@@ -68,10 +68,21 @@ class Table extends React.PureComponent {
     }
   }
 
+  componentWillUnmount() {
+    if (this.resizeEvent) {
+      this.resizeEvent.remove();
+    }
+  }
+
+  componentDidUpdate() {
+    this.handleWindowResize();
+    if (!this.resizeEvent) {
+      this.resizeEvent = addEventListener(window, 'resize', this.debouncedWindowResize);
+    }
+  }
+
   handleWindowResize = () => {
-    setTimeout(() => {
-      this.syncFixedTableRowHeight();
-    });
+    this.syncFixedTableRowHeight();
   };
 
   syncFixedTableRowHeight = () => {
@@ -79,21 +90,10 @@ class Table extends React.PureComponent {
     if (tableRect.height !== undefined && tableRect.height <= 0) {
       return;
     }
-    const headRows = this['headTable'] ?
-      this['headTable'].querySelectorAll('.thead') :
-      this['bodyTable'].querySelectorAll('.thead');
-    const fixedColumnsHeadRowsHeight = [].map.call(
-      headRows, row => row.getBoundingClientRect().height || 'auto'
-    );
     const {fixedColumnsBodyRowsHeight, tops, bodyHeight} = this.resetBodyHeight();
-    const state = this.store.getState();
-    if (this.props.showHeader && shallowEqual(state.fixedColumnsHeadRowsHeight, fixedColumnsHeadRowsHeight)) {
-      return;
-    }
     const hasScroll = this['bodyTable'].getBoundingClientRect().height < bodyHeight;
     this.store.setState({
       hasScroll,
-      fixedColumnsHeadRowsHeight,
       tops,
       bodyHeight,
       ...this.resetRenderInterval(0, this['bodyTable'].clientHeight, bodyHeight, fixedColumnsBodyRowsHeight)
@@ -244,14 +244,13 @@ Table.propTypes = {
   rowRef: PropTypes.func,
   getRowHeight: PropTypes.func,
   rowClassName: PropTypes.func,
+  footer: PropTypes.func,
 
   rowHeight: PropTypes.number,
   headerRowHeight: PropTypes.number,
   footerHeight: PropTypes.number,
 
-  style: PropTypes.object,
-
-  footer: PropTypes.any
+  style: PropTypes.object
 };
 
 Table.defaultProps = {

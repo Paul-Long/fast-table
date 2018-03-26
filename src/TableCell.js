@@ -29,6 +29,7 @@ class TableCell extends React.PureComponent {
     align && (style.textAlign = column.align);
     if (width) {
       style.flex = `${isLast ? 1 : 0} 1 ${isNumber(width) ? width + 'px' : width}`;
+      style.minWidth = width;
     } else {
       style.flex = 1;
     }
@@ -86,7 +87,9 @@ class TableCell extends React.PureComponent {
         className={this.getClassName()}
         {...tdProps}
       >
-        {text}
+        <div>
+          {text}
+        </div>
       </BodyCell>
     )
   }

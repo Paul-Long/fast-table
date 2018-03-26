@@ -6,8 +6,10 @@ import {connect} from './mini-store';
 
 class BaseTable extends React.PureComponent {
   handleRowHover = (isHover, key) => {
-    this.props.store.setState({
-      currentHoverKey: isHover ? key : null
+    setTimeout(() => {
+      this.props.store.setState({
+        currentHoverKey: isHover ? key : null
+      });
     });
   };
   renderRows = (datas) => {
@@ -62,18 +64,12 @@ class BaseTable extends React.PureComponent {
   };
 
   renderFooter = () => {
-    const table = this.context.table;
-    const components = table.components;
-    const {footer, footerHeight} = table.props;
-    if (!footer) {
-      return null;
-    }
-    const TableRow = components.body.row;
-    return (
-      <TableRow style={{position: 'absolute', bottom: 0, left: 0, height: footerHeight}}>
-        {footer}
-      </TableRow>
-    )
+    const {footer, footerHeight} = this.context.table.props;
+    return footer ? (
+      <div style={{height: footerHeight, color: 'inherit'}}>
+        {footer(this.props.dataSource)}
+      </div>
+    ) : null;
   };
 
   render() {

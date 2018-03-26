@@ -5,7 +5,7 @@ import {connect} from './mini-store';
 
 function BodyTable(props, {table}) {
   const {saveRef} = table;
-  const {prefixCls, fixedHeader, showHeader} = table.props;
+  const {prefixCls, fixedHeader, showHeader, footer, footerHeight} = table.props;
   const {
     fixed,
     columns,
