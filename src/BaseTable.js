@@ -61,17 +61,34 @@ class BaseTable extends React.PureComponent {
     return rows;
   };
 
+  renderFooter = () => {
+    const table = this.context.table;
+    const components = table.components;
+    const {footer, footerHeight} = table.props;
+    if (!footer) {
+      return null;
+    }
+    const TableRow = components.body.row;
+    return (
+      <TableRow style={{position: 'absolute', bottom: 0, left: 0, height: footerHeight}}>
+        {footer}
+      </TableRow>
+    )
+  };
+
   render() {
     const {hasHead, hasBody, columns, fixed, bodyHeight} = this.props;
     const table = this.context.table;
     const components = table.components;
+    const {footer, footerHeight} = table.props;
     let body;
     const Table = components.table;
     const BodyWrapper = components.body.wrapper;
     if (hasBody) {
       body = (
-        <BodyWrapper className='tbody' style={{height: bodyHeight}}>
+        <BodyWrapper className='tbody' style={{height: bodyHeight + (footer ? footerHeight : 0)}}>
           {this.renderRows(table.props.dataSource)}
+          {this.renderFooter()}
         </BodyWrapper>
       )
     }
