@@ -29,7 +29,6 @@ class BaseTable extends React.PureComponent {
       rowClassName
     } = table.props;
     const columnManager = table.columnManager;
-    console.log(renderStart, renderEnd);
     datas.forEach((record, i) => {
       if (i >= renderStart && i <= renderEnd) {
         let leafColumns;

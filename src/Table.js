@@ -140,9 +140,6 @@ class Table extends React.PureComponent {
     if (end < start || end - start < this.showCount) {
       end = start + this.showCount;
     }
-    if (isNaN(end)) {
-      console.log(start, end, this.showCount);
-    }
     return {
       renderStart: start,
       renderEnd: end
