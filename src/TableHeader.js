@@ -42,21 +42,12 @@ export default function TableHeader(props, {table}) {
   const columnSize = columns.length;
   return (
     <HeaderWrapper className='thead'>
-      {
-        rows.map((row, index) => (
-          <TableHeaderRow
-            key={index}
-            index={index}
-            fixed={fixed}
-            columns={columns}
-            rows={rows}
-            row={row}
-            rowHeight={headerRowHeight - (bordered ? 1 : 0)}
-            components={components}
-            isLast={index + 1 === columnSize}
-          />
-        ))
-      }
+      <TableHeaderRow
+        fixed={fixed}
+        columns={columns}
+        rowHeight={headerRowHeight - (bordered ? 1 : 0)}
+        components={components}
+      />
     </HeaderWrapper>
   )
 }
