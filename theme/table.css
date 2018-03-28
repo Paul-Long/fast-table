@@ -39,6 +39,16 @@
   color: #7b8082;
   overflow-y: scroll;
 }
+
+.vt-header .row-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.vt-header .col-group {
+  display: flex;
+  flex-direction: row;
+}
 .vt-body {
   color: #ffebc8;
   overflow-y: scroll;

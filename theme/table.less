@@ -14,6 +14,14 @@
     background: @tableHeaderBg;
     color: @tableHeaderText;
     overflow-y: scroll;
+    .row-group {
+      display: flex;
+      flex-direction: column;
+    }
+    .col-group {
+      display: flex;
+      flex-direction: row;
+    }
   }
   &-body {
     color: @textColor;

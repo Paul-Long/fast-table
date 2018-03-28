@@ -14,28 +14,35 @@ class TableHeaderCell extends React.PureComponent {
     return rows;
   };
 
-  render() {
-    const {title} = this.props.column;
-    const rows = this.renderChildren(this.props.column.children);
-    console.log(rows);
-    const style = {
-      display: 'inline-block'
-    };
-    const props = {
-      className: 'th',
-      style
-    };
+  renderCell = (column, key) => {
+    const style = {};
+    const children = column.children || [];
+    if (column.width && children.length === 0) {
+      style.width = column.width;
+    }
     return (
-      <div>
-        <div {...props}>{title}</div>
-        <div>
+      <div key={key || column.key || column.dataIndex} className='th' style={style}>
+        {column.title}
+      </div>
+    )
+  };
+
+  render() {
+    const column = this.props.column;
+    const children = column.children || [];
+    const rows = this.renderChildren(children);
+    if (children.length === 0) {
+      return this.renderCell(column);
+    }
+    return (
+      <div className='row-group'>
+        {this.renderCell(column)}
+        <div className='col-group'>
           {
             rows.map((row, i) => {
               return (
-                <div key={i}>
-                  {row.map((r, ri) => {
-                    return (<div {...props} key={`${i}-${ri}`}>{r.title}</div>)
-                  })}
+                <div key={i} className='col-group'>
+                  {row.map((r, ri) => this.renderCell(r, `${i}-${ri}`))}
                 </div>
               )
             })
