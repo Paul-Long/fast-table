@@ -29,6 +29,7 @@ class BaseTable extends React.PureComponent {
       rowClassName
     } = table.props;
     const columnManager = table.columnManager;
+    console.log(renderStart, renderEnd);
     datas.forEach((record, i) => {
       if (i >= renderStart && i <= renderEnd) {
         let leafColumns;
@@ -66,10 +67,22 @@ class BaseTable extends React.PureComponent {
   renderFooter = () => {
     const {footer, footerHeight} = this.context.table.props;
     return footer ? (
-      <div style={{position: 'absolute', bottom: 0, height: footerHeight, color: 'inherit'}}>
+      <div style={{position: 'absolute', bottom: 0, left: 0, right: 0, height: footerHeight, color: 'inherit'}}>
         {footer(this.props.dataSource)}
       </div>
     ) : null;
+  };
+
+  renderEmptyText = () => {
+    const {emptyText, dataSource, rowHeight} = this.context.table.props;
+    if (dataSource && dataSource.length > 0) {
+      return null;
+    }
+    return typeof emptyText === 'function' ? (
+      <div style={{position: 'absolute', bottom: 0, height: rowHeight, textAlign: 'center', color: 'inherit'}}>
+        {emptyText(this.props.dataSource)}
+      </div>
+    ) : emptyText;
   };
 
   render() {
@@ -84,6 +97,7 @@ class BaseTable extends React.PureComponent {
       body = (
         <BodyWrapper className='tbody' style={{height: bodyHeight + (footer ? footerHeight : 0)}}>
           {this.renderRows(table.props.dataSource)}
+          {this.renderEmptyText()}
           {this.renderFooter()}
         </BodyWrapper>
       )

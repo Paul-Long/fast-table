@@ -19,6 +19,7 @@ class Table extends React.PureComponent {
     super(props);
     this.columnManager = new ColumnManager(props.columns);
     this.lastScrollTop = 0;
+    this.showCount = props.defaultShowCount || 30;
     const columns = this.columnManager.groupedColumns();
     let maxRowSpan = maxBy(columns, 'rowSpan');
     maxRowSpan = maxRowSpan ? maxRowSpan['rowSpan'] : 1;
@@ -27,9 +28,9 @@ class Table extends React.PureComponent {
       hasScroll: false,
       headHeight: maxRowSpan * props.headerRowHeight,
       fixedColumnsHeadRowsHeight: [],
-      ...this.resetBodyHeight()
+      ...this.resetBodyHeight(props.dataSource || [])
     });
-    this.debouncedWindowResize = debounce(this.handleWindowResize, 150);
+    this.debouncedWindowResize = debounce(this.resetData, 150);
   }
 
   getChildContext() {
@@ -56,15 +57,13 @@ class Table extends React.PureComponent {
   }
 
   componentDidMount() {
-    this.handleWindowResize();
+    this.resetData();
     this.resizeEvent = addEventListener(window, 'resize', this.debouncedWindowResize);
   }
 
   componentWillReceiveProps(nextProps) {
     if (!shallowEqual(nextProps.dataSource, this.props.dataSource)) {
-      this.store.setState({
-        fixedColumnsBodyRowsHeight: this.resetBodyHeight()
-      });
+      this.resetData(nextProps.dataSource);
     }
   }
 
@@ -74,21 +73,19 @@ class Table extends React.PureComponent {
     }
   }
 
-  handleWindowResize = () => {
-    this.syncFixedTableRowHeight();
-  };
+  componentDidUpdate() {
+    this.bodyHeight = this['bodyTable'].getBoundingClientRect().height;
+    this.showCount = 5 + (this.bodyHeight / this.props.rowHeight);
+  }
 
-  syncFixedTableRowHeight = () => {
-    const tableRect = this['tableNode'].getBoundingClientRect();
-    if (tableRect.height !== undefined && tableRect.height <= 0) {
-      return;
-    }
-    const {fixedColumnsBodyRowsHeight, tops, bodyHeight} = this.resetBodyHeight();
+  resetData = (dataSource = this.props.dataSource) => {
+    const {fixedColumnsBodyRowsHeight, tops, bodyHeight} = this.resetBodyHeight(dataSource);
     const hasScroll = this['bodyTable'].getBoundingClientRect().height < bodyHeight;
     this.store.setState({
       hasScroll,
       tops,
       bodyHeight,
+      fixedColumnsBodyRowsHeight,
       ...this.resetRenderInterval(this.lastScrollTop || this['bodyTable'].scrollTop, this['bodyTable'].clientHeight, bodyHeight, fixedColumnsBodyRowsHeight)
     });
   };
@@ -102,9 +99,10 @@ class Table extends React.PureComponent {
     this.lastScrollTop = target.scrollTop;
   };
 
-  resetBodyHeight = () => {
-    const {dataSource, getRowHeight, rowHeight} = this.props;
+  resetBodyHeight = (dataSource) => {
+    const {getRowHeight, rowHeight} = this.props;
     let tops = [], top = 0;
+    dataSource = dataSource || [];
     const fixedColumnsBodyRowsHeight = dataSource.map((record, index) => {
       const height = getRowHeight(record, index) * rowHeight;
       tops.push(top);
@@ -138,6 +136,12 @@ class Table extends React.PureComponent {
     }
     if (scrollTop + clientHeight >= scrollHeight - rowHeight) {
       end = fixedColumnsBodyRowsHeight.length - 1;
+    }
+    if (end < start || end - start < this.showCount) {
+      end = start + this.showCount;
+    }
+    if (isNaN(end)) {
+      console.log(start, end, this.showCount);
     }
     return {
       renderStart: start,
@@ -238,10 +242,12 @@ Table.propTypes = {
   getRowHeight: PropTypes.func,
   rowClassName: PropTypes.func,
   footer: PropTypes.func,
+  emptyText: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
 
   rowHeight: PropTypes.number,
   headerRowHeight: PropTypes.number,
   footerHeight: PropTypes.number,
+  defaultShowCount: PropTypes.number,
 
   style: PropTypes.object
 };
@@ -258,10 +264,12 @@ Table.defaultProps = {
   rowRef: () => null,
   getRowHeight: () => 1,
   rowClassName: () => '',
+  emptyText: () => '暂无数据',
 
   rowHeight: 30,
   headerRowHeight: 35,
   footerHeight: 30,
+  defaultShowCount: 30,
 
   style: {}
 };
