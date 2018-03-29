@@ -1,11 +1,21 @@
 import React from 'react';
 import flattenDeep from 'lodash/flattenDeep';
+import maxBy from 'lodash/maxBy';
+import max from 'lodash/max';
+import sum from 'lodash/sum';
+import multiply from 'lodash/multiply';
+import isNumber from 'lodash/isNumber';
+import toNumber from 'lodash/toNumber';
+import divide from 'lodash/divide';
+
+const percentReg = /^\d+\.?\d{0,2}%$/;
 
 export default class ColumnManager {
   _cached = {};
 
-  constructor(columns) {
+  constructor(columns, minWidth) {
     this.columns = columns;
+    this.minWidth = minWidth;
   }
 
   leftColumns() {
@@ -40,6 +50,13 @@ export default class ColumnManager {
     return this._cache('rightLeafColumns', () =>
       this._leafColumns(this.rightColumns())
     );
+  }
+
+  maxRowSpan() {
+    return this._cache('maxRowSpan', () => {
+      let max = maxBy(this.leftColumns(), 'rowSpan');
+      return max ? max['rowSpan'] : 1;
+    });
   }
 
   groupedColumns() {
@@ -89,9 +106,55 @@ export default class ColumnManager {
     });
   }
 
+  getColWidth(wrapperWidth) {
+    return this._cache('getColWidth', () => {
+      const _getColWidth = (columns, colWidth = {}, currentRow = 0) => {
+        colWidth = colWidth || {};
+        columns.forEach((column) => {
+          let widths = column.widths || [];
+          widths = this._calcWidth(widths, wrapperWidth);
+          let width = column.width;
+          if (widths.length > 0) {
+            width = sum(widths);
+          }
+          const key = column.path.join('-');
+          if (key in colWidth) {
+            throw Error(`duplicate column title - ${key}`);
+          }
+          colWidth[key] = width;
+          const children = column.children || [];
+          if (children.length > 0) {
+            colWidth = _getColWidth(children, colWidth, currentRow + 1);
+          }
+        });
+        return colWidth;
+      };
+      return _getColWidth(this.groupedColumns());
+    })
+  }
+
   reset(columns, elements) {
     this.columns = columns || this.normalize(elements);
     this._cached = {};
+  }
+
+  _calcWidth(widths, wrapperWidth) {
+    widths = widths.map(w => {
+      if (typeof w === 'string' && percentReg.test(w)) {
+        const i = w.replace('%', '');
+        return this._minWidth(multiply(wrapperWidth, divide(i, 100)));
+      }
+      let ww = toNumber(w);
+      if (!isNaN(ww) && isNumber(ww)) {
+        return this._minWidth(ww);
+      }
+      return this._minWidth(w);
+    });
+    return widths.filter(w => !!w);
+  }
+
+  _minWidth(width) {
+    return !width ? width : max([this.minWidth, width]);
   }
 
   _cache(name, fn) {

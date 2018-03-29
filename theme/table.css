@@ -1,7 +1,6 @@
 .vt.bordered .tr {
   position: relative;
 }
-
 .vt.bordered .tr:before {
   content: '';
   position: absolute;
@@ -18,7 +17,6 @@
   border-color: #000000;
   z-index: 10;
 }
-
 .vt.bordered .tr:before {
   border: 0;
   border-bottom: 1px solid #000000;
@@ -49,11 +47,9 @@
   left: auto;
   border-right: 1px solid #000000;
 }
-
 .vt.bordered .th.has-child {
   position: relative;
 }
-
 .vt.bordered .th.has-child:before {
   content: '';
   position: absolute;
@@ -70,17 +66,14 @@
   border-color: #000000;
   z-index: 10;
 }
-
 .vt.bordered .th.has-child:before {
   border: 0;
   border-bottom: 1px solid #000000;
   border-right: 1px solid #000000;
 }
-
 .vt.bordered .th:not(.has-child) {
   position: relative;
 }
-
 .vt.bordered .th:not(.has-child):before {
   content: '';
   position: absolute;
@@ -97,7 +90,6 @@
   border-color: #000000;
   z-index: 10;
 }
-
 .vt.bordered .th:not(.has-child):before {
   border: 0;
   width: 1px;

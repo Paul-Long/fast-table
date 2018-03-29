@@ -3,12 +3,6 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import merge from 'lodash/merge';
 import sum from 'lodash/sum';
-import maxBy from 'lodash/maxBy';
-import multiply from 'lodash/multiply';
-import divide from 'lodash/divide';
-import toNumber from 'lodash/toNumber';
-import isNumber from 'lodash/isNumber';
-import isNaN from 'lodash/isNaN';
 import shallowEqual from 'shallowequal';
 
 import HeadTable from './HeadTable';
@@ -16,20 +10,20 @@ import BodyTable from './BodyTable';
 import ColumnManager from './ColumnManager';
 import {addEventListener, debounce, measureScrollbar} from './Utils';
 import {create, Provider} from './mini-store';
+import TableProps from './TableProps';
 
 import '../theme/table.css';
 
 const percentReg = /^\d+\.?\d{0,2}%$/;
 
-class Table extends React.PureComponent {
+class Table extends TableProps {
   constructor(props) {
     super(props);
-    this.columnManager = new ColumnManager(props.columns);
+    this.columnManager = new ColumnManager(props.columns, props.colMinWidth);
     this.lastScrollTop = 0;
     this.showCount = props.defaultShowCount || 30;
     this.columns = this.columnManager.groupedColumns();
-    let maxRowSpan = maxBy(this.columns, 'rowSpan');
-    maxRowSpan = maxRowSpan ? maxRowSpan['rowSpan'] : 1;
+    const maxRowSpan = this.columnManager.maxRowSpan();
     this.store = create({
       currentHoverKey: null,
       hasScroll: false,
@@ -91,43 +85,6 @@ class Table extends React.PureComponent {
     this.updateColumn();
   };
 
-  resetColumn = (columns, colWidth = {}, currentRow = 0) => {
-    colWidth = colWidth || {};
-    columns.forEach((column) => {
-      let widths = column.widths || [];
-      widths = this.reCalcWidth(widths);
-      let width = column.width;
-      if (widths.length > 0) {
-        width = sum(widths);
-      }
-      const key = column.path.join('-');
-      if (key in colWidth) {
-        throw Error(`duplicate column title - ${key}`);
-      }
-      colWidth[key] = width;
-      const children = column.children || [];
-      if (children.length > 0) {
-        colWidth = this.resetColumn(children, colWidth, currentRow + 1);
-      }
-    });
-    return colWidth;
-  };
-
-  reCalcWidth = (widths) => {
-    widths = widths.map(w => {
-      if (typeof w === 'string' && percentReg.test(w)) {
-        const i = w.replace('%', '');
-        return multiply(this.headWidth, divide(i, 100));
-      }
-      let ww = toNumber(w);
-      if (!isNaN(ww) && isNumber(ww)) {
-        return ww;
-      }
-      return w;
-    });
-    return widths.filter(w => !!w);
-  };
-
   updateColumn = () => {
     const headRows = this['headTable'] ?
       this['headTable'].querySelectorAll('.thead') :
@@ -135,10 +92,9 @@ class Table extends React.PureComponent {
     const scrollSize = measureScrollbar();
     const state = this.store.getState();
     if (headRows && headRows.length > 0) {
-      this.headWidth = headRows[0].getBoundingClientRect().width - (state.hasScroll ? scrollSize : 0);
-      const colWidth = this.resetColumn(this.columns);
+      const width = headRows[0].getBoundingClientRect().width - (state.hasScroll ? scrollSize : 0);
       this.store.setState({
-        colWidth
+        colWidth: this.columnManager.getColWidth(width)
       })
     }
   };
@@ -288,53 +244,6 @@ class Table extends React.PureComponent {
 }
 
 export default Table;
-
-Table.propTypes = {
-  prefixCls: PropTypes.string,
-  columns: PropTypes.array,
-  dataSource: PropTypes.array,
-
-  className: PropTypes.string,
-
-  showHeader: PropTypes.bool,
-  bordered: PropTypes.bool,
-  fixedHeader: PropTypes.bool,
-
-  rowRef: PropTypes.func,
-  getRowHeight: PropTypes.func,
-  rowClassName: PropTypes.func,
-  footer: PropTypes.func,
-  emptyText: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
-
-  rowHeight: PropTypes.number,
-  headerRowHeight: PropTypes.number,
-  footerHeight: PropTypes.number,
-  defaultShowCount: PropTypes.number,
-
-  style: PropTypes.object
-};
-
-Table.defaultProps = {
-  prefixCls: 'vt',
-  columns: [],
-  dataSource: [],
-
-  showHeader: true,
-  bordered: false,
-  fixedHeader: true,
-
-  rowRef: () => null,
-  getRowHeight: () => 1,
-  rowClassName: () => '',
-  emptyText: () => '暂无数据',
-
-  rowHeight: 30,
-  headerRowHeight: 35,
-  footerHeight: 30,
-  defaultShowCount: 30,
-
-  style: {}
-};
 
 Table.childContextTypes = {
   table: PropTypes.any
