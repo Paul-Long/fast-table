@@ -1,13 +1,20 @@
 import React from 'react';
 import TableHeaderCell from './TableHeaderCell';
 
-function TableHeaderRow({row, index, height, components, columns, rowHeight}) {
+function TableHeaderRow({row, index, height, colWidth, components, columns, rowHeight}) {
   const HeaderRow = components.header.row;
   const HeaderCell = components.header.cell;
-  const columnSize = columns.length;
   return (
     <HeaderRow className='tr'>
-      {columns.map((column, index) => (<TableHeaderCell key={index} column={column}/>))}
+      {columns.map((column, index) => (
+        <TableHeaderCell
+          key={index}
+          index={index}
+          colWidth={colWidth}
+          headerRowHeight={rowHeight}
+          column={column}
+          columns={columns} />
+      ))}
     </HeaderRow>
   )
 }

@@ -14,12 +14,12 @@ class TableCell extends React.PureComponent {
   getStyle = () => {
     const {
       column,
-      height,
+      width,
       isLast,
       record,
       index
     } = this.props;
-    const {bodyStyle, align, width} = column;
+    const {bodyStyle, align} = column;
     let style = {};
     if (typeof bodyStyle === 'function') {
       style = bodyStyle(record, index) || {};

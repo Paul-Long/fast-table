@@ -4,15 +4,22 @@ import classNames from 'classnames';
 import merge from 'lodash/merge';
 import sum from 'lodash/sum';
 import maxBy from 'lodash/maxBy';
+import multiply from 'lodash/multiply';
+import divide from 'lodash/divide';
+import toNumber from 'lodash/toNumber';
+import isNumber from 'lodash/isNumber';
+import isNaN from 'lodash/isNaN';
 import shallowEqual from 'shallowequal';
 
 import HeadTable from './HeadTable';
 import BodyTable from './BodyTable';
 import ColumnManager from './ColumnManager';
-import {addEventListener, debounce} from './Utils';
+import {addEventListener, debounce, measureScrollbar} from './Utils';
 import {create, Provider} from './mini-store';
 
 import '../theme/table.css';
+
+const percentReg = /^\d+\.?\d{0,2}%$/;
 
 class Table extends React.PureComponent {
   constructor(props) {
@@ -20,17 +27,18 @@ class Table extends React.PureComponent {
     this.columnManager = new ColumnManager(props.columns);
     this.lastScrollTop = 0;
     this.showCount = props.defaultShowCount || 30;
-    const columns = this.columnManager.groupedColumns();
-    let maxRowSpan = maxBy(columns, 'rowSpan');
+    this.columns = this.columnManager.groupedColumns();
+    let maxRowSpan = maxBy(this.columns, 'rowSpan');
     maxRowSpan = maxRowSpan ? maxRowSpan['rowSpan'] : 1;
     this.store = create({
       currentHoverKey: null,
       hasScroll: false,
       headHeight: maxRowSpan * props.headerRowHeight,
       fixedColumnsHeadRowsHeight: [],
+      colWidth: {},
       ...this.resetBodyHeight(props.dataSource || [])
     });
-    this.debouncedWindowResize = debounce(this.resetData, 150);
+    this.debouncedWindowResize = debounce(this.handleWindowResize, 150);
   }
 
   getChildContext() {
@@ -57,7 +65,7 @@ class Table extends React.PureComponent {
   }
 
   componentDidMount() {
-    this.resetData();
+    this.handleWindowResize();
     this.resizeEvent = addEventListener(window, 'resize', this.debouncedWindowResize);
   }
 
@@ -77,6 +85,64 @@ class Table extends React.PureComponent {
     this.bodyHeight = this['bodyTable'].getBoundingClientRect().height;
     this.showCount = 5 + (this.bodyHeight / this.props.rowHeight);
   }
+
+  handleWindowResize = () => {
+    this.resetData();
+    this.updateColumn();
+  };
+
+  resetColumn = (columns, colWidth = {}, currentRow = 0) => {
+    colWidth = colWidth || {};
+    columns.forEach((column) => {
+      let widths = column.widths || [];
+      widths = this.reCalcWidth(widths);
+      let width = column.width;
+      if (widths.length > 0) {
+        width = sum(widths);
+      }
+      const key = column.path.join('-');
+      if (key in colWidth) {
+        throw Error(`duplicate column title - ${key}`);
+      }
+      colWidth[key] = width;
+      const children = column.children || [];
+      if (children.length > 0) {
+        colWidth = this.resetColumn(children, colWidth, currentRow + 1);
+      }
+    });
+    return colWidth;
+  };
+
+  reCalcWidth = (widths) => {
+    widths = widths.map(w => {
+      if (typeof w === 'string' && percentReg.test(w)) {
+        const i = w.replace('%', '');
+        return multiply(this.headWidth, divide(i, 100));
+      }
+      let ww = toNumber(w);
+      if (!isNaN(ww) && isNumber(ww)) {
+        return ww;
+      }
+      return w;
+    });
+    return widths.filter(w => !!w);
+  };
+
+  updateColumn = () => {
+    const headRows = this['headTable'] ?
+      this['headTable'].querySelectorAll('.thead') :
+      this['bodyTable'].querySelectorAll('.thead');
+    const scrollSize = measureScrollbar();
+    const state = this.store.getState();
+    if (headRows && headRows.length > 0) {
+      this.headWidth = headRows[0].getBoundingClientRect().width - (state.hasScroll ? scrollSize : 0);
+      const colWidth = this.resetColumn(this.columns);
+      console.log(colWidth);
+      this.store.setState({
+        colWidth
+      })
+    }
+  };
 
   resetData = (dataSource = this.props.dataSource) => {
     const {fixedColumnsBodyRowsHeight, tops, bodyHeight} = this.resetBodyHeight(dataSource);
@@ -202,8 +268,9 @@ class Table extends React.PureComponent {
   };
 
   renderMainTable = () => {
+    console.log('render main table');
     return this.renderTable({
-      columns: this.columnManager.groupedColumns()
+      columns: this.columns
     });
   };
 

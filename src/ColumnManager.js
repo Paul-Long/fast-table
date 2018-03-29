@@ -1,4 +1,5 @@
 import React from 'react';
+import flattenDeep from 'lodash/flattenDeep';
 
 export default class ColumnManager {
   _cached = {};
@@ -25,7 +26,7 @@ export default class ColumnManager {
 
   leafColumns() {
     return this._cache('leafColumns', () =>
-      this._leafColumns(this.columns)
+      this._leafColumns(this.groupedColumns())
     );
   }
 
@@ -60,13 +61,18 @@ export default class ColumnManager {
         columns.forEach((column, index) => {
           const newColumn = {...column};
           rows[currentRow].push(newColumn);
+          const path = parentColumn.path || [currentRow];
+          newColumn.path = [...path, index];
           parentColumn.colSpan = parentColumn.colSpan || 0;
           if (newColumn.children && newColumn.children.length > 0) {
             newColumn.children = _groupColumns(newColumn.children, currentRow + 1, newColumn, rows);
             parentColumn.colSpan = parentColumn.colSpan + newColumn.colSpan;
+            newColumn.widths = newColumn.children.map(c => c.widths);
           } else {
             parentColumn.colSpan++;
+            newColumn.widths = [newColumn.width];
           }
+          newColumn.widths = flattenDeep(newColumn.widths);
           // update rowspan to all same row columns
           for (let i = 0; i < rows[currentRow].length - 1; ++i) {
             setRowSpan(rows[currentRow][i]);

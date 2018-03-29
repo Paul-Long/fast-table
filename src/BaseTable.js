@@ -85,7 +85,7 @@ class BaseTable extends React.PureComponent {
   };
 
   render() {
-    const {hasHead, hasBody, columns, fixed, bodyHeight} = this.props;
+    const {hasHead, hasBody, columns, fixed, bodyHeight, colWidth} = this.props;
     const table = this.context.table;
     const components = table.components;
     const {footer, footerHeight} = table.props;
@@ -103,7 +103,7 @@ class BaseTable extends React.PureComponent {
     }
     return (
       <Table className='table'>
-        {hasHead && <TableHeader columns={columns} fixed={fixed}/>}
+        {hasHead && <TableHeader columns={columns} fixed={fixed} colWidth={colWidth} />}
         {body}
       </Table>
     )
@@ -111,13 +111,14 @@ class BaseTable extends React.PureComponent {
 }
 
 export default connect((state) => {
-  const {hasScroll, fixedColumnsBodyRowsHeight, renderStart, renderEnd, bodyHeight} = state;
+  const {hasScroll, fixedColumnsBodyRowsHeight, renderStart, renderEnd, bodyHeight, colWidth} = state;
   return {
     hasScroll,
     bodyHeight,
     fixedColumnsBodyRowsHeight,
     renderStart,
-    renderEnd
+    renderEnd,
+    colWidth
   }
 })(BaseTable);
 

@@ -2,8 +2,20 @@
 @import (reference) "mixins";
 
 .@{tablePrefixCls}.bordered {
-  .th, .td {
+  .tr {
+    position: relative;
+    .border-bottom();
+  }
+  .td {
+    position: relative;
+    .border-right();
+  }
+  .th.has-child {
     position: relative;
     .border-right-bottom();
+  }
+  .th:not(.has-child) {
+    position: relative;
+    .border-right();
   }
 }
