@@ -50,7 +50,11 @@ class TableHeaderCell extends React.PureComponent {
         style.width = width;
       }
     }
+    if (column.align) {
+      style.textAlign = column.align;
+    }
     style.height = (rowSpan || 1) * this.props.headerRowHeight;
+    style.lineHeight = (rowSpan || 1) * 1.5;
     const cellClass = classNames('th', {'has-child': children.length > 0});
     return (
       <div key={key || column.key || dataIndex} className={cellClass} style={style}>

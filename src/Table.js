@@ -137,7 +137,6 @@ class Table extends React.PureComponent {
     if (headRows && headRows.length > 0) {
       this.headWidth = headRows[0].getBoundingClientRect().width - (state.hasScroll ? scrollSize : 0);
       const colWidth = this.resetColumn(this.columns);
-      console.log(colWidth);
       this.store.setState({
         colWidth
       })
@@ -268,7 +267,6 @@ class Table extends React.PureComponent {
   };
 
   renderMainTable = () => {
-    console.log('render main table');
     return this.renderTable({
       columns: this.columns
     });
