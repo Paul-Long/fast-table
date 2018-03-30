@@ -37,18 +37,6 @@ class TableCell extends React.PureComponent {
     return style;
   };
 
-  getClassName = () => {
-    const {record, index, column} = this.props;
-    const {className} = column;
-    let cls = '';
-    if (typeof className === 'function') {
-      cls = className(column, record, index);
-    } else if (className === 'string') {
-      cls = className;
-    }
-    return classNames('td', cls);
-  };
-
   render() {
     const {
       record,
@@ -84,7 +72,7 @@ class TableCell extends React.PureComponent {
     tdProps.style = this.getStyle();
     return (
       <BodyCell
-        className={this.getClassName()}
+        className={classNames('td', column.className)}
         {...tdProps}
       >
         <div>

@@ -14,8 +14,6 @@ import TableProps from './TableProps';
 
 import '../theme/table.css';
 
-const percentReg = /^\d+\.?\d{0,2}%$/;
-
 class Table extends TableProps {
   constructor(props) {
     super(props);
@@ -24,6 +22,7 @@ class Table extends TableProps {
     this.showCount = props.defaultShowCount || 30;
     this.columns = this.columnManager.groupedColumns();
     const maxRowSpan = this.columnManager.maxRowSpan();
+    console.log(maxRowSpan * props.headerRowHeight);
     this.store = create({
       currentHoverKey: null,
       hasScroll: false,

@@ -44,7 +44,7 @@ function BodyTable(props, {table}) {
   )
 }
 
-export default connect((state, props) => {
+export default connect((state) => {
   const {hasScroll, headHeight} = state;
   return {
     hasScroll,
