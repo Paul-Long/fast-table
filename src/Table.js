@@ -22,6 +22,7 @@ class Table extends TableProps {
     this.showCount = props.defaultShowCount || 30;
     this.columns = this.columnManager.groupedColumns();
     const maxRowSpan = this.columnManager.maxRowSpan();
+    let start = new Date().getTime();
     this.store = create({
       currentHoverKey: null,
       hasScroll: false,
@@ -30,6 +31,14 @@ class Table extends TableProps {
       colWidth: {},
       ...this.resetBodyHeight(props.dataSource || [])
     });
+    let timer = setTimeout(() => {
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+      this.setState({...this.resetBodyHeight(props.dataSource || [])});
+    });
+    console.log('store.create -> ', new Date().getTime() - start);
     this.debouncedWindowResize = debounce(this.handleWindowResize, 150);
   }
 
@@ -79,11 +88,13 @@ class Table extends TableProps {
   }
 
   getShowCount = () => {
+    const start = new Date().getTime();
     const dataSource = this.props.dataSource || [];
     this.bodyHeight = this['bodyTable'].getBoundingClientRect().height;
     let showCount = 5 + (this.bodyHeight / this.props.rowHeight);
     showCount = showCount > dataSource.length ? dataSource.length : showCount;
     showCount = Math.max(showCount, this.props.defaultShowCount);
+    console.log('getShowCount -> ', new Date().getTime() - start);
     return showCount;
   };
 
@@ -97,6 +108,7 @@ class Table extends TableProps {
   };
 
   updateColumn = () => {
+    const start = new Date().getTime();
     const headRows = this['headTable'] ?
       this['headTable'].querySelectorAll('.thead') :
       this['bodyTable'].querySelectorAll('.thead');
@@ -108,9 +120,11 @@ class Table extends TableProps {
         colWidth: this.columnManager.getColWidth(width)
       })
     }
+    console.log('updateColumn -> ', new Date().getTime() - start);
   };
 
   resetData = (dataSource = this.props.dataSource) => {
+    const start = new Date().getTime();
     const {fixedColumnsBodyRowsHeight, tops, bodyHeight} = this.resetBodyHeight(dataSource);
     const hasScroll = this['bodyTable'].getBoundingClientRect().height < bodyHeight;
     dataSource = dataSource || [];
@@ -131,9 +145,11 @@ class Table extends TableProps {
       fixedColumnsBodyRowsHeight,
       ...result
     });
+    console.log('resetData -> ', new Date().getTime() - start);
   };
 
   handleBodyScroll = (e) => {
+    const start = new Date().getTime();
     const target = e.target;
     if (this.lastScrollTop !== target.scrollTop && target !== this['headTable']) {
       const state = this.store.getState();
@@ -141,9 +157,11 @@ class Table extends TableProps {
       this.store.setState(result);
     }
     this.lastScrollTop = target.scrollTop;
+    console.log('handleBodyScroll -> ', new Date().getTime() - start);
   };
 
   resetBodyHeight = (dataSource) => {
+    const start = new Date().getTime();
     const {getRowHeight, rowHeight} = this.props;
     let tops = [], top = 0;
     dataSource = dataSource || [];
@@ -153,10 +171,12 @@ class Table extends TableProps {
       top += height;
       return height;
     });
+    console.log('resetBodyHeight -> ', new Date().getTime() - start);
     return {fixedColumnsBodyRowsHeight, tops, bodyHeight: sum(fixedColumnsBodyRowsHeight)};
   };
 
   resetRenderInterval = (scrollTop, clientHeight, scrollHeight, fixedColumnsBodyRowsHeight, dataSource) => {
+    const startTime = new Date().getTime();
     const {rowHeight} = this.props;
     dataSource = dataSource || [];
     if (!fixedColumnsBodyRowsHeight) {
@@ -192,6 +212,7 @@ class Table extends TableProps {
         showData.push(data);
       }
     });
+    console.log('resetRenderInterval -> ', new Date().getTime() - startTime);
     return {
       renderStart: start,
       renderEnd: end,
