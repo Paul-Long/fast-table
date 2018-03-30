@@ -88,9 +88,12 @@ class Table extends TableProps {
   };
 
   handleWindowResize = () => {
+    const start = new Date().getTime();
     this.showCount = this.getShowCount();
     this.resetData(this.props.dataSource);
     this.updateColumn();
+    const end = new Date().getTime();
+    console.log('handleWindowResize -> ', end - start);
   };
 
   updateColumn = () => {
