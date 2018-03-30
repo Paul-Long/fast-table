@@ -18,7 +18,8 @@ class BaseTable extends React.PureComponent {
       getRowKey,
       fixed,
       showData,
-      tops
+      tops,
+      colWidth
     } = this.props;
     const table = this.context.table;
     const {
@@ -48,6 +49,7 @@ class BaseTable extends React.PureComponent {
         fixed,
         prefixCls,
         className,
+        colWidth,
         rowKey: key,
         index: record.index,
         top: tops[record.index],

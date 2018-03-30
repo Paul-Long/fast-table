@@ -70,6 +70,36 @@
   }
 }
 
+.after-border() {
+  &:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 200%;
+    height: 200%;
+    transform-origin: 0 0;
+    transform: scale(0.5);
+    box-sizing: border-box;
+    pointer-events: none;
+    border-width: @beforeBorderSize;
+    border-style: solid;
+    border-color: @tableBorderColor;
+    z-index: 10;
+  }
+}
+
+.after-border-bottom() {
+  .after-border();
+  &:after {
+    border: 0;
+    height: @beforeBorderSize;
+    bottom: 0;
+    top: auto;
+    border-bottom: @beforeBorderSize solid @tableBorderColor;
+  }
+}
+
 .opacity-background(@color, @opacity) {
   &:before {
     content: '';

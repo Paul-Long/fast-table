@@ -7,6 +7,7 @@ import multiply from 'lodash/multiply';
 import isNumber from 'lodash/isNumber';
 import toNumber from 'lodash/toNumber';
 import divide from 'lodash/divide';
+import ceil from 'lodash/ceil';
 
 const percentReg = /^\d+\.?\d{0,2}%$/;
 
@@ -107,30 +108,28 @@ export default class ColumnManager {
   }
 
   getColWidth(wrapperWidth) {
-    return this._cache('getColWidth', () => {
-      const _getColWidth = (columns, colWidth = {}, currentRow = 0) => {
-        colWidth = colWidth || {};
-        columns.forEach((column) => {
-          let widths = column.widths || [];
-          widths = this._calcWidth(widths, wrapperWidth);
-          let width = column.width;
-          if (widths.length > 0) {
-            width = sum(widths);
-          }
-          const key = column.path.join('-');
-          if (key in colWidth) {
-            throw Error(`duplicate column title - ${key}`);
-          }
-          colWidth[key] = width;
-          const children = column.children || [];
-          if (children.length > 0) {
-            colWidth = _getColWidth(children, colWidth, currentRow + 1);
-          }
-        });
-        return colWidth;
-      };
-      return _getColWidth(this.groupedColumns());
-    })
+    const _getColWidth = (columns, colWidth = {}, currentRow = 0) => {
+      colWidth = colWidth || {};
+      columns.forEach((column) => {
+        let widths = column.widths || [];
+        widths = this._calcWidth(widths, wrapperWidth);
+        let width = column.width;
+        if (widths.length > 0) {
+          width = sum(widths);
+        }
+        const key = column.path.join('-');
+        if (key in colWidth) {
+          throw Error(`duplicate column title - ${key}`);
+        }
+        colWidth[key] = width;
+        const children = column.children || [];
+        if (children.length > 0) {
+          colWidth = _getColWidth(children, colWidth, currentRow + 1);
+        }
+      });
+      return colWidth;
+    };
+    return _getColWidth(this.groupedColumns());
   }
 
   reset(columns, elements) {
@@ -142,11 +141,15 @@ export default class ColumnManager {
     widths = widths.map(w => {
       if (typeof w === 'string' && percentReg.test(w)) {
         const i = w.replace('%', '');
-        return this._minWidth(multiply(wrapperWidth, divide(i, 100)));
+        let width = this._minWidth(multiply(wrapperWidth, divide(i, 100)));
+        return ceil(width);
+      }
+      if (w && typeof w === 'string') {
+        w = w.replace(/px/, '');
       }
       let ww = toNumber(w);
       if (!isNaN(ww) && isNumber(ww)) {
-        return this._minWidth(ww);
+        return ceil(this._minWidth(ww));
       }
       return this._minWidth(w);
     });

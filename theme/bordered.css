@@ -68,8 +68,33 @@
 }
 .vt.bordered .th.has-child:before {
   border: 0;
-  border-bottom: 1px solid #000000;
+  width: 1px;
+  right: 0;
+  left: auto;
   border-right: 1px solid #000000;
+}
+.vt.bordered .th.has-child:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 200%;
+  height: 200%;
+  transform-origin: 0 0;
+  transform: scale(0.5);
+  box-sizing: border-box;
+  pointer-events: none;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #000000;
+  z-index: 10;
+}
+.vt.bordered .th.has-child:after {
+  border: 0;
+  height: 1px;
+  bottom: 0;
+  top: auto;
+  border-bottom: 1px solid #000000;
 }
 .vt.bordered .th:not(.has-child) {
   position: relative;
