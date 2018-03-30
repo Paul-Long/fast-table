@@ -134,6 +134,7 @@
 }
 .vt .tbody {
   position: relative;
+  min-height: 30px;
 }
 .vt .tbody > .tr > .td {
   background: #172422;

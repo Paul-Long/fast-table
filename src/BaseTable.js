@@ -78,7 +78,16 @@ class BaseTable extends React.PureComponent {
       return null;
     }
     return typeof emptyText === 'function' ? (
-      <div style={{position: 'absolute', bottom: 0, height: rowHeight, textAlign: 'center', color: 'inherit'}}>
+      <div style={{
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: rowHeight,
+        lineHeight: rowHeight + 'px',
+        textAlign: 'center',
+        color: 'inherit'
+      }}>
         {emptyText(this.props.dataSource)}
       </div>
     ) : emptyText;
