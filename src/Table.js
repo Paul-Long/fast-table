@@ -22,7 +22,6 @@ class Table extends TableProps {
     this.showCount = props.defaultShowCount || 30;
     this.columns = this.columnManager.groupedColumns();
     const maxRowSpan = this.columnManager.maxRowSpan();
-    console.log(maxRowSpan * props.headerRowHeight);
     this.store = create({
       currentHoverKey: null,
       hasScroll: false,

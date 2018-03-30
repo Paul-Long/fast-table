@@ -54,7 +54,7 @@ export default class ColumnManager {
 
   maxRowSpan() {
     return this._cache('maxRowSpan', () => {
-      let max = maxBy(this.leftColumns(), 'rowSpan');
+      let max = maxBy(this.groupedColumns(), 'rowSpan');
       return max ? max['rowSpan'] : 1;
     });
   }
