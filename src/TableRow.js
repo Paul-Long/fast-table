@@ -78,11 +78,10 @@ class TableRow extends React.PureComponent {
 }
 
 export default connect((state, props) => {
-  const {currentHoverKey, tops, colWidth} = state;
-  const {rowKey, index} = props;
+  const {currentHoverKey, colWidth} = state;
+  const {rowKey} = props;
   return {
     hovered: currentHoverKey === rowKey,
-    top: tops[index],
     colWidth
   }
 })(TableRow);

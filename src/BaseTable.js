@@ -12,13 +12,13 @@ class BaseTable extends React.PureComponent {
       });
     });
   };
-  renderRows = (datas) => {
+  renderRows = () => {
     const rows = [];
     const {
       getRowKey,
       fixed,
-      renderStart,
-      renderEnd
+      showData,
+      tops
     } = this.props;
     const table = this.context.table;
     const {
@@ -29,36 +29,35 @@ class BaseTable extends React.PureComponent {
       rowClassName
     } = table.props;
     const columnManager = table.columnManager;
-    datas.forEach((record, i) => {
-      if (i >= renderStart && i <= renderEnd) {
-        let leafColumns;
-        if (fixed === 'left') {
-          leafColumns = columnManager.leftLeafColumns();
-        } else if (fixed === 'right') {
-          leafColumns = columnManager.rightLeafColumns();
-        } else {
-          leafColumns = columnManager.leafColumns();
-        }
-        const className = typeof rowClassName === 'function'
-          ? rowClassName(record, i)
-          : rowClassName;
-        const key = getRowKey(record, i);
-        const props = {
-          key,
-          record,
-          fixed,
-          prefixCls,
-          className,
-          rowKey: key,
-          index: i,
-          columns: leafColumns,
-          ref: rowRef(record, i),
-          components: table.components,
-          height: getRowHeight(record, i) * rowHeight,
-          onHover: this.handleRowHover
-        };
-        rows.push(<TableRow {...props} />);
+    (showData || []).forEach((record, i) => {
+      let leafColumns;
+      if (fixed === 'left') {
+        leafColumns = columnManager.leftLeafColumns();
+      } else if (fixed === 'right') {
+        leafColumns = columnManager.rightLeafColumns();
+      } else {
+        leafColumns = columnManager.leafColumns();
       }
+      const className = typeof rowClassName === 'function'
+        ? rowClassName(record, record.index)
+        : rowClassName;
+      const key = getRowKey(record, record.index);
+      const props = {
+        key,
+        record,
+        fixed,
+        prefixCls,
+        className,
+        rowKey: key,
+        index: record.index,
+        top: tops[record.index],
+        columns: leafColumns,
+        ref: rowRef(record, record.index),
+        components: table.components,
+        height: getRowHeight(record, record.index) * rowHeight,
+        onHover: this.handleRowHover
+      };
+      rows.push(<TableRow {...props} />);
     });
     return rows;
   };
@@ -102,9 +101,10 @@ class BaseTable extends React.PureComponent {
     const Table = components.table;
     const BodyWrapper = components.body.wrapper;
     if (hasBody) {
+      const rows = this.renderRows();
       body = (
         <BodyWrapper className='tbody' style={{height: bodyHeight + (footer ? footerHeight : 0)}}>
-          {this.renderRows(table.props.dataSource)}
+          {rows}
           {this.renderEmptyText()}
           {this.renderFooter()}
         </BodyWrapper>
@@ -120,14 +120,25 @@ class BaseTable extends React.PureComponent {
 }
 
 export default connect((state) => {
-  const {hasScroll, fixedColumnsBodyRowsHeight, renderStart, renderEnd, bodyHeight, colWidth} = state;
+  const {
+    hasScroll,
+    fixedColumnsBodyRowsHeight,
+    renderStart,
+    renderEnd,
+    bodyHeight,
+    colWidth,
+    tops,
+    showData
+  } = state;
   return {
     hasScroll,
     bodyHeight,
     fixedColumnsBodyRowsHeight,
     renderStart,
     renderEnd,
-    colWidth
+    colWidth,
+    tops,
+    showData: showData || []
   }
 })(BaseTable);
 
