@@ -60,3 +60,4 @@ typings/
 .idea/
 yarn.lock
 package-lock.json
+/lib

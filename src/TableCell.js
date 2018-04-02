@@ -14,11 +14,12 @@ class TableCell extends React.PureComponent {
   getStyle = () => {
     const {
       column,
+      width,
       isLast,
       record,
       index
     } = this.props;
-    const {bodyStyle, align, width} = column;
+    const {bodyStyle, align} = column;
     let style = {};
     if (typeof bodyStyle === 'function') {
       style = bodyStyle(record, index) || {};
@@ -26,27 +27,14 @@ class TableCell extends React.PureComponent {
       style = Object.assign({}, bodyStyle);
     }
     align && (style.textAlign = column.align);
-    let w = this.props.width || width;
-    if (w) {
-      style.flex = `${isLast ? 1 : 0} 1 ${isNumber(w) ? w + 'px' : w}`;
-      style.minWidth = w;
-      style.maxWidth = w;
+    if (width) {
+      style.flex = `${isLast ? 1 : 0} 1 ${isNumber(width) ? width + 'px' : width}`;
+      style.minWidth = width;
     } else {
       style.flex = 1;
     }
+    // style.height = height;
     return style;
-  };
-
-  getClassName = () => {
-    const {record, index, column} = this.props;
-    const {className} = column;
-    let cls = '';
-    if (typeof className === 'function') {
-      cls = className(column, record, index);
-    } else if (className === 'string') {
-      cls = className;
-    }
-    return classNames('td', cls);
   };
 
   render() {
@@ -84,10 +72,12 @@ class TableCell extends React.PureComponent {
     tdProps.style = this.getStyle();
     return (
       <BodyCell
-        className={this.getClassName()}
+        className={classNames('td', column.className)}
         {...tdProps}
       >
-        {text}
+        <div>
+          {text}
+        </div>
       </BodyCell>
     )
   }

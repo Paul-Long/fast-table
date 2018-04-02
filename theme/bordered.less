@@ -2,9 +2,29 @@
 @import (reference) "mixins";
 
 .@{tablePrefixCls}.bordered {
-  .th, .td {
+  .tr {
     position: relative;
-    border-right: 1px solid @tableBorderColor;
-    border-bottom: 1px solid @tableBorderColor;
+    .border-bottom();
+  }
+  .td {
+    position: relative;
+    .border-right();
+  }
+  .th.has-child {
+    position: relative;
+    .border-right();
+    .after-border-bottom();
+  }
+  .th:not(.has-child) {
+    position: relative;
+    .border-right();
+  }
+  .@{tablePrefixCls}-footer {
+    position: relative;
+    .border-bottom();
+  }
+  .@{tablePrefixCls}-empty-text {
+    position: relative;
+    .border-bottom();
   }
 }

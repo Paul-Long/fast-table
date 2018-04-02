@@ -1,8 +1,172 @@
-.vt.bordered .th,
+.vt.bordered .tr {
+  position: relative;
+}
+.vt.bordered .tr:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 200%;
+  height: 200%;
+  transform-origin: 0 0;
+  transform: scale(0.5);
+  box-sizing: border-box;
+  pointer-events: none;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #000000;
+  z-index: 10;
+}
+.vt.bordered .tr:before {
+  border: 0;
+  border-bottom: 1px solid #000000;
+}
 .vt.bordered .td {
   position: relative;
-  border-right: 1px solid #000;
-  border-bottom: 1px solid #000;
+}
+.vt.bordered .td:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 200%;
+  height: 200%;
+  transform-origin: 0 0;
+  transform: scale(0.5);
+  box-sizing: border-box;
+  pointer-events: none;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #000000;
+  z-index: 10;
+}
+.vt.bordered .td:before {
+  border: 0;
+  width: 1px;
+  right: 0;
+  left: auto;
+  border-right: 1px solid #000000;
+}
+.vt.bordered .th.has-child {
+  position: relative;
+}
+.vt.bordered .th.has-child:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 200%;
+  height: 200%;
+  transform-origin: 0 0;
+  transform: scale(0.5);
+  box-sizing: border-box;
+  pointer-events: none;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #000000;
+  z-index: 10;
+}
+.vt.bordered .th.has-child:before {
+  border: 0;
+  width: 1px;
+  right: 0;
+  left: auto;
+  border-right: 1px solid #000000;
+}
+.vt.bordered .th.has-child:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 200%;
+  height: 200%;
+  transform-origin: 0 0;
+  transform: scale(0.5);
+  box-sizing: border-box;
+  pointer-events: none;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #000000;
+  z-index: 10;
+}
+.vt.bordered .th.has-child:after {
+  border: 0;
+  height: 1px;
+  bottom: 0;
+  top: auto;
+  border-bottom: 1px solid #000000;
+}
+.vt.bordered .th:not(.has-child) {
+  position: relative;
+}
+.vt.bordered .th:not(.has-child):before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 200%;
+  height: 200%;
+  transform-origin: 0 0;
+  transform: scale(0.5);
+  box-sizing: border-box;
+  pointer-events: none;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #000000;
+  z-index: 10;
+}
+.vt.bordered .th:not(.has-child):before {
+  border: 0;
+  width: 1px;
+  right: 0;
+  left: auto;
+  border-right: 1px solid #000000;
+}
+.vt.bordered .vt-footer {
+  position: relative;
+}
+.vt.bordered .vt-footer:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 200%;
+  height: 200%;
+  transform-origin: 0 0;
+  transform: scale(0.5);
+  box-sizing: border-box;
+  pointer-events: none;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #000000;
+  z-index: 10;
+}
+.vt.bordered .vt-footer:before {
+  border: 0;
+  border-bottom: 1px solid #000000;
+}
+.vt.bordered .vt-empty-text {
+  position: relative;
+}
+.vt.bordered .vt-empty-text:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 200%;
+  height: 200%;
+  transform-origin: 0 0;
+  transform: scale(0.5);
+  box-sizing: border-box;
+  pointer-events: none;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #000000;
+  z-index: 10;
+}
+.vt.bordered .vt-empty-text:before {
+  border: 0;
+  border-bottom: 1px solid #000000;
 }
 .vt {
   overflow: hidden;
@@ -10,17 +174,49 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  line-height: 1.5;
   background: #172422;
+  color: #ffebc8;
+}
+.vt table {
+  position: relative;
+}
+.vt table thead,
+.vt table tbody {
+  display: block;
+}
+.vt table tr th {
+  margin: 0;
+  padding: 0;
+}
+.vt-empty-text {
+  color: #9ab9b9;
+  box-sizing: border-box;
+}
+.vt-footer {
+  box-sizing: border-box;
 }
 .vt-header {
   background: #16211f;
   color: #7b8082;
   overflow-y: scroll;
 }
+.vt-header .row-group {
+  display: flex;
+  flex-direction: column;
+}
+.vt-header .col-group {
+  display: flex;
+  flex-direction: row;
+}
 .vt-body {
   color: #ffebc8;
   overflow-y: scroll;
+}
+.vt-row-0 > .td {
+  background: #172422;
+}
+.vt-row-1 > .td {
+  background: #121A19;
 }
 .vt-hover > .td {
   background: #193D37 !important;
@@ -28,17 +224,12 @@
 .vt .table {
   width: 100%;
   color: inherit;
+  border-collapse: separate;
   border-spacing: 0;
-  border: 0;
-  border-collapse: collapse;
-}
-.vt .thead > tr {
-  display: table-row;
-  width: auto;
 }
 .vt .tbody {
-  display: block;
   position: relative;
+  min-height: 30px;
 }
 .vt .tbody > .tr > .td {
   background: #172422;
@@ -61,5 +252,10 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   box-sizing: border-box;
-  padding: 0;
+}
+.vt .th {
+  padding: 6px 8px;
+}
+.vt .td {
+  padding: 6px 8px;
 }

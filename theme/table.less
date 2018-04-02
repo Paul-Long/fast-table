@@ -10,14 +10,52 @@
   box-sizing: border-box;
   line-height: 1.5;
   background: @tableBgColor;
+  color: @textColor;
+  table {
+    position: relative;
+    thead, tbody {
+      display: block;
+      tr {
+      }
+    }
+    tr {
+      th {
+        margin: 0;
+        padding: 0;
+      }
+    }
+  }
+  &-content {
+  }
+  &-empty-text {
+    color: #9ab9b9;
+    box-sizing: border-box;
+  }
+  &-footer {
+    box-sizing: border-box;
+  }
   &-header {
     background: @tableHeaderBg;
     color: @tableHeaderText;
     overflow-y: scroll;
+    .row-group {
+      display: flex;
+      flex-direction: column;
+    }
+    .col-group {
+      display: flex;
+      flex-direction: row;
+    }
   }
   &-body {
     color: @textColor;
     overflow-y: scroll;
+  }
+  &-row-0 > .td {
+    background: @tableBgColor;
+  }
+  &-row-1 > .td {
+    background: @tableBodyNthColor;
   }
   &-hover {
     & > .td {
@@ -40,6 +78,7 @@
   .tbody {
     display: block;
     position: relative;
+    min-height: 30px;
     & > .tr > .td {
       background: @tableBgColor;
     }

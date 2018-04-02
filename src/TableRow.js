@@ -21,7 +21,7 @@ class TableRow extends React.PureComponent {
     }
   };
   renderCells = () => {
-    const {columns, prefixCls, record, index, components, height, colWidthMap} = this.props;
+    const {columns, prefixCls, record, index, components, height, colWidth} = this.props;
     const cells = [];
     const columnSize = columns.length;
     columns.forEach((column, i) => {
@@ -33,8 +33,8 @@ class TableRow extends React.PureComponent {
           column={column}
           key={column.key || column.dataIndex}
           component={components.body.cell}
+          width={colWidth[column.path.join('-')] || column.width}
           height={height}
-          width={colWidthMap[column.dataIndex]}
           isLast={i + 1 === columnSize}
         />
       );
@@ -78,13 +78,10 @@ class TableRow extends React.PureComponent {
 }
 
 export default connect((state, props) => {
-  const {currentHoverKey, tops, colWidthMap} = state;
-  const {rowKey, index} = props;
-  // console.log('TableRow.js -> ', colWidthMap);
+  const {currentHoverKey} = state;
+  const {rowKey} = props;
   return {
-    hovered: currentHoverKey === rowKey,
-    top: tops[index],
-    colWidthMap
+    hovered: currentHoverKey === rowKey
   }
 })(TableRow);
 
