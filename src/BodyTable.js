@@ -5,7 +5,7 @@ import {connect} from './mini-store';
 
 function BodyTable(props, {table}) {
   const {saveRef} = table;
-  const {prefixCls, fixedHeader, showHeader, footer, footerHeight} = table.props;
+  const {prefixCls, fixedHeader, showHeader, footer, footerHeight, dataSource} = table.props;
   const {
     fixed,
     columns,
@@ -23,8 +23,12 @@ function BodyTable(props, {table}) {
       getRowKey={getRowKey}
     />
   );
+  let height = 0;
+  if (dataSource && dataSource.length > 0) {
+    height = showHeader ? `calc(100% - ${headHeight + 1 + (footer ? footerHeight : 0)}px)` : '100%';
+  }
   const style = {
-    height: showHeader ? `calc(100% - ${headHeight + 1}px)` : '100%',
+    height,
     overflowY: hasScroll ? 'scroll' : 'auto'
   };
   if (!fixedHeader) {

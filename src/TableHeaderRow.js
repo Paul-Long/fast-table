@@ -13,7 +13,9 @@ function TableHeaderRow({row, index, height, colWidth, components, columns, rowH
           colWidth={colWidth}
           headerRowHeight={rowHeight}
           column={column}
-          columns={columns} />
+          columns={columns}
+          components={components}
+        />
       ))}
     </HeaderRow>
   )

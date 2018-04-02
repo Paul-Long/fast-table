@@ -98,17 +98,14 @@ class BaseTable extends React.PureComponent {
     const {hasHead, hasBody, columns, fixed, bodyHeight, colWidth} = this.props;
     const table = this.context.table;
     const components = table.components;
-    const {footer, footerHeight} = table.props;
     let body;
     const Table = components.table;
     const BodyWrapper = components.body.wrapper;
     if (hasBody) {
       const rows = this.renderRows();
       body = (
-        <BodyWrapper className='tbody' style={{height: bodyHeight + (footer ? footerHeight : 0)}}>
+        <BodyWrapper className='tbody' style={{height: bodyHeight}}>
           {rows}
-          {this.renderEmptyText()}
-          {this.renderFooter()}
         </BodyWrapper>
       )
     }

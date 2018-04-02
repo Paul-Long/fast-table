@@ -32,23 +32,18 @@ class TableHeaderCell extends React.PureComponent {
     });
   };
 
-  renderCell = (column, key, columns, index, isChild = true) => {
-    const {colWidth} = this.props;
+  renderCell = (column, key, columns, index, isChild = true, isBase) => {
+    const {colWidth, components} = this.props;
+    const HeadCell = isBase ? components.header.cell : 'div';
     columns = columns || [];
     const style = {};
     const columnSize = columns.length;
     const {children = [], rowSpan, dataIndex} = column;
     let width = colWidth[column.path.join('-')] || column.width;
     if (children.length === 0) {
-      if (width) {
-        style.flex = `${index + 1 === columnSize && isChild ? 1 : 0} 1 ${isNumber(width) ? width + 'px' : width}`;
-      } else {
-        style.flex = 1;
-      }
+      style.flex = width ? `${index + 1 === columnSize && isChild ? 1 : 0} 1 ${isNumber(width) ? width + 'px' : width}` : 1;
     } else {
-      if (width) {
-        style.width = width;
-      }
+      width && (style.width = width);
     }
     if (column.align) {
       style.textAlign = column.align;
@@ -57,18 +52,19 @@ class TableHeaderCell extends React.PureComponent {
     style.lineHeight = (rowSpan || 1) * 1.5;
     const cellClass = classNames('th', {'has-child': children.length > 0});
     return (
-      <div key={key || column.key || dataIndex} className={cellClass} style={style}>
+      <HeadCell key={key || column.key || dataIndex} className={cellClass} style={style}>
         {column.title}
-      </div>
+      </HeadCell>
     )
   };
 
   render() {
-    const {column, columns, index, colWidth} = this.props;
+    const {column, columns, index, colWidth, components} = this.props;
     const children = column.children || [];
+    const HeaderCell = components.header.cell;
     const key = column.key || column.dataIndex || index;
     if (children.length === 0) {
-      return this.renderCell(column, key, columns, index);
+      return this.renderCell(column, key, columns, index, true, true);
     }
     let width = colWidth[column.path.join('-')] || column.width;
     const style = {};
@@ -76,12 +72,12 @@ class TableHeaderCell extends React.PureComponent {
       style.flex = `${index + 1 === columns.length ? 1 : 0} 1 ${isNumber(width) ? width + 'px' : width}`;
     }
     return (
-      <div className='row-group' style={style}>
+      <HeaderCell className='row-group' style={style}>
         {this.renderCell(column, key, columns, index)}
         <div className='col-group'>
           {this.renderChildren(children)}
         </div>
-      </div>
+      </HeaderCell>
     )
   }
 }

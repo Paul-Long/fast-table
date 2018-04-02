@@ -40,16 +40,16 @@ class Table extends TableProps {
         saveRef: this.saveRef,
         columnManager: this.columnManager,
         components: merge({
-          table: 'div',
+          table: 'table',
           header: {
-            wrapper: 'div',
-            row: 'div',
-            cell: 'div'
+            wrapper: 'thead',
+            row: 'tr',
+            cell: 'th'
           },
           body: {
-            wrapper: 'div',
-            row: 'div',
-            cell: 'div'
+            wrapper: 'tbody',
+            row: 'tr',
+            cell: 'td'
           }
         }, this.props.components)
       }
@@ -227,12 +227,46 @@ class Table extends TableProps {
   };
 
   renderMainTable = () => {
-    return this.renderTable({
+    const table = this.renderTable({
       columns: this.columns
     });
+    return [table, this.renderEmptyText(), this.renderFooter()]
+  };
+
+  renderFooter = () => {
+    const {footer, footerHeight, prefixCls} = this.props;
+    return footer ? (
+      <div
+        key='table-footer'
+        className={`${prefixCls}-footer`}
+        style={{flex: `0 1 ${footerHeight}px`, height: footerHeight, color: 'inherit'}}>
+        {footer(this.props.dataSource)}
+      </div>
+    ) : null;
+  };
+
+  renderEmptyText = () => {
+    const {emptyText, dataSource, rowHeight, prefixCls} = this.props;
+    if (dataSource && dataSource.length > 0) {
+      return null;
+    }
+    return typeof emptyText === 'function' ? (
+      <div
+        key='table-empty-text'
+        className={`${prefixCls}-empty-text`}
+        style={{
+          height: rowHeight,
+          lineHeight: rowHeight + 'px',
+          textAlign: 'center',
+          color: 'inherit'
+        }}>
+        {emptyText()}
+      </div>
+    ) : emptyText;
   };
 
   render() {
+    const {prefixCls} = this.props;
     return (
       <Provider store={this.store}>
         <div
@@ -240,7 +274,9 @@ class Table extends TableProps {
           ref={this.saveRef('tableNode')}
           style={this.getStyle()}
         >
-          {this.renderMainTable()}
+          <div className={`${prefixCls}-content`}>
+            {this.renderMainTable()}
+          </div>
         </div>
       </Provider>
     )

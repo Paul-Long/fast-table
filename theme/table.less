@@ -10,6 +10,29 @@
   box-sizing: border-box;
   background: @tableBgColor;
   color: @textColor;
+  table {
+    position: relative;
+    thead, tbody {
+      display: block;
+      tr {
+      }
+    }
+    tr {
+      th {
+        margin: 0;
+        padding: 0;
+      }
+    }
+  }
+  &-content {
+  }
+  &-empty-text {
+    color: #9ab9b9;
+    box-sizing: border-box;
+  }
+  &-footer {
+    box-sizing: border-box;
+  }
   &-header {
     background: @tableHeaderBg;
     color: @tableHeaderText;
