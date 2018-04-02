@@ -145,7 +145,7 @@ export default class ColumnManager {
         return ceil(width);
       }
       if (w && typeof w === 'string') {
-        w = w.replace(/px/, '');
+        w = w.replace(/[^\d]/g, '');
       }
       let ww = toNumber(w);
       if (!isNaN(ww) && isNumber(ww)) {

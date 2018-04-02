@@ -124,9 +124,6 @@ class BaseTable extends React.PureComponent {
 export default connect((state) => {
   const {
     hasScroll,
-    fixedColumnsBodyRowsHeight,
-    renderStart,
-    renderEnd,
     bodyHeight,
     colWidth,
     tops,
@@ -135,9 +132,6 @@ export default connect((state) => {
   return {
     hasScroll,
     bodyHeight,
-    fixedColumnsBodyRowsHeight,
-    renderStart,
-    renderEnd,
     colWidth,
     tops,
     showData: showData || []

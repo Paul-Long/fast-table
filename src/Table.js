@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import merge from 'lodash/merge';
-import sum from 'lodash/sum';
 import shallowEqual from 'shallowequal';
 
 import HeadTable from './HeadTable';
 import BodyTable from './BodyTable';
 import ColumnManager from './ColumnManager';
+import DataManager from './DataManager';
 import {addEventListener, debounce, measureScrollbar} from './Utils';
 import {create, Provider} from './mini-store';
 import TableProps from './TableProps';
@@ -22,23 +22,14 @@ class Table extends TableProps {
     this.showCount = props.defaultShowCount || 30;
     this.columns = this.columnManager.groupedColumns();
     const maxRowSpan = this.columnManager.maxRowSpan();
-    let start = new Date().getTime();
+    this.dataManager = new DataManager(props.dataSource, props);
     this.store = create({
       currentHoverKey: null,
       hasScroll: false,
       headHeight: maxRowSpan * props.headerRowHeight,
-      fixedColumnsHeadRowsHeight: [],
       colWidth: {},
-      ...this.resetBodyHeight(props.dataSource || [])
+      ...this.dataManager.getRowsHeight()
     });
-    let timer = setTimeout(() => {
-      if (timer) {
-        clearTimeout(timer);
-        timer = null;
-      }
-      this.setState({...this.resetBodyHeight(props.dataSource || [])});
-    });
-    console.log('store.create -> ', new Date().getTime() - start);
     this.debouncedWindowResize = debounce(this.handleWindowResize, 150);
   }
 
@@ -72,7 +63,8 @@ class Table extends TableProps {
 
   componentWillReceiveProps(nextProps) {
     if (!shallowEqual(nextProps.dataSource, this.props.dataSource)) {
-      this.resetData(nextProps.dataSource);
+      this.dataManager.reset(nextProps.dataSource);
+      this.resetData();
     }
   }
 
@@ -84,31 +76,25 @@ class Table extends TableProps {
 
   componentDidUpdate() {
     const showCount = this.getShowCount();
-    if (this.showCount !== showCount) this.resetData(this.props.dataSource);
+    if (this.showCount !== showCount) this.resetData();
   }
 
   getShowCount = () => {
-    const start = new Date().getTime();
-    const dataSource = this.props.dataSource || [];
+    const dataSource = this.dataManager.getData();
     this.bodyHeight = this['bodyTable'].getBoundingClientRect().height;
     let showCount = 5 + (this.bodyHeight / this.props.rowHeight);
     showCount = showCount > dataSource.length ? dataSource.length : showCount;
     showCount = Math.max(showCount, this.props.defaultShowCount);
-    console.log('getShowCount -> ', new Date().getTime() - start);
     return showCount;
   };
 
   handleWindowResize = () => {
-    const start = new Date().getTime();
     this.showCount = this.getShowCount();
-    this.resetData(this.props.dataSource);
+    this.resetData();
     this.updateColumn();
-    const end = new Date().getTime();
-    console.log('handleWindowResize -> ', end - start);
   };
 
   updateColumn = () => {
-    const start = new Date().getTime();
     const headRows = this['headTable'] ?
       this['headTable'].querySelectorAll('.thead') :
       this['bodyTable'].querySelectorAll('.thead');
@@ -120,72 +106,41 @@ class Table extends TableProps {
         colWidth: this.columnManager.getColWidth(width)
       })
     }
-    console.log('updateColumn -> ', new Date().getTime() - start);
   };
 
-  resetData = (dataSource = this.props.dataSource) => {
-    const start = new Date().getTime();
-    const {fixedColumnsBodyRowsHeight, tops, bodyHeight} = this.resetBodyHeight(dataSource);
-    const hasScroll = this['bodyTable'].getBoundingClientRect().height < bodyHeight;
-    dataSource = dataSource || [];
-    let result = {
-      renderStart: 0,
-      renderEnd: dataSource.length - 1,
-      showData: dataSource.map((data, index) => ({...data, index}))
-    };
-    if (hasScroll) {
-      const scrollTop = this.lastScrollTop || this['bodyTable'].scrollTop;
-      const clientHeight = this['bodyTable'].clientHeight;
-      result = this.resetRenderInterval(scrollTop, clientHeight, bodyHeight, fixedColumnsBodyRowsHeight, dataSource);
-    }
+  resetData = () => {
+    const result = this.resetRenderInterval(this['bodyTable']);
     this.store.setState({
-      hasScroll,
-      tops,
-      bodyHeight,
-      fixedColumnsBodyRowsHeight,
+      ...this.dataManager.getRowsHeight(),
       ...result
     });
-    console.log('resetData -> ', new Date().getTime() - start);
   };
 
   handleBodyScroll = (e) => {
-    const start = new Date().getTime();
     const target = e.target;
     if (this.lastScrollTop !== target.scrollTop && target !== this['headTable']) {
-      const state = this.store.getState();
-      const result = this.resetRenderInterval(target.scrollTop, target.clientHeight, target.scrollHeight, state.fixedColumnsBodyRowsHeight, this.props.dataSource);
+      const result = this.resetRenderInterval(target);
       this.store.setState(result);
     }
     this.lastScrollTop = target.scrollTop;
-    console.log('handleBodyScroll -> ', new Date().getTime() - start);
   };
 
-  resetBodyHeight = (dataSource) => {
-    const start = new Date().getTime();
-    const {getRowHeight, rowHeight} = this.props;
-    let tops = [], top = 0;
-    dataSource = dataSource || [];
-    const fixedColumnsBodyRowsHeight = dataSource.map((record, index) => {
-      const height = getRowHeight(record, index) * rowHeight;
-      tops.push(top);
-      top += height;
-      return height;
-    });
-    console.log('resetBodyHeight -> ', new Date().getTime() - start);
-    return {fixedColumnsBodyRowsHeight, tops, bodyHeight: sum(fixedColumnsBodyRowsHeight)};
-  };
-
-  resetRenderInterval = (scrollTop, clientHeight, scrollHeight, fixedColumnsBodyRowsHeight, dataSource) => {
-    const startTime = new Date().getTime();
+  resetRenderInterval = (target) => {
+    const scrollTop = target.scrollTop;
+    const clientHeight = target.clientHeight;
     const {rowHeight} = this.props;
-    dataSource = dataSource || [];
-    if (!fixedColumnsBodyRowsHeight) {
-      const state = this.store.getState();
-      fixedColumnsBodyRowsHeight = state.fixedColumnsBodyRowsHeight;
+    const dataSource = this.dataManager.getData() || [];
+    const {bodyRowsHeight, tops, bodyHeight} = this.dataManager.getRowsHeight();
+    const hasScroll = this['bodyTable'].getBoundingClientRect().height < bodyHeight;
+
+    if (!hasScroll) {
+      return {hasScroll, showData: dataSource};
     }
-    let start = 0, end = 0, top = 0, isStart = false, isEnd = false;
-    for (let index = 0; index < fixedColumnsBodyRowsHeight.length; index++) {
-      const height = fixedColumnsBodyRowsHeight[index];
+
+    let start = 0, end = 0, isStart = false, isEnd = false;
+    for (let index = 0; index < dataSource.length; index++) {
+      const top = tops[index];
+      const height = bodyRowsHeight[index];
       if (top + height >= scrollTop && !isStart) {
         start = index;
         isStart = true;
@@ -194,28 +149,24 @@ class Table extends TableProps {
         isEnd = true;
         break;
       }
-      top += height;
     }
     if (scrollTop <= rowHeight) {
       start = 0;
     }
-    if (scrollTop + clientHeight >= scrollHeight - rowHeight) {
-      end = fixedColumnsBodyRowsHeight.length - 1;
+    if (scrollTop + clientHeight >= bodyHeight - rowHeight) {
+      end = bodyRowsHeight.length - 1;
     }
     if (end < start || end - start < this.showCount) {
       end = start + this.showCount;
     }
     const showData = [];
-    dataSource.forEach((data, index) => {
-      if (index >= start && index <= end) {
-        data = {...data, index};
-        showData.push(data);
+    for (let i = 0; i < dataSource.length; i++) {
+      if (i >= start && i <= end) {
+        showData.push(dataSource[i]);
       }
-    });
-    console.log('resetRenderInterval -> ', new Date().getTime() - startTime);
+    }
     return {
-      renderStart: start,
-      renderEnd: end,
+      hasScroll,
       showData
     };
   };
