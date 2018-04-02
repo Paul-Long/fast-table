@@ -122,11 +122,9 @@
   left: auto;
   border-right: 1px solid #000000;
 }
-
 .vt.bordered .vt-footer {
   position: relative;
 }
-
 .vt.bordered .vt-footer:before {
   content: '';
   position: absolute;
@@ -143,16 +141,13 @@
   border-color: #000000;
   z-index: 10;
 }
-
 .vt.bordered .vt-footer:before {
   border: 0;
   border-bottom: 1px solid #000000;
 }
-
 .vt.bordered .vt-empty-text {
   position: relative;
 }
-
 .vt.bordered .vt-empty-text:before {
   content: '';
   position: absolute;
@@ -169,7 +164,6 @@
   border-color: #000000;
   z-index: 10;
 }
-
 .vt.bordered .vt-empty-text:before {
   border: 0;
   border-bottom: 1px solid #000000;

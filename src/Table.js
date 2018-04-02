@@ -40,16 +40,16 @@ class Table extends TableProps {
         saveRef: this.saveRef,
         columnManager: this.columnManager,
         components: merge({
-          table: 'table',
+          table: 'div',
           header: {
-            wrapper: 'thead',
-            row: 'tr',
-            cell: 'th'
+            wrapper: 'div',
+            row: 'div',
+            cell: 'div'
           },
           body: {
-            wrapper: 'tbody',
-            row: 'tr',
-            cell: 'td'
+            wrapper: 'div',
+            row: 'div',
+            cell: 'div'
           }
         }, this.props.components)
       }
@@ -274,9 +274,7 @@ class Table extends TableProps {
           ref={this.saveRef('tableNode')}
           style={this.getStyle()}
         >
-          <div className={`${prefixCls}-content`}>
-            {this.renderMainTable()}
-          </div>
+          {this.renderMainTable()}
         </div>
       </Provider>
     )
