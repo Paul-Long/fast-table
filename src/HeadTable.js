@@ -48,7 +48,8 @@ HeadTable.propTypes = {
     PropTypes.string,
     PropTypes.bool
   ]),
-  columns: PropTypes.array.isRequired
+  columns: PropTypes.array.isRequired,
+  onSort: PropTypes.func
 };
 
 HeadTable.contextTypes = {

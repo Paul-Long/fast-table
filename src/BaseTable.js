@@ -8,11 +8,19 @@ import isEmpty from 'lodash/isEmpty';
 
 class BaseTable extends React.PureComponent {
   handleRowHover = (isHover, key) => {
-    setTimeout(() => {
-      this.props.store.setState({
-        currentHoverKey: isHover ? key : null
-      });
+    this.props.store.setState({
+      currentHoverKey: isHover ? key : null
     });
+  };
+  handleSort = (key, order) => {
+    const {orderManager, props} = this.context.table;
+    const onSort = props.onSort;
+    orderManager.setOrder(key, order, (orders) => {
+      this.props.store.setState({orders});
+      if (typeof onSort === 'function') {
+        onSort(orders);
+      }
+    })
   };
   renderRows = () => {
     const rows = [];
@@ -65,26 +73,33 @@ class BaseTable extends React.PureComponent {
     });
     return rows;
   };
-
+  
   render() {
-    const {hasHead, hasBody, columns, fixed, bodyHeight, colWidth} = this.props;
-    let width = isEmpty(colWidth) ? '100%' : sum(Object.values(colWidth));
+    const {hasHead, hasBody, columns, fixed, bodyHeight, colWidth, orders} = this.props;
+    const width = isEmpty(colWidth) ? '100%' : sum(Object.values(colWidth));
     const table = this.context.table;
     const components = table.components;
     let body;
     const Table = components.table;
     const BodyWrapper = components.body.wrapper;
     if (hasBody) {
-      const rows = this.renderRows();
       body = (
         <BodyWrapper className='tbody' style={{height: bodyHeight}}>
-          {rows}
+          {this.renderRows()}
         </BodyWrapper>
       )
     }
     return (
       <Table className='table' style={{width, minWidth: '100%'}}>
-        {hasHead && <TableHeader columns={columns} fixed={fixed} colWidth={colWidth} />}
+        {hasHead && (
+          <TableHeader
+            columns={columns}
+            fixed={fixed}
+            colWidth={colWidth}
+            onSort={this.handleSort}
+            orders={orders || {}}
+          />
+        )}
         {body}
       </Table>
     )
@@ -97,14 +112,16 @@ export default connect((state) => {
     bodyHeight,
     colWidth,
     tops,
-    showData
+    showData,
+    orders
   } = state;
   return {
     hasScroll,
     bodyHeight,
     colWidth,
     tops,
-    showData: showData || []
+    showData: showData || [],
+    orders
   }
 })(BaseTable);
 

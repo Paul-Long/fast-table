@@ -9,6 +9,7 @@ import HeadTable from './HeadTable';
 import BodyTable from './BodyTable';
 import ColumnManager from './ColumnManager';
 import DataManager from './DataManager';
+import OrderManager from './OrderManager';
 import {addEventListener, debounce, measureScrollbar} from './Utils';
 import {create, Provider} from './mini-store';
 import TableProps from './TableProps';
@@ -25,11 +26,13 @@ class Table extends TableProps {
     this.columns = this.columnManager.groupedColumns();
     const maxRowSpan = this.columnManager.maxRowSpan();
     this.dataManager = new DataManager(props.dataSource, props);
+    this.orderManager = new OrderManager(this.columns, props.sortMulti);
     this.store = create({
       currentHoverKey: null,
       hasScroll: false,
       headHeight: maxRowSpan * props.headerRowHeight,
       colWidth: {},
+      orders: this.orderManager.enabled(),
       ...this.dataManager.getRowsHeight()
     });
     this.debouncedWindowResize = debounce(this.handleWindowResize, 150);
@@ -41,6 +44,7 @@ class Table extends TableProps {
         props: this.props,
         saveRef: this.saveRef,
         columnManager: this.columnManager,
+        orderManager: this.orderManager,
         components: merge({
           table: 'div',
           header: {
@@ -67,6 +71,10 @@ class Table extends TableProps {
     if (!shallowEqual(nextProps.dataSource, this.props.dataSource)) {
       this.dataManager.reset(nextProps.dataSource);
       this.resetData();
+    }
+    if (!shallowEqual(nextProps.columns, this.props.columns)) {
+      this.columnManager.reset(nextProps.columns, this.props.colMinWidth);
+      this.handleWindowResize();
     }
   }
 
@@ -226,6 +234,13 @@ class Table extends TableProps {
       showData
     };
   };
+  
+  handleSort = (key, order) => {
+    this.orderManager.setOrder(key, order, (orders) => {
+      this.store.setState({orders});
+    });
+  };
+  
 
   saveRef = (name) => (node) => {
     this[name] = node;

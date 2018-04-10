@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import isNumber from 'lodash/isNumber';
-import ColumnSorter from './ColumnSorter';
+import Sorter from './Sorter';
 import {cellAlignStyle} from './Utils';
 
 class TableHeaderCell extends React.PureComponent {
@@ -35,7 +35,7 @@ class TableHeaderCell extends React.PureComponent {
   };
 
   renderCell = (column, key, columns, index, isChild = true, isBase) => {
-    const {colWidth, components} = this.props;
+    const {colWidth, components, orders, onSort} = this.props;
     const HeadCell = isBase ? components.header.cell : 'div';
     columns = columns || [];
     const style = cellAlignStyle(column.align);
@@ -47,9 +47,10 @@ class TableHeaderCell extends React.PureComponent {
     } else {
       width && (style.width = width);
     }
-    let sortComponent = null;
-    if (column.order && children.length === 0) {
-      sortComponent = (<ColumnSorter column={column} order={column.order} />);
+    let sorter;
+    const order = orders[column.dataIndex];
+    if (column.sortEnable && children.length === 0 && order) {
+      sorter = (<Sorter dataIndex={column.dataIndex} order={order} onSort={onSort} />);
     }
     style.height = (rowSpan || 1) * this.props.headerRowHeight;
     style.lineHeight = (rowSpan || 1) * (style.height / 20);
@@ -59,10 +60,16 @@ class TableHeaderCell extends React.PureComponent {
       className: classNames('th', {'has-child': children.length > 0}),
       style
     };
+    if (column.sortEnable && !order) {
+      props.onClick = () => {
+        onSort(column.dataIndex, 'desc');
+      };
+      props.style.cursor = 'pointer';
+    }
     return (
       <HeadCell {...props}>
         {column.title}
-        {sortComponent}
+        {sorter}
       </HeadCell>
     )
   };
