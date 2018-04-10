@@ -53,9 +53,14 @@ class TableHeaderCell extends React.PureComponent {
     }
     style.height = (rowSpan || 1) * this.props.headerRowHeight;
     style.lineHeight = (rowSpan || 1) * (style.height / 20);
-    const cellClass = classNames('th', {'has-child': children.length > 0});
+
+    const props = {
+      key: key || column.key || dataIndex,
+      className: classNames('th', {'has-child': children.length > 0}),
+      style
+    };
     return (
-      <HeadCell key={key || column.key || dataIndex} className={cellClass} style={style}>
+      <HeadCell {...props}>
         {column.title}
         {sortComponent}
       </HeadCell>
