@@ -16,12 +16,14 @@ export default class TableProps extends React.PureComponent {
     showHeader: PropTypes.bool,
     bordered: PropTypes.bool,
     fixedHeader: PropTypes.bool,
+    orderMulti: PropTypes.bool,
 
     rowRef: PropTypes.func,
     getRowHeight: PropTypes.func,
     rowClassName: PropTypes.func,
     footer: PropTypes.func,
     emptyText: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
+    onSort: PropTypes.func,
 
     rowHeight: PropTypes.number,
     headerRowHeight: PropTypes.number,
@@ -39,6 +41,7 @@ export default class TableProps extends React.PureComponent {
     showHeader: true,
     bordered: false,
     fixedHeader: true,
+    orderMulti: false,
 
     rowRef: () => null,
     getRowHeight: () => 1,
