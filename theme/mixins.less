@@ -115,3 +115,37 @@
     opacity: @opacity;
   }
 }
+
+.sorter() {
+  position: relative;
+  background: @tableSorterColor;
+  width: 2px;
+  border-radius: 1px;
+  height: 14px;
+  &:after {
+    content: "";
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: transparent;
+    border-left: 2px solid @tableSorterColor;
+    border-top: 2px solid @tableSorterColor;
+    transform-origin: 0 0;
+  }
+}
+
+.sorter-up() {
+  .sorter();
+  &:after {
+    top: -1px;
+    transform: rotate(45deg);
+  }
+}
+
+.sorter-down() {
+  .sorter();
+  &:after {
+    bottom: -7px;
+    transform: rotate(-135deg);
+  }
+}

@@ -14,12 +14,12 @@
   pointer-events: none;
   border-width: 1px;
   border-style: solid;
-  border-color: #000000;
+  border-color: #ffffff;
   z-index: 10;
 }
 .vt.bordered .tr:before {
   border: 0;
-  border-bottom: 1px solid #000000;
+  border-bottom: 1px solid #ffffff;
 }
 .vt.bordered .td {
   position: relative;
@@ -37,7 +37,7 @@
   pointer-events: none;
   border-width: 1px;
   border-style: solid;
-  border-color: #000000;
+  border-color: #ffffff;
   z-index: 10;
 }
 .vt.bordered .td:before {
@@ -45,7 +45,7 @@
   width: 1px;
   right: 0;
   left: auto;
-  border-right: 1px solid #000000;
+  border-right: 1px solid #ffffff;
 }
 .vt.bordered .th.has-child {
   position: relative;
@@ -63,7 +63,7 @@
   pointer-events: none;
   border-width: 1px;
   border-style: solid;
-  border-color: #000000;
+  border-color: #ffffff;
   z-index: 10;
 }
 .vt.bordered .th.has-child:before {
@@ -71,7 +71,7 @@
   width: 1px;
   right: 0;
   left: auto;
-  border-right: 1px solid #000000;
+  border-right: 1px solid #ffffff;
 }
 .vt.bordered .th.has-child:after {
   content: '';
@@ -86,7 +86,7 @@
   pointer-events: none;
   border-width: 1px;
   border-style: solid;
-  border-color: #000000;
+  border-color: #ffffff;
   z-index: 10;
 }
 .vt.bordered .th.has-child:after {
@@ -94,7 +94,7 @@
   height: 1px;
   bottom: 0;
   top: auto;
-  border-bottom: 1px solid #000000;
+  border-bottom: 1px solid #ffffff;
 }
 .vt.bordered .th:not(.has-child) {
   position: relative;
@@ -112,7 +112,7 @@
   pointer-events: none;
   border-width: 1px;
   border-style: solid;
-  border-color: #000000;
+  border-color: #ffffff;
   z-index: 10;
 }
 .vt.bordered .th:not(.has-child):before {
@@ -120,7 +120,7 @@
   width: 1px;
   right: 0;
   left: auto;
-  border-right: 1px solid #000000;
+  border-right: 1px solid #ffffff;
 }
 .vt.bordered .vt-footer {
   position: relative;
@@ -138,12 +138,12 @@
   pointer-events: none;
   border-width: 1px;
   border-style: solid;
-  border-color: #000000;
+  border-color: #ffffff;
   z-index: 10;
 }
 .vt.bordered .vt-footer:before {
   border: 0;
-  border-bottom: 1px solid #000000;
+  border-bottom: 1px solid #ffffff;
 }
 .vt.bordered .vt-empty-text {
   position: relative;
@@ -161,10 +161,10 @@
   pointer-events: none;
   border-width: 1px;
   border-style: solid;
-  border-color: #000000;
+  border-color: #ffffff;
   z-index: 10;
 }
 .vt.bordered .vt-empty-text:before {
   border: 0;
-  border-bottom: 1px solid #000000;
+  border-bottom: 1px solid #ffffff;
 }

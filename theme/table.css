@@ -14,12 +14,12 @@
   pointer-events: none;
   border-width: 1px;
   border-style: solid;
-  border-color: #000000;
+  border-color: #ffffff;
   z-index: 10;
 }
 .vt.bordered .tr:before {
   border: 0;
-  border-bottom: 1px solid #000000;
+  border-bottom: 1px solid #ffffff;
 }
 .vt.bordered .td {
   position: relative;
@@ -37,7 +37,7 @@
   pointer-events: none;
   border-width: 1px;
   border-style: solid;
-  border-color: #000000;
+  border-color: #ffffff;
   z-index: 10;
 }
 .vt.bordered .td:before {
@@ -45,7 +45,7 @@
   width: 1px;
   right: 0;
   left: auto;
-  border-right: 1px solid #000000;
+  border-right: 1px solid #ffffff;
 }
 .vt.bordered .th.has-child {
   position: relative;
@@ -63,7 +63,7 @@
   pointer-events: none;
   border-width: 1px;
   border-style: solid;
-  border-color: #000000;
+  border-color: #ffffff;
   z-index: 10;
 }
 .vt.bordered .th.has-child:before {
@@ -71,7 +71,7 @@
   width: 1px;
   right: 0;
   left: auto;
-  border-right: 1px solid #000000;
+  border-right: 1px solid #ffffff;
 }
 .vt.bordered .th.has-child:after {
   content: '';
@@ -86,7 +86,7 @@
   pointer-events: none;
   border-width: 1px;
   border-style: solid;
-  border-color: #000000;
+  border-color: #ffffff;
   z-index: 10;
 }
 .vt.bordered .th.has-child:after {
@@ -94,7 +94,7 @@
   height: 1px;
   bottom: 0;
   top: auto;
-  border-bottom: 1px solid #000000;
+  border-bottom: 1px solid #ffffff;
 }
 .vt.bordered .th:not(.has-child) {
   position: relative;
@@ -112,7 +112,7 @@
   pointer-events: none;
   border-width: 1px;
   border-style: solid;
-  border-color: #000000;
+  border-color: #ffffff;
   z-index: 10;
 }
 .vt.bordered .th:not(.has-child):before {
@@ -120,7 +120,7 @@
   width: 1px;
   right: 0;
   left: auto;
-  border-right: 1px solid #000000;
+  border-right: 1px solid #ffffff;
 }
 .vt.bordered .vt-footer {
   position: relative;
@@ -138,12 +138,12 @@
   pointer-events: none;
   border-width: 1px;
   border-style: solid;
-  border-color: #000000;
+  border-color: #ffffff;
   z-index: 10;
 }
 .vt.bordered .vt-footer:before {
   border: 0;
-  border-bottom: 1px solid #000000;
+  border-bottom: 1px solid #ffffff;
 }
 .vt.bordered .vt-empty-text {
   position: relative;
@@ -161,12 +161,12 @@
   pointer-events: none;
   border-width: 1px;
   border-style: solid;
-  border-color: #000000;
+  border-color: #ffffff;
   z-index: 10;
 }
 .vt.bordered .vt-empty-text:before {
   border: 0;
-  border-bottom: 1px solid #000000;
+  border-bottom: 1px solid #ffffff;
 }
 .vt {
   overflow: hidden;
@@ -174,6 +174,7 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  line-height: 1.5;
   background: #172422;
   color: #ffebc8;
 }
@@ -198,7 +199,7 @@
 .vt-header {
   background: #16211f;
   color: #7b8082;
-  overflow-y: scroll;
+  overflow: scroll;
 }
 .vt-header .row-group {
   display: flex;
@@ -221,13 +222,71 @@
 .vt-hover > .td {
   background: #193D37 !important;
 }
+.vt-sorter {
+  margin-left: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+}
+.vt-sorter-desc {
+  margin: 0 auto;
+  position: relative;
+  background: #7b8082;
+  width: 2px;
+  border-radius: 1px;
+  height: 14px;
+}
+.vt-sorter-desc:after {
+  content: "";
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: transparent;
+  border-left: 2px solid #7b8082;
+  border-top: 2px solid #7b8082;
+  transform-origin: 0 0;
+}
+.vt-sorter-desc:after {
+  top: -1px;
+  transform: rotate(45deg);
+}
+.vt-sorter-asc {
+  margin: 0 auto;
+  position: relative;
+  background: #7b8082;
+  width: 2px;
+  border-radius: 1px;
+  height: 14px;
+}
+.vt-sorter-asc:after {
+  content: "";
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: transparent;
+  border-left: 2px solid #7b8082;
+  border-top: 2px solid #7b8082;
+  transform-origin: 0 0;
+}
+.vt-sorter-asc:after {
+  bottom: -7px;
+  transform: rotate(-135deg);
+}
 .vt .table {
   width: 100%;
   color: inherit;
-  border-collapse: separate;
   border-spacing: 0;
+  border: 0;
+  border-collapse: collapse;
+}
+.vt .thead > tr {
+  display: table-row;
+  width: auto;
 }
 .vt .tbody {
+  display: block;
   position: relative;
   min-height: 30px;
 }
@@ -246,16 +305,13 @@
 }
 .vt .th,
 .vt .td {
-  text-align: center;
-  vertical-align: middle;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   box-sizing: border-box;
-}
-.vt .th {
-  padding: 6px 8px;
-}
-.vt .td {
-  padding: 6px 8px;
+  padding: 0;
 }

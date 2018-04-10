@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import TableHeader from './TableHeader';
 import TableRow from './TableRow';
 import {connect} from './mini-store';
+import sum from 'lodash/sum';
+import isEmpty from 'lodash/isEmpty';
 
 class BaseTable extends React.PureComponent {
   handleRowHover = (isHover, key) => {
@@ -64,38 +66,9 @@ class BaseTable extends React.PureComponent {
     return rows;
   };
 
-  renderFooter = () => {
-    const {footer, footerHeight} = this.context.table.props;
-    return footer ? (
-      <div style={{position: 'absolute', bottom: 0, left: 0, right: 0, height: footerHeight, color: 'inherit'}}>
-        {footer(this.props.dataSource)}
-      </div>
-    ) : null;
-  };
-
-  renderEmptyText = () => {
-    const {emptyText, dataSource, rowHeight} = this.context.table.props;
-    if (dataSource && dataSource.length > 0) {
-      return null;
-    }
-    return typeof emptyText === 'function' ? (
-      <div style={{
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: rowHeight,
-        lineHeight: rowHeight + 'px',
-        textAlign: 'center',
-        color: 'inherit'
-      }}>
-        {emptyText(this.props.dataSource)}
-      </div>
-    ) : emptyText;
-  };
-
   render() {
     const {hasHead, hasBody, columns, fixed, bodyHeight, colWidth} = this.props;
+    let width = isEmpty(colWidth) ? '100%' : sum(Object.values(colWidth));
     const table = this.context.table;
     const components = table.components;
     let body;
@@ -110,7 +83,7 @@ class BaseTable extends React.PureComponent {
       )
     }
     return (
-      <Table className='table'>
+      <Table className='table' style={{width, minWidth: '100%'}}>
         {hasHead && <TableHeader columns={columns} fixed={fixed} colWidth={colWidth} />}
         {body}
       </Table>

@@ -84,3 +84,21 @@ export function addEventListener(target, eventType, cb) {
   } : cb;
   return addDOMEventListener(target, eventType, callback);
 }
+
+export function cellAlignStyle(align) {
+  let style = {};
+  if (align) {
+    switch (align) {
+      case 'center':
+        style.justifyContent = 'center';
+        break;
+      case 'left':
+        style.justifyContent = 'flex-start';
+        break;
+      case 'right':
+        style.justifyContent = 'flex-end';
+        break;
+    }
+  }
+  return style;
+}

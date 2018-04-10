@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import get from 'lodash/get';
 import isNumber from 'lodash/isNumber';
+import {cellAlignStyle} from './Utils';
 
 class TableCell extends React.PureComponent {
   isInvalidRenderCellText = (text) => {
@@ -24,25 +25,24 @@ class TableCell extends React.PureComponent {
     if (typeof bodyStyle === 'function') {
       style = bodyStyle(record, index) || {};
     } else {
-      style = Object.assign({}, bodyStyle);
+      style = {...bodyStyle};
     }
-    align && (style.textAlign = column.align);
+    style = {...style, ...cellAlignStyle(align)};
+
     if (width) {
       style.flex = `${isLast ? 1 : 0} 1 ${isNumber(width) ? width + 'px' : width}`;
       style.minWidth = width;
     } else {
       style.flex = 1;
     }
-    // style.height = height;
     return style;
   };
 
-  render() {
+  getText = () => {
     const {
       record,
       index,
       column,
-      component: BodyCell
     } = this.props;
     const {dataIndex, render} = column;
     let text;
@@ -53,9 +53,21 @@ class TableCell extends React.PureComponent {
     } else {
       text = get(record, dataIndex);
     }
+    if (typeof render === 'function') {
+      text = render(text, record, index);
+    }
+    return text;
+  };
+
+  render() {
+    const {
+      column,
+      component: BodyCell
+    } = this.props;
+    const {render} = column;
+    let text = this.getText();
     let tdProps = {}, colSpan, rowSpan;
     if (render) {
-      text = render(text, record, index);
       if (this.isInvalidRenderCellText(text)) {
         tdProps = text.props || tdProps;
         colSpan = tdProps.colSpan;

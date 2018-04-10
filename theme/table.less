@@ -37,7 +37,7 @@
   &-header {
     background: @tableHeaderBg;
     color: @tableHeaderText;
-    overflow-y: scroll;
+    overflow: scroll;
     .row-group {
       display: flex;
       flex-direction: column;
@@ -60,6 +60,22 @@
   &-hover {
     & > .td {
       background: @tableRowHoverColor !important;
+    }
+  }
+  &-sorter {
+    margin-left: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+    &-desc {
+      margin: 0 auto;
+      .sorter-up();
+    }
+    &-asc {
+      margin: 0 auto;
+      .sorter-down();
     }
   }
   .table {
@@ -94,8 +110,10 @@
     box-sizing: border-box;
   }
   .th, .td {
-    text-align: center;
-    vertical-align: middle;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;

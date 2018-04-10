@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import merge from 'lodash/merge';
 import shallowEqual from 'shallowequal';
+import classes from 'component-classes';
 
 import HeadTable from './HeadTable';
 import BodyTable from './BodyTable';
@@ -19,6 +20,7 @@ class Table extends TableProps {
     super(props);
     this.columnManager = new ColumnManager(props.columns, props.colMinWidth);
     this.lastScrollTop = 0;
+    this.lastScrollLeft = 0;
     this.showCount = props.defaultShowCount || 30;
     this.columns = this.columnManager.groupedColumns();
     const maxRowSpan = this.columnManager.maxRowSpan();
@@ -116,7 +118,61 @@ class Table extends TableProps {
     });
   };
 
+  setScrollPosition(position) {
+    this.scrollPosition = position;
+    if (this.tableNode) {
+      const {prefixCls} = this.props;
+      if (position === 'both') {
+        classes(this.tableNode)
+          .remove(new RegExp(`^${prefixCls}-scroll-position-.+$`))
+          .add(`${prefixCls}-scroll-position-left`)
+          .add(`${prefixCls}-scroll-position-right`);
+      } else {
+        classes(this.tableNode)
+          .remove(new RegExp(`^${prefixCls}-scroll-position-.+$`))
+          .add(`${prefixCls}-scroll-position-${position}`);
+      }
+    }
+  }
+
+  setScrollPositionClassName() {
+    const node = this['bodyTable'];
+    const scrollToLeft = node.scrollLeft === 0;
+    const scrollToRight = node.scrollLeft + 1 >=
+      node.children[0].getBoundingClientRect().width -
+      node.getBoundingClientRect().width;
+    if (scrollToLeft && scrollToRight) {
+      this.setScrollPosition('both');
+    } else if (scrollToLeft) {
+      this.setScrollPosition('left');
+    } else if (scrollToRight) {
+      this.setScrollPosition('right');
+    } else if (this.scrollPosition !== 'middle') {
+      this.setScrollPosition('middle');
+    }
+  }
+
   handleBodyScroll = (e) => {
+    this.handleBodyScrollLeft(e);
+    this.handleBodyScrollTop(e);
+  };
+
+  handleBodyScrollLeft = (e) => {
+    if (e.currentTarget !== e.target) {
+      return;
+    }
+    const target = e.target;
+    const {headTable, bodyTable} = this;
+    if (target.scrollLeft !== this.lastScrollLeft) {
+      if (target === bodyTable && headTable) {
+        headTable.scrollLeft = target.scrollLeft;
+      }
+      this.setScrollPositionClassName();
+    }
+    this.lastScrollLeft = target.scrollLeft;
+  };
+
+  handleBodyScrollTop = (e) => {
     const target = e.target;
     if (this.lastScrollTop !== target.scrollTop && target !== this['headTable']) {
       const result = this.resetRenderInterval(target);
@@ -250,16 +306,22 @@ class Table extends TableProps {
     if (dataSource && dataSource.length > 0) {
       return null;
     }
+    const scrollbarWidth = measureScrollbar();
+    const style = {
+      height: rowHeight,
+      lineHeight: rowHeight + 'px',
+      flex: `0 1 ${rowHeight}px`,
+      textAlign: 'center',
+      color: 'inherit'
+    };
+    if (scrollbarWidth > 0) {
+      style.marginTop = scrollbarWidth;
+    }
     return typeof emptyText === 'function' ? (
       <div
         key='table-empty-text'
         className={`${prefixCls}-empty-text`}
-        style={{
-          height: rowHeight,
-          lineHeight: rowHeight + 'px',
-          textAlign: 'center',
-          color: 'inherit'
-        }}>
+        style={style}>
         {emptyText()}
       </div>
     ) : emptyText;

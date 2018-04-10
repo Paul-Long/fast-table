@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import BaseTable from './BaseTable';
 import {connect} from './mini-store';
+import {measureScrollbar} from './Utils';
 
 function BodyTable(props, {table}) {
   const {saveRef} = table;
@@ -34,6 +35,11 @@ function BodyTable(props, {table}) {
   if (!fixedHeader) {
     style.height = 'auto';
     style.overflowY = 'hidden';
+  }
+  const scrollbarWidth = measureScrollbar();
+  if (scrollbarWidth > 0 && fixed) {
+    style.marginBottom = `-${scrollbarWidth}px`;
+    style.paddingBottom = '0px';
   }
   return (
     <div
