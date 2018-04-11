@@ -125,11 +125,10 @@
   &:after {
     content: "";
     position: absolute;
-    width: 3px;
-    height: 3px;
+    width: 1px;
+    height: 1px;
     background: transparent;
-    border-left: 2px solid @tableSorterColor;
-    border-top: 2px solid @tableSorterColor;
+    border: 2px solid transparent;
     transform-origin: 0 0;
   }
 }
@@ -138,6 +137,8 @@
   .sorter();
   &:after {
     top: -1px;
+    border-left: 2px solid @tableSorterColor;
+    border-top: 2px solid @tableSorterColor;
     transform: rotate(45deg);
   }
 }
@@ -145,7 +146,9 @@
 .sorter-down() {
   .sorter();
   &:after {
-    bottom: -7px;
-    transform: rotate(-135deg);
+    bottom: 0;
+    border-right: 2px solid @tableSorterColor;
+    border-bottom: 2px solid @tableSorterColor;
+    transform: rotate(45deg);
   }
 }

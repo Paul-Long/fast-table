@@ -22,6 +22,7 @@ class Table extends TableProps {
     this.columnManager = new ColumnManager(props.columns, props.colMinWidth);
     this.lastScrollTop = 0;
     this.lastScrollLeft = 0;
+    this.refreshAble = true;
     this.showCount = props.defaultShowCount || 30;
     this.columns = this.columnManager.groupedColumns();
     const maxRowSpan = this.columnManager.maxRowSpan();
@@ -187,6 +188,21 @@ class Table extends TableProps {
       this.store.setState(result);
     }
     this.lastScrollTop = target.scrollTop;
+    if (this.props.refreshEnable) {
+      this.scrollRefresh(target);
+    }
+  };
+
+  scrollRefresh = (target) => {
+    const {scrollEndPosition, onScrollEnd} = this.props;
+    if (target.scrollTop + target.clientHeight + scrollEndPosition > target.scrollHeight && this.refreshAble) {
+      if (typeof onScrollEnd === 'function') {
+        onScrollEnd();
+        this.refreshAble = false;
+      }
+    } else {
+      this.refreshAble = true;
+    }
   };
 
   resetRenderInterval = (target) => {
@@ -234,13 +250,6 @@ class Table extends TableProps {
       showData
     };
   };
-  
-  handleSort = (key, order) => {
-    this.orderManager.setOrder(key, order, (orders) => {
-      this.store.setState({orders});
-    });
-  };
-  
 
   saveRef = (name) => (node) => {
     this[name] = node;
@@ -330,7 +339,7 @@ class Table extends TableProps {
       color: 'inherit'
     };
     if (scrollbarWidth > 0) {
-      style.marginTop = scrollbarWidth;
+      style.marginTop = `${scrollbarWidth}px`;
     }
     return typeof emptyText === 'function' ? (
       <div
@@ -343,7 +352,6 @@ class Table extends TableProps {
   };
 
   render() {
-    const {prefixCls} = this.props;
     return (
       <Provider store={this.store}>
         <div

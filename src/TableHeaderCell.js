@@ -64,7 +64,6 @@ class TableHeaderCell extends React.PureComponent {
       props.onClick = () => {
         onSort(column.dataIndex, 'desc');
       };
-      props.style.cursor = 'pointer';
     }
     return (
       <HeadCell {...props}>

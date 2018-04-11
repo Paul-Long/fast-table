@@ -177,6 +177,7 @@
   line-height: 1.5;
   background: #172422;
   color: #ffebc8;
+  cursor: default;
 }
 .vt table {
   position: relative;
@@ -228,7 +229,6 @@
   padding-right: 5px;
   display: inline-block;
   text-align: center;
-  cursor: pointer;
 }
 .vt-sorter-desc {
   margin: 0 auto;
@@ -241,15 +241,16 @@
 .vt-sorter-desc:after {
   content: "";
   position: absolute;
-  width: 3px;
-  height: 3px;
+  width: 1px;
+  height: 1px;
   background: transparent;
-  border-left: 2px solid #7b8082;
-  border-top: 2px solid #7b8082;
+  border: 2px solid transparent;
   transform-origin: 0 0;
 }
 .vt-sorter-desc:after {
   top: -1px;
+  border-left: 2px solid #7b8082;
+  border-top: 2px solid #7b8082;
   transform: rotate(45deg);
 }
 .vt-sorter-asc {
@@ -263,16 +264,17 @@
 .vt-sorter-asc:after {
   content: "";
   position: absolute;
-  width: 3px;
-  height: 3px;
+  width: 1px;
+  height: 1px;
   background: transparent;
-  border-left: 2px solid #7b8082;
-  border-top: 2px solid #7b8082;
+  border: 2px solid transparent;
   transform-origin: 0 0;
 }
 .vt-sorter-asc:after {
-  bottom: -7px;
-  transform: rotate(-135deg);
+  bottom: 0;
+  border-right: 2px solid #7b8082;
+  border-bottom: 2px solid #7b8082;
+  transform: rotate(45deg);
 }
 .vt .table {
   width: 100%;

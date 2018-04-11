@@ -17,7 +17,7 @@ export default class TableProps extends React.PureComponent {
     bordered: PropTypes.bool,
     fixedHeader: PropTypes.bool,
     sortMulti: PropTypes.bool,
-    scrollEndEnable: PropTypes.bool,
+    refreshEnable: PropTypes.bool,
 
     rowRef: PropTypes.func,
     getRowHeight: PropTypes.func,
@@ -32,6 +32,7 @@ export default class TableProps extends React.PureComponent {
     footerHeight: PropTypes.number,
     defaultShowCount: PropTypes.number,
     colMinWidth: PropTypes.number,
+    scrollEndPosition: PropTypes.number,
 
     style: PropTypes.object
   };
@@ -44,7 +45,7 @@ export default class TableProps extends React.PureComponent {
     bordered: false,
     fixedHeader: true,
     sortMulti: false,
-    scrollEndEnable: true,
+    refreshEnable: true,
 
     rowRef: () => null,
     getRowHeight: () => 1,
@@ -57,6 +58,7 @@ export default class TableProps extends React.PureComponent {
     footerHeight: 30,
     defaultShowCount: 30,
     colMinWidth: 60,
+    scrollEndPosition: 60,
 
     style: {}
   };
