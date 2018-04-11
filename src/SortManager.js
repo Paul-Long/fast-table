@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default class OrderManager {
+export default class SortManager {
   _cached = {};
   
   constructor(columns, sortMulti) {
@@ -36,9 +36,9 @@ export default class OrderManager {
       const column = columns[i] || {};
       const children = column.children || [];
       if (children.length > 0) {
-        order = this._enable(children, orderEnable);
+        order = this._enable(children, order);
       } else {
-        if (column.orderEnable) {
+        if (column.sortEnable) {
           order[column.dataIndex] = column.order;
         }
       }

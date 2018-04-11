@@ -13,9 +13,9 @@ class BaseTable extends React.PureComponent {
     });
   };
   handleSort = (key, order) => {
-    const {orderManager, props} = this.context.table;
+    const {sortManager, props} = this.context.table;
     const onSort = props.onSort;
-    orderManager.setOrder(key, order, (orders) => {
+    sortManager.setOrder(key, order, (orders) => {
       this.props.store.setState({orders});
       if (typeof onSort === 'function') {
         onSort(orders);

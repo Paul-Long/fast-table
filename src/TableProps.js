@@ -36,11 +36,14 @@ export default class TableProps extends React.PureComponent {
 
     style: PropTypes.object,
 
-    pagination: PropTypes.shape({
-      current: PropTypes.number,
-      pageSize: PropTypes.number,
-      total: PropTypes.number
-    })
+    pagination: PropTypes.oneOfType([
+      PropTypes.shape({
+        current: PropTypes.number,
+        pageSize: PropTypes.number,
+        total: PropTypes.number
+      }),
+      PropTypes.bool
+    ])
   };
   static defaultProps = {
     prefixCls: 'vt',

@@ -9,7 +9,7 @@ import HeadTable from './HeadTable';
 import BodyTable from './BodyTable';
 import ColumnManager from './ColumnManager';
 import DataManager from './DataManager';
-import OrderManager from './OrderManager';
+import SortManager from './SortManager';
 import {addEventListener, debounce, measureScrollbar} from './Utils';
 import {create, Provider} from './mini-store';
 import TableProps from './TableProps';
@@ -27,13 +27,13 @@ class Table extends TableProps {
     this.columns = this.columnManager.groupedColumns();
     const maxRowSpan = this.columnManager.maxRowSpan();
     this.dataManager = new DataManager(props.dataSource, props);
-    this.orderManager = new OrderManager(this.columns, props.sortMulti);
+    this.sortManager = new SortManager(this.columns, props.sortMulti);
     this.store = create({
       currentHoverKey: null,
       hasScroll: false,
       headHeight: maxRowSpan * props.headerRowHeight,
       colWidth: {},
-      orders: this.orderManager.enabled(),
+      orders: this.sortManager.enabled(),
       ...this.dataManager.getRowsHeight()
     });
     this.debouncedWindowResize = debounce(this.handleWindowResize, 150);
@@ -45,7 +45,7 @@ class Table extends TableProps {
         props: this.props,
         saveRef: this.saveRef,
         columnManager: this.columnManager,
-        orderManager: this.orderManager,
+        sortManager: this.sortManager,
         components: merge({
           table: 'div',
           header: {
