@@ -121,14 +121,15 @@
   background: @tableSorterColor;
   width: 2px;
   border-radius: 1px;
-  height: 14px;
+  height: 12px;
   &:after {
     content: "";
     position: absolute;
-    width: 1px;
-    height: 1px;
+    width: 2px;
+    height: 2px;
     background: transparent;
     border: 2px solid transparent;
+    box-sizing: border-box;
     transform-origin: 0 0;
   }
 }

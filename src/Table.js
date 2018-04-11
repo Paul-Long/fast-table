@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {findDOMNode} from 'react-dom';
 import classNames from 'classnames';
 import merge from 'lodash/merge';
 import shallowEqual from 'shallowequal';
@@ -106,13 +107,10 @@ class Table extends TableProps {
   };
 
   updateColumn = () => {
-    const headRows = this['headTable'] ?
-      this['headTable'].querySelectorAll('.thead') :
-      this['bodyTable'].querySelectorAll('.thead');
     const scrollSize = measureScrollbar();
     const state = this.store.getState();
-    if (headRows && headRows.length > 0) {
-      const width = headRows[0].getBoundingClientRect().width - (state.hasScroll ? scrollSize : 0);
+    if (this['tableNode']) {
+      const width = findDOMNode(this['tableNode']).getBoundingClientRect().width - (state.hasScroll ? scrollSize : 0) - 2;
       this.store.setState({
         colWidth: this.columnManager.getColWidth(width)
       })
@@ -335,8 +333,7 @@ class Table extends TableProps {
       height: rowHeight,
       lineHeight: rowHeight + 'px',
       flex: `0 1 ${rowHeight}px`,
-      textAlign: 'center',
-      color: 'inherit'
+      textAlign: 'center'
     };
     if (scrollbarWidth > 0) {
       style.marginTop = `${scrollbarWidth}px`;

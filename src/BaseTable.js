@@ -84,7 +84,7 @@ class BaseTable extends React.PureComponent {
     const BodyWrapper = components.body.wrapper;
     if (hasBody) {
       body = (
-        <BodyWrapper className='tbody' style={{height: bodyHeight}}>
+        <BodyWrapper className='tbody' style={{height: bodyHeight, minHeight: table.props.rowHeight}}>
           {this.renderRows()}
         </BodyWrapper>
       )
