@@ -34,7 +34,13 @@ export default class TableProps extends React.PureComponent {
     colMinWidth: PropTypes.number,
     scrollEndPosition: PropTypes.number,
 
-    style: PropTypes.object
+    style: PropTypes.object,
+
+    pagination: PropTypes.shape({
+      current: PropTypes.number,
+      pageSize: PropTypes.number,
+      total: PropTypes.number
+    })
   };
   static defaultProps = {
     prefixCls: 'vt',
@@ -60,6 +66,12 @@ export default class TableProps extends React.PureComponent {
     colMinWidth: 60,
     scrollEndPosition: 60,
 
-    style: {}
+    style: {},
+
+    pagination: {
+      current: 1,
+      pageSize: 20,
+      total: 0
+    }
   };
 }
