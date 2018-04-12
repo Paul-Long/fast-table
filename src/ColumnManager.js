@@ -13,12 +13,31 @@ const percentReg = /^\d+\.?\d{0,2}%$/;
 
 export default class ColumnManager {
   _cached = {};
-  
+
   constructor(columns, minWidth) {
     this.columns = columns;
     this.minWidth = minWidth;
+    this.width = 0;
+    this.leftWidth = 0;
+    this.rightWidth = 0;
   }
-  
+
+  isAnyColumnsLeftFixed() {
+    return this._cache('isAnyColumnsLeftFixed', () => {
+      return this.groupedColumns().some(
+        column => column.fixed === 'left' || column.fixed === true
+      );
+    });
+  }
+
+  isAnyColumnsRightFixed() {
+    return this._cache('isAnyColumnsRightFixed', () => {
+      return this.groupedColumns().some(
+        column => column.fixed === 'right'
+      );
+    });
+  }
+
   leftColumns() {
     return this._cache('leftColumns', () => {
       return this.groupedColumns().filter(
@@ -26,7 +45,7 @@ export default class ColumnManager {
       );
     });
   }
-  
+
   rightColumns() {
     return this._cache('rightColumns', () => {
       return this.groupedColumns().filter(
@@ -34,49 +53,58 @@ export default class ColumnManager {
       );
     });
   }
-  
+
   leafColumns() {
     return this._cache('leafColumns', () =>
       this._leafColumns(this.groupedColumns())
     );
   }
-  
+
   leftLeafColumns() {
     return this._cache('leftLeafColumns', () =>
       this._leafColumns(this.leftColumns())
     );
   }
-  
+
   rightLeafColumns() {
     return this._cache('rightLeafColumns', () =>
       this._leafColumns(this.rightColumns())
     );
   }
-  
+
   maxRowSpan() {
     return this._cache('maxRowSpan', () => {
       let max = maxBy(this.groupedColumns(), 'rowSpan');
       return max ? max['rowSpan'] : 1;
     });
   }
-  
+
   groupedColumns() {
     return this._cache('groupedColumns', () =>
       this._groupColumns(this.columns)
     );
   }
-  
+
   getColWidth(wrapperWidth) {
     return this._cache('getColWidth', () => {
       return this._getColWidth(this.groupedColumns(), wrapperWidth);
     });
   }
-  
+
+  getWidth(fixed) {
+    if (fixed === 'left' || fixed === true) {
+      return this.leftWidth;
+    } else if (fixed === 'right') {
+      return this.rightWidth;
+    }
+    return this.width;
+  }
+
   reset(columns, elements) {
     this.columns = columns || this.normalize(elements);
     this._cached = {};
   }
-  
+
   _calcWidth(widths, wrapperWidth) {
     widths = widths.map(w => {
       if (typeof w === 'string' && percentReg.test(w)) {
@@ -95,11 +123,11 @@ export default class ColumnManager {
     });
     return widths.filter(w => !!w);
   }
-  
+
   _minWidth(width) {
     return !width ? width : max([this.minWidth, width]);
   }
-  
+
   _cache(name, fn) {
     if (name in this._cached) {
       return this._cached[name];
@@ -107,7 +135,7 @@ export default class ColumnManager {
     this._cached[name] = fn();
     return this._cached[name];
   }
-  
+
   _leafColumns(columns) {
     const leafColumns = [];
     columns.forEach(column => {
@@ -119,7 +147,7 @@ export default class ColumnManager {
     });
     return leafColumns;
   }
-  
+
   _groupColumns = (columns, currentRow = 0, parentColumn = {}, rows = []) => {
     // track how many rows we got
     rows[currentRow] = rows[currentRow] || [];
@@ -164,6 +192,7 @@ export default class ColumnManager {
   _getColWidth = (columns, wrapperWidth, colWidth = {}, currentRow = 0) => {
     colWidth = colWidth || {};
     columns.forEach((column) => {
+      const fixed = column.fixed;
       let widths = column.widths || [];
       widths = this._calcWidth(widths, wrapperWidth);
       let width = column.width;
@@ -178,6 +207,14 @@ export default class ColumnManager {
       const children = column.children || [];
       if (children.length > 0) {
         colWidth = this._getColWidth(children, wrapperWidth, colWidth, currentRow + 1);
+      }
+      if (currentRow === 0 && column.fixed) {
+        if (fixed === 'left' || fixed === true) {
+          this.leftWidth += width;
+        } else if (fixed === 'right') {
+          this.rightWidth += width;
+        }
+        this.width += width;
       }
     });
     return colWidth;

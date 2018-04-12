@@ -24,7 +24,7 @@ function BodyTable(props, {table}) {
   );
   let height = 0;
   if (dataSource && dataSource.length > 0) {
-    height = showHeader ? `calc(100% - ${headHeight + 1 + (footer ? footerHeight : 0)}px)` : '100%';
+    height = showHeader ? `calc(100% - ${headHeight + 1 + (footer && !fixed ? footerHeight : 0)}px)` : '100%';
   }
   const style = {
     height,
@@ -39,17 +39,23 @@ function BodyTable(props, {table}) {
     style.marginBottom = `-${scrollbarWidth}px`;
     style.paddingBottom = '0px';
   }
+  let scrollRef = 'bodyTable';
+  if (fixed === 'left' || fixed === true) {
+    scrollRef = 'fixedColumnsBodyLeft';
+  } else if (fixed === 'right') {
+    scrollRef = 'fixedColumnsBodyRight';
+  }
   return (
     <div
       key='bodyTable'
       className={`${prefixCls}-body`}
-      ref={saveRef('bodyTable')}
+      ref={saveRef(scrollRef)}
       style={style}
       onScroll={handleBodyScroll}
     >
       {baseTable}
     </div>
-  )
+  );
 }
 
 export default connect((state) => {
@@ -57,8 +63,8 @@ export default connect((state) => {
   return {
     hasScroll,
     headHeight
-  }
-})(BodyTable)
+  };
+})(BodyTable);
 BodyTable.contextTypes = {
   table: PropTypes.any
 };

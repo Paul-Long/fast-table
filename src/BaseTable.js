@@ -3,10 +3,23 @@ import PropTypes from 'prop-types';
 import TableHeader from './TableHeader';
 import TableRow from './TableRow';
 import {connect} from './mini-store';
-import sum from 'lodash/sum';
 import isEmpty from 'lodash/isEmpty';
 
 class BaseTable extends React.PureComponent {
+  constructor(props, context) {
+    super(props, context);
+    this.columns = [];
+    const columnManager = context.table.columnManager;
+    const fixed = props.fixed;
+    if (fixed === 'left') {
+      this.columns = columnManager.leftLeafColumns();
+    } else if (fixed === 'right') {
+      this.columns = columnManager.rightLeafColumns();
+    } else {
+      this.columns = columnManager.leafColumns();
+    }
+  }
+
   handleRowHover = (isHover, key) => {
     this.props.store.setState({
       currentHoverKey: isHover ? key : null
@@ -41,17 +54,8 @@ class BaseTable extends React.PureComponent {
       indentSize,
       expandedRowByClick
     } = table.props;
-    const columnManager = table.columnManager;
     const dataManager = table.dataManager;
     (showData || []).forEach((record, i) => {
-      let leafColumns;
-      if (fixed === 'left') {
-        leafColumns = columnManager.leftLeafColumns();
-      } else if (fixed === 'right') {
-        leafColumns = columnManager.rightLeafColumns();
-      } else {
-        leafColumns = columnManager.leafColumns();
-      }
       const className = typeof rowClassName === 'function'
         ? rowClassName(record, record.index)
         : rowClassName;
@@ -68,7 +72,7 @@ class BaseTable extends React.PureComponent {
         rowKey: key,
         index: record.index,
         top: tops[record._showIndex],
-        columns: leafColumns,
+        columns: this.columns,
         ref: rowRef(record, record.index),
         components: table.components,
         height: getRowHeight(record, record.index) * rowHeight,
@@ -83,9 +87,12 @@ class BaseTable extends React.PureComponent {
 
   render() {
     const {hasHead, hasBody, columns, fixed, bodyHeight, colWidth, orders} = this.props;
-    const width = isEmpty(colWidth) ? '100%' : sum(Object.values(colWidth));
     const table = this.context.table;
     const components = table.components;
+    let width = '100%';
+    if (!isEmpty(colWidth)) {
+      width = table.columnManager.getWidth(fixed);
+    }
     let body;
     const Table = components.table;
     const BodyWrapper = components.body.wrapper;
@@ -96,8 +103,13 @@ class BaseTable extends React.PureComponent {
         </BodyWrapper>
       );
     }
+
+    const style = {width};
+    if (!fixed) {
+      style.minWidth = '100%';
+    }
     return (
-      <Table className='table' style={{width, minWidth: '100%'}}>
+      <Table className='table' style={style}>
         {hasHead && (
           <TableHeader
             columns={columns}

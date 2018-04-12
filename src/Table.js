@@ -184,8 +184,21 @@ class Table extends TableProps {
 
   handleBodyScrollTop = (e) => {
     const target = e.target;
-    if (this.lastScrollTop !== target.scrollTop && target !== this['headTable']) {
+    if (target !== e.currentTarget) {
+      return;
+    }
+    const {headTable, bodyTable, fixedColumnsBodyLeft, fixedColumnsBodyRight} = this;
+    if (this.lastScrollTop !== target.scrollTop && target !== headTable) {
       const result = this.resetRenderInterval(target);
+      if (fixedColumnsBodyLeft && target !== fixedColumnsBodyLeft) {
+        fixedColumnsBodyLeft.scrollTop = target.scrollTop;
+      }
+      if (fixedColumnsBodyRight && target !== fixedColumnsBodyRight) {
+        fixedColumnsBodyRight.scrollTop = target.scrollTop;
+      }
+      if (bodyTable && target !== bodyTable) {
+        bodyTable.scrollTop = target.scrollTop;
+      }
       this.store.setState(result);
     }
     this.lastScrollTop = target.scrollTop;
@@ -321,6 +334,34 @@ class Table extends TableProps {
     return [table, this.renderEmptyText(), this.renderFooter()];
   };
 
+  renderLeftFixedTable = () => {
+    const {prefixCls, footerHeight, rowHeight} = this.props;
+    return (
+      <div className={`${prefixCls}-fixed-left`} style={{height: `calc(100% - ${footerHeight}px)`}}>
+        {
+          this.renderTable({
+            columns: this.columnManager.leftColumns(),
+            fixed: 'left'
+          })
+        }
+      </div>
+    );
+  };
+
+  renderRightFixedTable = () => {
+    const {prefixCls, footerHeight, rowHeight} = this.props;
+    return (
+      <div className={`${prefixCls}-fixed-right`} style={{height: `calc(100% - ${footerHeight}px)`}}>
+        {
+          this.renderTable({
+            columns: this.columnManager.rightColumns(),
+            fixed: 'right'
+          })
+        }
+      </div>
+    );
+  };
+
   renderFooter = () => {
     const {footer, footerHeight, prefixCls} = this.props;
     return footer ? (
@@ -358,7 +399,10 @@ class Table extends TableProps {
     ) : emptyText;
   };
 
+
   render() {
+    const hasLeftFixed = this.columnManager.isAnyColumnsLeftFixed();
+    const hasRightFixed = this.columnManager.isAnyColumnsRightFixed();
     return (
       <Provider store={this.store}>
         <div
@@ -367,6 +411,8 @@ class Table extends TableProps {
           style={this.getStyle()}
         >
           {this.renderMainTable()}
+          {hasLeftFixed && this.renderLeftFixedTable()}
+          {hasRightFixed && this.renderRightFixedTable()}
         </div>
       </Provider>
     );

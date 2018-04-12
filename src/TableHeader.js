@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import TableHeaderCell from './TableHeaderCell';
 
 function TableHeader(props, {table}) {
-  const {columns, colWidth, orders, onSort} = props;
+  const {columns, colWidth, orders, onSort, fixed} = props;
   const {headerRowHeight, bordered} = table.props;
   const components = table.components;
   const HeaderWrapper = components.header.wrapper;
@@ -17,6 +17,7 @@ function TableHeader(props, {table}) {
           <TableHeaderCell
             key={index}
             index={index}
+            fixed={fixed}
             colWidth={colWidth}
             headerRowHeight={rowHeight}
             column={column}

@@ -288,6 +288,39 @@
   border-bottom: 2px solid #7b8082;
   transform: rotate(45deg);
 }
+
+.vt-fixed-left,
+.vt-fixed-right {
+  position: absolute;
+  top: 0;
+  overflow: hidden;
+}
+
+.vt-fixed-left .table,
+.vt-fixed-right .table {
+  width: auto;
+  min-width: 0;
+}
+
+.vt-fixed-left .vt-header,
+.vt-fixed-right .vt-header,
+.vt-fixed-left .vt-body,
+.vt-fixed-right .vt-body {
+  overflow: hidden;
+}
+
+.vt-fixed-left {
+  left: 0;
+}
+
+.vt-fixed-left .table {
+  margin-right: -20px;
+  padding-right: 20px;
+}
+
+.vt-fixed-right {
+  right: 0;
+}
 .vt .table {
   width: 100%;
   color: inherit;

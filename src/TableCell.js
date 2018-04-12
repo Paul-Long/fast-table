@@ -74,10 +74,11 @@ class TableCell extends React.PureComponent {
       record,
       prefixCls,
       expanded,
-      indentSize
+      indentSize,
+      fixed
     } = this.props;
     const children = record.children || [];
-    if (children.length > 0 && colIndex === 0) {
+    if (children.length > 0 && colIndex === 0 && fixed !== 'right') {
       return (
         <ExpandedIcon
           prefixCls={prefixCls}
