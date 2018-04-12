@@ -10,7 +10,6 @@ function BodyTable(props, {table}) {
   const {
     fixed,
     columns,
-    getRowKey,
     hasScroll,
     handleBodyScroll,
     headHeight
@@ -21,7 +20,6 @@ function BodyTable(props, {table}) {
       hasBody
       fixed={fixed}
       columns={columns}
-      getRowKey={getRowKey}
     />
   );
   let height = 0;

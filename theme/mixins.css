@@ -1,0 +1,9 @@
+.vt-icon {
+  content: '';
+  pointer-events: none;
+  box-shadow: inset 0 0 0 10px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}

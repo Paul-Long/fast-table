@@ -27,7 +27,7 @@ class Table extends TableProps {
     this.showCount = props.defaultShowCount || 30;
     this.columns = this.columnManager.groupedColumns();
     const maxRowSpan = this.columnManager.maxRowSpan();
-    this.dataManager = new DataManager(props.dataSource, props);
+    this.dataManager = new DataManager({...props, rowKey: this.getRowKey});
     this.sortManager = new SortManager(this.columns, props.sortMulti);
     this.store = create({
       currentHoverKey: null,
@@ -46,7 +46,10 @@ class Table extends TableProps {
         props: this.props,
         saveRef: this.saveRef,
         columnManager: this.columnManager,
+        dataManager: this.dataManager,
         sortManager: this.sortManager,
+        rowKey: this.getRowKey,
+        resetExpandedRowKeys: this.handleExpandedRowKeysChange,
         components: merge({
           table: 'div',
           header: {
@@ -61,7 +64,7 @@ class Table extends TableProps {
           }
         }, this.props.components)
       }
-    }
+    };
   }
 
   componentDidMount() {
@@ -92,7 +95,7 @@ class Table extends TableProps {
   }
 
   getShowCount = () => {
-    const dataSource = this.dataManager.getData();
+    const dataSource = this.dataManager.showData();
     this.bodyHeight = this['bodyTable'].getBoundingClientRect().height;
     let showCount = 5 + (this.bodyHeight / this.props.rowHeight);
     showCount = showCount > dataSource.length ? dataSource.length : showCount;
@@ -113,7 +116,7 @@ class Table extends TableProps {
       const width = findDOMNode(this['tableNode']).getBoundingClientRect().width - (state.hasScroll ? scrollSize : 0) - 2;
       this.store.setState({
         colWidth: this.columnManager.getColWidth(width)
-      })
+      });
     }
   };
 
@@ -207,7 +210,7 @@ class Table extends TableProps {
     const scrollTop = target.scrollTop;
     const clientHeight = target.clientHeight;
     const {rowHeight} = this.props;
-    const dataSource = this.dataManager.getData() || [];
+    const dataSource = this.dataManager.showData() || [];
     const {bodyRowsHeight, tops, bodyHeight} = this.dataManager.getRowsHeight();
     const hasScroll = this['bodyTable'].getBoundingClientRect().height < bodyHeight;
 
@@ -249,6 +252,11 @@ class Table extends TableProps {
     };
   };
 
+  handleExpandedRowKeysChange = (key, expanded) => {
+    this.dataManager.resetExpandedRowKeys(key, expanded);
+    this.resetData();
+  };
+
   saveRef = (name) => (node) => {
     this[name] = node;
   };
@@ -260,7 +268,8 @@ class Table extends TableProps {
       className,
       {
         [`${prefixCls}-fixed-header`]: fixedHeader,
-        'bordered': bordered
+        'bordered': bordered,
+        [`${prefixCls}-expanded`]: this.dataManager.isExpanded()
       }
     );
   };
@@ -279,6 +288,8 @@ class Table extends TableProps {
       return rowKey(record, index);
     } else if (typeof rowKey === 'string') {
       return record[rowKey];
+    } else if (record['key']) {
+      return record['key'];
     }
     return index;
   };
@@ -297,7 +308,6 @@ class Table extends TableProps {
         key='body'
         columns={columns}
         fixed={fixed}
-        getRowKey={this.getRowKey}
         handleBodyScroll={this.handleBodyScroll}
       />
     );
@@ -308,7 +318,7 @@ class Table extends TableProps {
     const table = this.renderTable({
       columns: this.columns
     });
-    return [table, this.renderEmptyText(), this.renderFooter()]
+    return [table, this.renderEmptyText(), this.renderFooter()];
   };
 
   renderFooter = () => {
@@ -359,7 +369,7 @@ class Table extends TableProps {
           {this.renderMainTable()}
         </div>
       </Provider>
-    )
+    );
   }
 }
 

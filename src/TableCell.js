@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import get from 'lodash/get';
 import isNumber from 'lodash/isNumber';
 import {cellAlignStyle} from './Utils';
+import ExpandedIcon from './ExpandedIcon';
 
 class TableCell extends React.PureComponent {
   isInvalidRenderCellText = (text) => {
@@ -18,12 +19,13 @@ class TableCell extends React.PureComponent {
       width,
       isLast,
       record,
-      index
+      index,
+      colIndex
     } = this.props;
     const {bodyStyle, align} = column;
     let style = {};
     if (typeof bodyStyle === 'function') {
-      style = bodyStyle(record, index) || {};
+      style = bodyStyle(record, index, colIndex) || {};
     } else {
       style = {...bodyStyle};
     }
@@ -59,6 +61,36 @@ class TableCell extends React.PureComponent {
     return text;
   };
 
+  onExpandedIconClick = (key, expanded) => {
+    const {onExpandedRowsChange} = this.props;
+    if (typeof onExpandedRowsChange === 'function') {
+      onExpandedRowsChange(key, expanded);
+    }
+  };
+
+  getExpandedIcon = () => {
+    const {
+      colIndex,
+      record,
+      prefixCls,
+      expanded,
+      indentSize
+    } = this.props;
+    const children = record.children || [];
+    if (children.length > 0 && colIndex === 0) {
+      return (
+        <ExpandedIcon
+          prefixCls={prefixCls}
+          expanded={expanded}
+          onClick={this.onExpandedIconClick.bind(this, record.key, !expanded)}
+        />
+      );
+    }
+    if (colIndex === 0) {
+      return (<span style={{width: record._expandedLevel * indentSize}} />);
+    }
+  };
+
   render() {
     const {
       column,
@@ -87,11 +119,12 @@ class TableCell extends React.PureComponent {
         className={classNames('td', column.className)}
         {...tdProps}
       >
+        {this.getExpandedIcon()}
         <div>
           {text}
         </div>
       </BodyCell>
-    )
+    );
   }
 }
 
@@ -105,7 +138,8 @@ TableCell.propTypes = {
   indentSize: PropTypes.number,
   column: PropTypes.object,
   component: PropTypes.any,
-  isLast: PropTypes.bool
+  isLast: PropTypes.bool,
+  onExpandedRowsChange: PropTypes.func
 };
 
 TableCell.defaultProps = {

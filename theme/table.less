@@ -9,6 +9,7 @@
   flex-direction: column;
   box-sizing: border-box;
   line-height: 1.5;
+  font-size: inherit;
   background: @tableBgColor;
   color: @textColor;
   cursor: default;
@@ -19,11 +20,9 @@
       tr {
       }
     }
-    tr {
-      th {
-        margin: 0;
-        padding: 0;
-      }
+    tr > th {
+      margin: 0;
+      padding: 0;
     }
   }
   &-content {
@@ -118,6 +117,27 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     box-sizing: border-box;
-    padding: 0;
+    padding: 0 6px;
+  }
+}
+
+.@{tablePrefixCls}-expanded {
+  &-icon {
+    width: @12;
+    height: @12;
+    margin: @1 5px @1 @1;
+    border-radius: 50%;
+    position: relative;
+    color: #000000;
+    display: inline-block;
+    box-sizing: border-box;
+  }
+  &-icon:not(.expanded) {
+    background: #F9C152;
+    .vt-icon-plus();
+  }
+  &-icon.expanded {
+    background: #ffebc8;
+    .vt-icon-minus();
   }
 }

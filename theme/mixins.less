@@ -153,3 +153,38 @@
     transform: rotate(45deg);
   }
 }
+
+.vt-icon {
+  content: '';
+  pointer-events: none;
+  box-shadow: inset 0 0 0 @10;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.vt-icon-plus() {
+  position: relative;
+  &:before, &:after {
+    .vt-icon;
+  }
+  &:after {
+    height: @8;
+    width: @1;
+  }
+  &:before {
+    width: @8;
+    height: @1;
+  }
+}
+
+.vt-icon-minus() {
+  &:before {
+    .vt-icon;
+  }
+  &:before {
+    width: @8;
+    height: @1;
+  }
+}

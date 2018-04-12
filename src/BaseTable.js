@@ -20,26 +20,29 @@ class BaseTable extends React.PureComponent {
       if (typeof onSort === 'function') {
         onSort(orders);
       }
-    })
+    });
   };
   renderRows = () => {
     const rows = [];
     const {
-      getRowKey,
       fixed,
       showData,
       tops,
       colWidth
     } = this.props;
     const table = this.context.table;
+    const rowKey = table.rowKey;
     const {
       prefixCls,
       rowRef,
       getRowHeight,
       rowHeight,
-      rowClassName
+      rowClassName,
+      indentSize,
+      expandedRowByClick
     } = table.props;
     const columnManager = table.columnManager;
+    const dataManager = table.dataManager;
     (showData || []).forEach((record, i) => {
       let leafColumns;
       if (fixed === 'left') {
@@ -52,7 +55,7 @@ class BaseTable extends React.PureComponent {
       const className = typeof rowClassName === 'function'
         ? rowClassName(record, record.index)
         : rowClassName;
-      const key = getRowKey(record, record.index);
+      const key = rowKey(record, record.index);
       const props = {
         key,
         record,
@@ -60,20 +63,24 @@ class BaseTable extends React.PureComponent {
         prefixCls,
         className,
         colWidth,
+        indentSize,
+        expandedRowByClick,
         rowKey: key,
         index: record.index,
-        top: tops[record.index],
+        top: tops[record._showIndex],
         columns: leafColumns,
         ref: rowRef(record, record.index),
         components: table.components,
         height: getRowHeight(record, record.index) * rowHeight,
-        onHover: this.handleRowHover
+        onHover: this.handleRowHover,
+        expanded: dataManager.rowIsExpanded(record),
+        onExpandedRowsChange: table.resetExpandedRowKeys
       };
       rows.push(<TableRow {...props} />);
     });
     return rows;
   };
-  
+
   render() {
     const {hasHead, hasBody, columns, fixed, bodyHeight, colWidth, orders} = this.props;
     const width = isEmpty(colWidth) ? '100%' : sum(Object.values(colWidth));
@@ -87,7 +94,7 @@ class BaseTable extends React.PureComponent {
         <BodyWrapper className='tbody' style={{height: bodyHeight, minHeight: table.props.rowHeight}}>
           {this.renderRows()}
         </BodyWrapper>
-      )
+      );
     }
     return (
       <Table className='table' style={{width, minWidth: '100%'}}>
@@ -102,7 +109,7 @@ class BaseTable extends React.PureComponent {
         )}
         {body}
       </Table>
-    )
+    );
   }
 }
 
@@ -122,7 +129,7 @@ export default connect((state) => {
     tops,
     showData: showData || [],
     orders
-  }
+  };
 })(BaseTable);
 
 BaseTable.contextTypes = {

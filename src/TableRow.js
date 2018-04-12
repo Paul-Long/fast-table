@@ -20,8 +20,24 @@ class TableRow extends React.PureComponent {
       onRowMouseLeave(record, index, event);
     }
   };
+
+  onExpandedRowsChange = (key, expanded) => {
+    const {onExpandedRowsChange} = this.props;
+    if (typeof onExpandedRowsChange === 'function') {
+      onExpandedRowsChange(key, expanded);
+    }
+  };
+
+  onClick = (e) => {
+    e.stopPropagation();
+    const {record, expanded, expandedRowByClick} = this.props;
+    if (expandedRowByClick) {
+      this.onExpandedRowsChange(record.key, !expanded);
+    }
+  };
+
   renderCells = () => {
-    const {columns, prefixCls, record, index, components, height, colWidth} = this.props;
+    const {columns, prefixCls, record, index, components, height, colWidth, expanded, indentSize, onExpandedRowsChange} = this.props;
     const cells = [];
     const columnSize = columns.length;
     columns.forEach((column, i) => {
@@ -30,12 +46,16 @@ class TableRow extends React.PureComponent {
           prefixCls={prefixCls}
           record={record}
           index={index}
+          colIndex={i}
           column={column}
           key={column.key || column.dataIndex}
           component={components.body.cell}
           width={colWidth[column.path.join('-')] || column.width}
           height={height}
           isLast={i + 1 === columnSize}
+          expanded={expanded}
+          indentSize={indentSize}
+          onExpandedRowsChange={onExpandedRowsChange}
         />
       );
     });
@@ -70,10 +90,11 @@ class TableRow extends React.PureComponent {
         style={style}
         onMouseEnter={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}
+        onClick={this.onClick}
       >
         {this.renderCells()}
       </BodyRow>
-    )
+    );
   }
 }
 
@@ -82,7 +103,7 @@ export default connect((state, props) => {
   const {rowKey} = props;
   return {
     hovered: currentHoverKey === rowKey
-  }
+  };
 })(TableRow);
 
 TableRow.propTypes = {
@@ -90,6 +111,7 @@ TableRow.propTypes = {
   prefixCls: PropTypes.string,
   columns: PropTypes.array,
   height: PropTypes.number,
+  indentSize: PropTypes.number,
   rowKey: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number
@@ -98,6 +120,8 @@ TableRow.propTypes = {
   fixed: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number
-  ])
+  ]),
+  onExpandedRowsChange: PropTypes.func,
+  expanded: PropTypes.bool
 };
 

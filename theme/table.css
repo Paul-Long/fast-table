@@ -1,3 +1,12 @@
+.vt-icon {
+  content: '';
+  pointer-events: none;
+  box-shadow: inset 0 0 0 10px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
 .vt.bordered .tr {
   position: relative;
 }
@@ -175,6 +184,7 @@
   flex-direction: column;
   box-sizing: border-box;
   line-height: 1.5;
+  font-size: inherit;
   background: #172422;
   color: #ffebc8;
   cursor: default;
@@ -186,7 +196,7 @@
 .vt table tbody {
   display: block;
 }
-.vt table tr th {
+.vt table tr > th {
   margin: 0;
   padding: 0;
 }
@@ -317,5 +327,53 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   box-sizing: border-box;
-  padding: 0;
+  padding: 0 6px;
+}
+.vt-expanded-icon {
+  width: 12px;
+  height: 12px;
+  margin: 1px 5px 1px 1px;
+  border-radius: 50%;
+  position: relative;
+  color: #000000;
+  display: inline-block;
+  box-sizing: border-box;
+}
+.vt-expanded-icon:not(.expanded) {
+  background: #F9C152;
+  position: relative;
+}
+.vt-expanded-icon:not(.expanded):before,
+.vt-expanded-icon:not(.expanded):after {
+  content: '';
+  pointer-events: none;
+  box-shadow: inset 0 0 0 10px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.vt-expanded-icon:not(.expanded):after {
+  height: 8px;
+  width: 1px;
+}
+.vt-expanded-icon:not(.expanded):before {
+  width: 8px;
+  height: 1px;
+}
+.vt-expanded-icon.expanded {
+  background: #ffebc8;
+}
+.vt-expanded-icon.expanded:before {
+  content: '';
+  pointer-events: none;
+  box-shadow: inset 0 0 0 10px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.vt-expanded-icon.expanded:before {
+  width: 8px;
+  height: 1px;
 }

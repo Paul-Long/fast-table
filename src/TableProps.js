@@ -10,6 +10,7 @@ export default class TableProps extends React.PureComponent {
     prefixCls: PropTypes.string,
     columns: PropTypes.array,
     dataSource: PropTypes.array,
+    expandedRowKeys: PropTypes.array,
 
     className: PropTypes.string,
 
@@ -18,6 +19,7 @@ export default class TableProps extends React.PureComponent {
     fixedHeader: PropTypes.bool,
     sortMulti: PropTypes.bool,
     refreshEnable: PropTypes.bool,
+    expandedRowByClick: PropTypes.bool,
 
     rowRef: PropTypes.func,
     getRowHeight: PropTypes.func,
@@ -26,6 +28,7 @@ export default class TableProps extends React.PureComponent {
     emptyText: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
     onSort: PropTypes.func,
     onScrollEnd: PropTypes.func,
+    onExpandedRowsChange: PropTypes.func,
 
     rowHeight: PropTypes.number,
     headerRowHeight: PropTypes.number,
@@ -33,6 +36,7 @@ export default class TableProps extends React.PureComponent {
     defaultShowCount: PropTypes.number,
     colMinWidth: PropTypes.number,
     scrollEndPosition: PropTypes.number,
+    indentSize: PropTypes.number,
 
     style: PropTypes.object,
 
@@ -55,12 +59,14 @@ export default class TableProps extends React.PureComponent {
     fixedHeader: true,
     sortMulti: false,
     refreshEnable: true,
+    expandedRowByClick: true,
 
     rowRef: () => null,
     getRowHeight: () => 1,
     rowClassName: () => '',
     emptyText: () => '暂无数据',
     onScrollEnd: () => null,
+    onExpandedRowsChange: () => null,
 
     rowHeight: 30,
     headerRowHeight: 35,
@@ -68,6 +74,7 @@ export default class TableProps extends React.PureComponent {
     defaultShowCount: 30,
     colMinWidth: 60,
     scrollEndPosition: 60,
+    indentSize: 17,
 
     style: {},
 
