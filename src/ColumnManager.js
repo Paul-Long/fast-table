@@ -60,18 +60,6 @@ export default class ColumnManager {
     );
   }
 
-  leftLeafColumns() {
-    return this._cache('leftLeafColumns', () =>
-      this._leafColumns(this.leftColumns())
-    );
-  }
-
-  rightLeafColumns() {
-    return this._cache('rightLeafColumns', () =>
-      this._leafColumns(this.rightColumns())
-    );
-  }
-
   maxRowSpan() {
     return this._cache('maxRowSpan', () => {
       let max = maxBy(this.groupedColumns(), 'rowSpan');
@@ -138,13 +126,14 @@ export default class ColumnManager {
 
   _leafColumns(columns) {
     const leafColumns = [];
-    columns.forEach(column => {
+    for (let i = 0; i < columns.length; i++) {
+      const column = columns[i];
       if (!column.children) {
         leafColumns.push(column);
       } else {
         leafColumns.push(...this._leafColumns(column.children));
       }
-    });
+    }
     return leafColumns;
   }
 
@@ -161,7 +150,8 @@ export default class ColumnManager {
         column.rowSpan = rowSpan;
       }
     };
-    columns.forEach((column, index) => {
+    for (let index = 0; index < columns.length; index++) {
+      const column = columns[index];
       const newColumn = {...column};
       rows[currentRow].push(newColumn);
       const path = parentColumn.path || [currentRow];
@@ -183,12 +173,13 @@ export default class ColumnManager {
         setRowSpan(newColumn);
       }
       grouped.push(newColumn);
-    });
+    }
     return grouped;
   };
   _getColWidth = (columns, wrapperWidth, colWidth = {}, currentRow = 0) => {
     colWidth = colWidth || {};
-    columns.forEach((column) => {
+    for (let index = 0; index < columns.length; index++) {
+      const column = columns[index];
       const fixed = column.fixed;
       let widths = column.widths || [];
       widths = this._calcWidth(widths, wrapperWidth);
@@ -213,7 +204,7 @@ export default class ColumnManager {
         }
         this.width += width;
       }
-    });
+    }
     return colWidth;
   };
 }

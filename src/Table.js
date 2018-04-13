@@ -104,39 +104,39 @@ class Table extends TableProps {
   handleWindowResize = () => {
     this.showCount = this.getShowCount();
     this.resetData();
-    this.updateColumn();
   };
 
-  updateColumn = () => {
+  updateColumn = (hasScroll) => {
     const scrollSize = measureScrollbar();
-    const state = this.store.getState();
-    if (this['tableNode']) {
-      const width = findDOMNode(this['tableNode']).getBoundingClientRect().width - (state.hasScroll ? scrollSize : 0) - 2;
-      this.store.setState({
-        colWidth: this.columnManager.getColWidth(width)
-      });
+    if (this['bodyTable']) {
+      const width = findDOMNode(this['bodyTable']).getBoundingClientRect().width - (hasScroll ? scrollSize : 0) - 2;
+      return {colWidth: this.columnManager.getColWidth(width)};
     }
+    return {};
   };
 
   resetData = () => {
     const result = this.resetRenderInterval(this['bodyTable']);
+    const colWidth = this.updateColumn(result.hasScroll);
     this.store.setState({
       ...this.dataManager.getRowsHeight(),
-      ...result
+      ...result,
+      ...colWidth
     });
   };
 
   setScrollPosition(position) {
     this.scrollPosition = position;
-    if (this.tableNode) {
+    const {tableNode} = this;
+    if (tableNode) {
       const {prefixCls} = this.props;
       if (position === 'both') {
-        classes(this.tableNode)
+        classes(tableNode)
           .remove(new RegExp(`^${prefixCls}-scroll-position-.+$`))
           .add(`${prefixCls}-scroll-position-left`)
           .add(`${prefixCls}-scroll-position-right`);
       } else {
-        classes(this.tableNode)
+        classes(tableNode)
           .remove(new RegExp(`^${prefixCls}-scroll-position-.+$`))
           .add(`${prefixCls}-scroll-position-${position}`);
       }

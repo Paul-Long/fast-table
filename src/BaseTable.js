@@ -12,9 +12,9 @@ class BaseTable extends React.PureComponent {
     const columnManager = context.table.columnManager;
     const fixed = props.fixed;
     if (fixed === 'left') {
-      this.columns = columnManager.leftLeafColumns();
+      this.columns = columnManager.leftColumns();
     } else if (fixed === 'right') {
-      this.columns = columnManager.rightLeafColumns();
+      this.columns = columnManager.rightColumns();
     } else {
       this.columns = columnManager.leafColumns();
     }
