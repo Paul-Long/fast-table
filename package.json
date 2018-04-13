@@ -3,9 +3,14 @@
   "version": "1.1.4",
   "description": "react table fast",
   "main": "./lib/index.js",
+  "module": "./src/index.js",
   "files": [
     "lib",
-    "theme/*.css"
+    "src",
+    "theme/*.css",
+    "theme/*.less",
+    "postcss.config.js",
+    ".babelrc"
   ],
   "scripts": {
     "build": "babel src -d lib"

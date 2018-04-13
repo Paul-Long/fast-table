@@ -7,6 +7,7 @@ import {measureScrollbar} from './Utils';
 function BodyTable(props, {table}) {
   const {saveRef} = table;
   const {prefixCls, fixedHeader, showHeader, footer, footerHeight, dataSource} = table.props;
+  const columnManager = table.columnManager;
   const {
     fixed,
     columns,
@@ -44,6 +45,26 @@ function BodyTable(props, {table}) {
     scrollRef = 'fixedColumnsBodyLeft';
   } else if (fixed === 'right') {
     scrollRef = 'fixedColumnsBodyRight';
+  }
+
+  if (fixed) {
+    delete style.overflowX;
+    delete style.overflowY;
+    return (
+      <div key='bodyTable' className={`${prefixCls}-body-outer`} style={{...style}}>
+        <div
+          className={`${prefixCls}-body`}
+          ref={saveRef(scrollRef)}
+          style={{
+            height: `calc(100% - ${columnManager.overflowX ? scrollbarWidth : 0}px)`,
+            overflowY: hasScroll ? 'scroll' : 'hidden'
+          }}
+          onScroll={handleBodyScroll}
+        >
+          {baseTable}
+        </div>
+      </div>
+    );
   }
   return (
     <div
