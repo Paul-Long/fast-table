@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import get from 'lodash/get';
-import isNumber from 'lodash/isNumber';
 import {cellAlignStyle} from './Utils';
 import ExpandedIcon from './ExpandedIcon';
 
@@ -16,8 +15,6 @@ class TableCell extends React.PureComponent {
   getStyle = () => {
     const {
       column,
-      width,
-      isLast,
       record,
       index,
       colIndex
@@ -30,13 +27,16 @@ class TableCell extends React.PureComponent {
       style = {...bodyStyle};
     }
     style = {...style, ...cellAlignStyle(align)};
-
-    if (width) {
-      style.flex = `${isLast ? 1 : 0} 1 ${isNumber(width) ? width + 'px' : width}`;
-      style.minWidth = width;
+    const {_width, _minWidth} = column || {};
+    if (_width) {
+      style.width = _width;
+      style.minWidth = _width;
     } else {
       style.flex = 1;
     }
+    // if (_minWidth) {
+    //   style.minWidth = _minWidth;
+    // }
     return style;
   };
 

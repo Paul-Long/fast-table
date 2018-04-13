@@ -3,23 +3,8 @@ import PropTypes from 'prop-types';
 import TableHeader from './TableHeader';
 import TableRow from './TableRow';
 import {connect} from './mini-store';
-import isEmpty from 'lodash/isEmpty';
 
 class BaseTable extends React.PureComponent {
-  constructor(props, context) {
-    super(props, context);
-    this.columns = [];
-    const columnManager = context.table.columnManager;
-    const fixed = props.fixed;
-    if (fixed === 'left') {
-      this.columns = columnManager.leftColumns();
-    } else if (fixed === 'right') {
-      this.columns = columnManager.rightColumns();
-    } else {
-      this.columns = columnManager.leafColumns();
-    }
-  }
-
   handleRowHover = (isHover, key) => {
     this.props.store.setState({
       currentHoverKey: isHover ? key : null
@@ -35,13 +20,13 @@ class BaseTable extends React.PureComponent {
       }
     });
   };
+
   renderRows = () => {
     const rows = [];
     const {
       fixed,
       showData,
-      tops,
-      colWidth
+      tops
     } = this.props;
     const table = this.context.table;
     const rowKey = table.rowKey;
@@ -55,6 +40,15 @@ class BaseTable extends React.PureComponent {
       expandedRowByClick
     } = table.props;
     const dataManager = table.dataManager;
+    const columnManager = table.columnManager;
+    let columns = [];
+    if (fixed === 'left') {
+      columns = columnManager.leftLeafColumns();
+    } else if (fixed === 'right') {
+      columns = columnManager.rightLeafColumns();
+    } else {
+      columns = columnManager.leafColumns();
+    }
     (showData || []).forEach((record, i) => {
       const className = typeof rowClassName === 'function'
         ? rowClassName(record, record.index)
@@ -66,13 +60,12 @@ class BaseTable extends React.PureComponent {
         fixed,
         prefixCls,
         className,
-        colWidth,
         indentSize,
         expandedRowByClick,
+        columns,
         rowKey: key,
         index: record.index,
         top: tops[record._showIndex],
-        columns: this.columns,
         ref: rowRef(record, record.index),
         components: table.components,
         height: getRowHeight(record, record.index) * rowHeight,
@@ -86,13 +79,12 @@ class BaseTable extends React.PureComponent {
   };
 
   render() {
-    const {hasHead, hasBody, columns, fixed, bodyHeight, colWidth, orders} = this.props;
+    const {hasHead, hasBody, fixed, bodyHeight, orders} = this.props;
     const table = this.context.table;
     const components = table.components;
-    let width = '100%';
-    if (!isEmpty(colWidth)) {
-      width = table.columnManager.getWidth(fixed);
-    }
+    const columnManager = table.columnManager;
+    let width = table.columnManager.getWidth(fixed);
+    width = width || '100%';
     let body;
     const Table = components.table;
     const BodyWrapper = components.body.wrapper;
@@ -102,6 +94,15 @@ class BaseTable extends React.PureComponent {
           {this.renderRows()}
         </BodyWrapper>
       );
+    }
+
+    let columns = [];
+    if (fixed === 'left') {
+      columns = columnManager.leftColumns();
+    } else if (fixed === 'right') {
+      columns = columnManager.rightColumns();
+    } else {
+      columns = columnManager.groupedColumns();
     }
 
     const style = {width};
@@ -114,7 +115,6 @@ class BaseTable extends React.PureComponent {
           <TableHeader
             columns={columns}
             fixed={fixed}
-            colWidth={colWidth}
             onSort={this.handleSort}
             orders={orders || {}}
           />
@@ -129,7 +129,6 @@ export default connect((state) => {
   const {
     hasScroll,
     bodyHeight,
-    colWidth,
     tops,
     showData,
     orders
@@ -137,7 +136,6 @@ export default connect((state) => {
   return {
     hasScroll,
     bodyHeight,
-    colWidth,
     tops,
     showData: showData || [],
     orders

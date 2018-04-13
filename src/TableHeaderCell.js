@@ -1,14 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import isNumber from 'lodash/isNumber';
 import Sorter from './Sorter';
 import {cellAlignStyle} from './Utils';
 
 class TableHeaderCell extends React.PureComponent {
   renderChildren = (columns) => {
     columns = columns || [];
-    const colWidth = this.props.colWidth;
     return columns.map((column, index) => {
       let children = column.children || [];
       children.length > 0 && this.renderChildren(children);
@@ -17,9 +15,12 @@ class TableHeaderCell extends React.PureComponent {
       if (children.length > 0) {
         children = this.renderChildren(children);
         const style = {display: 'flex', flexDirection: 'column'};
-        const width = colWidth[column.path.join('-')];
+        const width = column._width;
         if (width) {
           style.width = width;
+        }
+        if (column._minWidth) {
+          style.minWidth = column._minWidth;
         }
         return (
           <div key={column.path.join('-')} style={style}>
@@ -35,18 +36,20 @@ class TableHeaderCell extends React.PureComponent {
   };
 
   renderCell = (column, key, columns, index, isChild = true, isBase) => {
-    const {colWidth, components, orders, onSort} = this.props;
+    const {components, orders, onSort} = this.props;
     const HeadCell = isBase ? components.header.cell : 'div';
-    columns = columns || [];
     const style = cellAlignStyle(column.align);
-    const columnSize = columns.length;
     const {children = [], rowSpan, dataIndex} = column;
-    let width = colWidth[column.path.join('-')] || column.width;
-    if (children.length === 0) {
-      style.flex = width ? `${index + 1 === columnSize && isChild ? 1 : 0} 1 ${isNumber(width) ? width + 'px' : width}` : 1;
+    let width = column._width;
+    if (width) {
+      style.width = width;
+      style.minWidth = width;
     } else {
-      width && (style.width = width);
+      style.flex = 1;
     }
+    // if (column._minWidth) {
+    //   style.minWidth = column._minWidth;
+    // }
     let sorter;
     const order = orders[column.dataIndex];
     if (column.sortEnable && children.length === 0 && order) {
@@ -70,21 +73,24 @@ class TableHeaderCell extends React.PureComponent {
         {column.title}
         {sorter}
       </HeadCell>
-    )
+    );
   };
 
   render() {
-    const {column, columns, index, colWidth, components} = this.props;
+    const {column, columns, index, components} = this.props;
     const children = column.children || [];
     const HeaderCell = components.header.cell;
     const key = column.key || column.dataIndex || index;
     if (children.length === 0) {
       return this.renderCell(column, key, columns, index, true, true);
     }
-    let width = colWidth[column.path.join('-')] || column.width;
+    let width = column._width;
     const style = {};
     if (width) {
-      style.flex = `${index + 1 === columns.length ? 1 : 0} 1 ${isNumber(width) ? width + 'px' : width}`;
+      style.width = width;
+      style.minWidth = width;
+    } else {
+      style.flex = 1;
     }
     return (
       <HeaderCell className='row-group' style={style}>
@@ -93,7 +99,7 @@ class TableHeaderCell extends React.PureComponent {
           {this.renderChildren(children)}
         </div>
       </HeaderCell>
-    )
+    );
   }
 }
 
@@ -102,9 +108,5 @@ TableHeaderCell.propTypes = {
   column: PropTypes.object,
   headerRowHeight: PropTypes.number,
   columns: PropTypes.array,
-  index: PropTypes.number,
-  colWidth: PropTypes.object
-};
-TableHeaderCell.defaultProps = {
-  colWidth: {}
+  index: PropTypes.number
 };

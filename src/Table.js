@@ -31,7 +31,7 @@ class Table extends TableProps {
       currentHoverKey: null,
       hasScroll: false,
       headHeight: this.columnManager.maxRowSpan() * props.headerRowHeight,
-      colWidth: {},
+      minWidths: {},
       orders: this.sortManager.enabled(),
       ...this.dataManager.getRowsHeight()
     });
@@ -108,20 +108,18 @@ class Table extends TableProps {
 
   updateColumn = (hasScroll) => {
     const scrollSize = measureScrollbar();
-    if (this['bodyTable']) {
-      const width = findDOMNode(this['bodyTable']).getBoundingClientRect().width - (hasScroll ? scrollSize : 0) - 2;
-      return {colWidth: this.columnManager.getColWidth(width)};
+    if (this['tableNode']) {
+      const width = findDOMNode(this['tableNode']).getBoundingClientRect().width - (hasScroll ? scrollSize : 0) - 2;
+      this.columnManager.updateColWidth(width);
     }
-    return {};
   };
 
   resetData = () => {
     const result = this.resetRenderInterval(this['bodyTable']);
-    const colWidth = this.updateColumn(result.hasScroll);
+    this.updateColumn(result.hasScroll);
     this.store.setState({
       ...this.dataManager.getRowsHeight(),
       ...result,
-      ...colWidth
     });
   };
 

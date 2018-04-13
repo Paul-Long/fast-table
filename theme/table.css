@@ -184,7 +184,6 @@
   flex-direction: column;
   box-sizing: border-box;
   line-height: 1.5;
-  font-size: inherit;
   background: #172422;
   color: #ffebc8;
   cursor: default;
@@ -308,7 +307,6 @@
 .vt-fixed-left {
   left: 0;
 }
-
 .vt-fixed-left > .vt-body {
   margin-right: -20px;
   padding-right: 0;

@@ -39,7 +39,7 @@ class TableRow extends React.PureComponent {
   renderCells = () => {
     const {
       columns, prefixCls, record, index, components, height,
-      colWidth, expanded, indentSize, onExpandedRowsChange, fixed
+      expanded, indentSize, onExpandedRowsChange, fixed
     } = this.props;
     const cells = [];
     const columnSize = columns.length;
@@ -54,7 +54,6 @@ class TableRow extends React.PureComponent {
           column={column}
           key={column.key || column.dataIndex}
           component={components.body.cell}
-          width={colWidth[column.path.join('-')] || column.width}
           height={height}
           isLast={i + 1 === columnSize}
           expanded={expanded}
