@@ -23,6 +23,7 @@ export default class ColumnManager {
     this.width = 0;
     this.leftWidth = 0;
     this.rightWidth = 0;
+    this.hasOverflowX = false;
   }
 
   isAnyColumnsLeftFixed() {
@@ -88,6 +89,10 @@ export default class ColumnManager {
     );
   }
 
+  overflowX() {
+    return this.hasOverflowX;
+  }
+
   updateColWidth(wrapperWidth) {
     if (this.wrapperWidth !== wrapperWidth) {
       delete this._cached['getColWidth'];
@@ -133,6 +138,7 @@ export default class ColumnManager {
           return newColumn;
         });
       };
+      this.hasOverflowX = this.width > wrapperWidth;
       this._cached['groupedColumns'] = update(columns);
       delete this._cached['leafColumns'];
       delete this._cached['leftColumns'];
