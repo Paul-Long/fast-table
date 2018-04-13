@@ -20,19 +20,17 @@ import '../theme/table.css';
 class Table extends TableProps {
   constructor(props) {
     super(props);
-    this.columnManager = new ColumnManager(props.columns, props.colMinWidth);
     this.lastScrollTop = 0;
     this.lastScrollLeft = 0;
     this.refreshAble = true;
     this.showCount = props.defaultShowCount || 30;
-    this.columns = this.columnManager.groupedColumns();
-    const maxRowSpan = this.columnManager.maxRowSpan();
+    this.columnManager = new ColumnManager(props.columns, props.colMinWidth);
     this.dataManager = new DataManager({...props, rowKey: this.getRowKey});
-    this.sortManager = new SortManager(this.columns, props.sortMulti);
+    this.sortManager = new SortManager(this.columnManager.groupedColumns(), props.sortMulti);
     this.store = create({
       currentHoverKey: null,
       hasScroll: false,
-      headHeight: maxRowSpan * props.headerRowHeight,
+      headHeight: this.columnManager.maxRowSpan() * props.headerRowHeight,
       colWidth: {},
       orders: this.sortManager.enabled(),
       ...this.dataManager.getRowsHeight()
@@ -327,39 +325,36 @@ class Table extends TableProps {
     return [headTable, bodyTable];
   };
 
+  getFixedProps = (fixed) => {
+    const {prefixCls, footerHeight, rowHeight, footer} = this.props;
+    const height = (footer ? footerHeight : 0) + (this.dataManager.isEmpty() ? rowHeight : 0);
+    return {
+      className: `${prefixCls}-fixed-${fixed}`,
+      style: {height: `calc(100% - ${height}px)`}
+    };
+  };
+
   renderMainTable = () => {
     const table = this.renderTable({
-      columns: this.columns
+      columns: this.columnManager.groupedColumns()
     });
     return [table, this.renderEmptyText(), this.renderFooter()];
   };
 
   renderLeftFixedTable = () => {
-    const {prefixCls, footerHeight, rowHeight} = this.props;
-    return (
-      <div className={`${prefixCls}-fixed-left`} style={{height: `calc(100% - ${footerHeight}px)`}}>
-        {
-          this.renderTable({
-            columns: this.columnManager.leftColumns(),
-            fixed: 'left'
-          })
-        }
-      </div>
-    );
+    const table = this.renderTable({
+      columns: this.columnManager.leftColumns(),
+      fixed: 'left'
+    });
+    return (<div {...this.getFixedProps('left')}>{table}</div>);
   };
 
   renderRightFixedTable = () => {
-    const {prefixCls, footerHeight, rowHeight} = this.props;
-    return (
-      <div className={`${prefixCls}-fixed-right`} style={{height: `calc(100% - ${footerHeight}px)`}}>
-        {
-          this.renderTable({
-            columns: this.columnManager.rightColumns(),
-            fixed: 'right'
-          })
-        }
-      </div>
-    );
+    const table = this.renderTable({
+      columns: this.columnManager.rightColumns(),
+      fixed: 'right'
+    });
+    return (<div {...this.getFixedProps('right')}>{table}</div>);
   };
 
   renderFooter = () => {

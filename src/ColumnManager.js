@@ -149,13 +149,12 @@ export default class ColumnManager {
   }
 
   _groupColumns = (columns, currentRow = 0, parentColumn = {}, rows = []) => {
-    // track how many rows we got
     rows[currentRow] = rows[currentRow] || [];
     const grouped = [];
     const setRowSpan = column => {
       const rowSpan = rows.length - currentRow;
       if (column &&
-        !column.children && // parent columns are supposed to be one row
+        !column.children &&
         rowSpan > 1 &&
         (!column.rowSpan || column.rowSpan < rowSpan)
       ) {
@@ -177,11 +176,9 @@ export default class ColumnManager {
         newColumn.widths = [newColumn.width];
       }
       newColumn.widths = flattenDeep(newColumn.widths);
-      // update rowspan to all same row columns
       for (let i = 0; i < rows[currentRow].length - 1; ++i) {
         setRowSpan(rows[currentRow][i]);
       }
-      // last column, update rowspan immediately
       if (index + 1 === columns.length) {
         setRowSpan(newColumn);
       }

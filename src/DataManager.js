@@ -12,7 +12,9 @@ export default class DataManager {
   }
 
   getData = () => {
-    return this._cache('getData', () => this._getData(this.data));
+    return this._cache('getData', () => {
+      return this._getData(this.data);
+    });
   };
 
   showData = () => {
@@ -26,6 +28,10 @@ export default class DataManager {
       return this._getRowsHeight(this.showData());
     });
   };
+
+  isEmpty() {
+    return this.getData().length === 0;
+  }
 
   isExpanded = () => {
     return this._cache('isExpanded', () => {
