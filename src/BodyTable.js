@@ -53,7 +53,7 @@ function BodyTable(props, {table}) {
     return (
       <div key='bodyTable' className={`${prefixCls}-body-outer`} style={{...style}}>
         <div
-          className={`${prefixCls}-body`}
+          className={`${prefixCls}-body-inner`}
           ref={saveRef(scrollRef)}
           style={{
             height: `calc(100% - ${columnManager.overflowX ? scrollbarWidth : 0}px)`,

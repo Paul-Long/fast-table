@@ -47,7 +47,6 @@
     }
   }
   &-body {
-    color: @textColor;
     overflow-y: scroll;
     background: @tableBgColor;
   }
@@ -89,11 +88,18 @@
     .vt-header, .vt-body {
       overflow: hidden;
     }
+    .@{tablePrefixCls}-header {
+      margin-right: -20px;
+      padding-right: 0;
+    }
   }
   &-fixed-left {
     left: 0;
-    & > .vt-body {
+    & .@{tablePrefixCls}-body-inner {
       margin-right: -20px;
+      padding-right: 20px;
+    }
+    .@{tablePrefixCls}-fixed-header & .@{tablePrefixCls}-body-inner {
       padding-right: 0;
     }
   }
