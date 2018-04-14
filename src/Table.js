@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import {findDOMNode} from 'react-dom';
 import classNames from 'classnames';
 import merge from 'lodash/merge';
+import floor from 'lodash/floor';
+import ceil from 'lodash/ceil';
 import shallowEqual from 'shallowequal';
 import classes from 'component-classes';
 
@@ -23,13 +25,14 @@ class Table extends TableProps {
     this.lastScrollTop = 0;
     this.lastScrollLeft = 0;
     this.refreshAble = true;
+    this.hasScroll = false;
     this.showCount = props.defaultShowCount || 30;
     this.columnManager = new ColumnManager(props.columns, props.colMinWidth);
     this.dataManager = new DataManager({...props, rowKey: this.getRowKey});
     this.sortManager = new SortManager(this.columnManager.groupedColumns(), props.sortMulti);
     this.store = create({
       currentHoverKey: null,
-      hasScroll: false,
+      hasScroll: this.hasScroll,
       headHeight: this.columnManager.maxRowSpan() * props.headerRowHeight,
       minWidths: {},
       orders: this.sortManager.enabled(),
@@ -98,11 +101,13 @@ class Table extends TableProps {
     let showCount = 5 + (this.bodyHeight / this.props.rowHeight);
     showCount = showCount > dataSource.length ? dataSource.length : showCount;
     showCount = Math.max(showCount, this.props.defaultShowCount);
-    return showCount;
+    return ceil(showCount) + 2;
   };
 
   handleWindowResize = () => {
     this.showCount = this.getShowCount();
+    const {bodyHeight} = this.dataManager.getRowsHeight();
+    this.hasScroll = this['bodyTable'].getBoundingClientRect().height < bodyHeight;
     this.resetData();
   };
 
@@ -217,46 +222,18 @@ class Table extends TableProps {
 
   resetRenderInterval = (target) => {
     const scrollTop = target.scrollTop;
-    const clientHeight = target.clientHeight;
     const {rowHeight} = this.props;
     const dataSource = this.dataManager.showData() || [];
-    const {bodyRowsHeight, tops, bodyHeight} = this.dataManager.getRowsHeight();
-    const hasScroll = this['bodyTable'].getBoundingClientRect().height < bodyHeight;
 
-    if (!hasScroll) {
-      return {hasScroll, showData: dataSource};
+    if (!this.hasScroll) {
+      return {hasScroll: this.hasScroll, showData: dataSource};
     }
-
-    let start = 0, end = 0, isStart = false, isEnd = false;
-    for (let index = 0; index < dataSource.length; index++) {
-      const top = tops[index];
-      const height = bodyRowsHeight[index];
-      if (top + height >= scrollTop && !isStart) {
-        start = index;
-        isStart = true;
-      } else if (top > scrollTop + clientHeight && !isEnd) {
-        end = index;
-        isEnd = true;
-        break;
-      }
-    }
-    if (scrollTop <= rowHeight) {
-      start = 0;
-    }
-    if (scrollTop + clientHeight >= bodyHeight - rowHeight) {
-      end = bodyRowsHeight.length - 1;
-    }
-    if (end < start || end - start < this.showCount) {
-      end = start + this.showCount;
-    }
-    const showData = [];
-    for (let i = 0; i < dataSource.length; i++) {
-      if (i >= start && i <= end) {
-        showData.push(dataSource[i]);
-      }
-    }
+    let startIndex = floor(scrollTop / rowHeight) - 1;
+    startIndex = startIndex < 0 ? 0 : startIndex;
+    let endIndex = startIndex + this.showCount;
+    const showData = dataSource.slice(startIndex, endIndex);
     return {
-      hasScroll,
+      hasScroll: this.hasScroll,
       showData
     };
   };

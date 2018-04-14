@@ -25,16 +25,16 @@ function BodyTable(props, {table}) {
   );
   let height = 0;
   if (dataSource && dataSource.length > 0) {
-    height = showHeader ? `calc(100% - ${headHeight + 1 + (footer && !fixed ? footerHeight : 0)}px)` : '100%';
+    const hHeight = fixedHeader ? headHeight : 0;
+    const fHeight = footer && !fixed ? footerHeight : 0;
+    height = showHeader
+      ? `calc(100% - ${hHeight + 1 + fHeight}px)`
+      : '100%';
   }
   const style = {
     height,
     overflowY: hasScroll ? 'scroll' : 'auto'
   };
-  if (!fixedHeader) {
-    style.height = 'auto';
-    style.overflowY = 'hidden';
-  }
   const scrollbarWidth = measureScrollbar();
   if (scrollbarWidth > 0 && fixed) {
     style.marginBottom = `-${scrollbarWidth}px`;
@@ -50,13 +50,14 @@ function BodyTable(props, {table}) {
   if (fixed) {
     delete style.overflowX;
     delete style.overflowY;
+    (fixed === 'left') && (style.width = columnManager.getWidth(fixed));
     return (
       <div key='bodyTable' className={`${prefixCls}-body-outer`} style={{...style}}>
         <div
           className={`${prefixCls}-body-inner`}
           ref={saveRef(scrollRef)}
           style={{
-            height: `calc(100% - ${columnManager.overflowX ? scrollbarWidth : 0}px)`,
+            height: `calc(100% - ${columnManager.overflowX() ? scrollbarWidth : 0}px)`,
             overflowY: hasScroll ? 'scroll' : 'hidden'
           }}
           onScroll={handleBodyScroll}

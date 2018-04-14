@@ -293,6 +293,7 @@
   top: 0;
   overflow: hidden;
   z-index: 2;
+  background: #172422;
 }
 .vt-fixed-left .table,
 .vt-fixed-right .table {
@@ -305,7 +306,6 @@
 .vt-fixed-right .vt-body {
   overflow: hidden;
 }
-
 .vt-fixed-left .vt-header,
 .vt-fixed-right .vt-header {
   margin-right: -20px;
@@ -314,12 +314,10 @@
 .vt-fixed-left {
   left: 0;
 }
-
 .vt-fixed-left .vt-body-inner {
   margin-right: -20px;
   padding-right: 20px;
 }
-
 .vt-fixed-header .vt-fixed-left .vt-body-inner {
   padding-right: 0;
 }
