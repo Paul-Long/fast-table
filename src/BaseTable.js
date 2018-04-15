@@ -55,7 +55,7 @@ class BaseTable extends React.PureComponent {
         : rowClassName;
       const key = rowKey(record, record.index);
       const props = {
-        key,
+        key: i,
         record,
         fixed,
         prefixCls,
