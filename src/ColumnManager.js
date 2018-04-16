@@ -112,7 +112,7 @@ export default class ColumnManager {
           const key = newColumn.path.join('-');
           const width = minWidths[key];
           if (newColumn._pathKey === last._pathKey) {
-            newColumn._width = width + ((wrapperWidth - baseWidth) - (average * (len - 1)));
+            newColumn._width = wrapperWidth - this.width;
           } else {
             newColumn._width = width + average;
           }
@@ -165,16 +165,16 @@ export default class ColumnManager {
     widths = widths.map(w => {
       if (typeof w === 'string' && percentReg.test(w)) {
         const i = w.replace('%', '');
-        return this._minWidth(multiply(wrapperWidth, divide(i, 100)));
+        return floor(this._minWidth(multiply(wrapperWidth, divide(i, 100))));
       }
       if (w && typeof w === 'string') {
         w = w.replace(/[^\d]/g, '');
       }
       let ww = toNumber(w);
       if (!isNaN(ww) && isNumber(ww)) {
-        return this._minWidth(ww);
+        return floor(this._minWidth(ww));
       }
-      return this._minWidth(w);
+      return floor(this._minWidth(w));
     });
     return widths.filter(w => !!w);
   }

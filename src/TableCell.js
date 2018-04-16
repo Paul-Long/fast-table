@@ -121,7 +121,7 @@ class TableCell extends React.PureComponent {
         {...tdProps}
       >
         {this.getExpandedIcon()}
-        <div>
+        <div style={{maxWidth: '100%'}}>
           {text}
         </div>
       </BodyCell>

@@ -114,7 +114,7 @@ class Table extends TableProps {
   updateColumn = (hasScroll) => {
     const scrollSize = measureScrollbar();
     if (this['tableNode']) {
-      const width = findDOMNode(this['tableNode']).getBoundingClientRect().width - (hasScroll ? scrollSize : 0) - 2;
+      const width = findDOMNode(this['tableNode']).getBoundingClientRect().width - (hasScroll ? scrollSize : 0);
       this.columnManager.updateColWidth(width);
     }
   };
