@@ -35,7 +35,8 @@ class Table extends TableProps {
       headHeight: this.columnManager.maxRowSpan() * props.headerRowHeight,
       minWidths: {},
       orders: this.sortManager.enabled(),
-      ...this.dataManager.getRowsHeight()
+      ...this.dataManager.getRowsHeight(),
+      newColumns: this.columnManager.groupedColumns()
     });
     this.debouncedWindowResize = debounce(this.handleWindowResize, 150);
   }
@@ -122,6 +123,7 @@ class Table extends TableProps {
     this.store.setState({
       ...this.dataManager.getRowsHeight(),
       ...result,
+      newColumns: this.columnManager.groupedColumns()
     });
   };
 
@@ -222,7 +224,8 @@ class Table extends TableProps {
     const {rowHeight} = this.props;
     const dataSource = this.dataManager.showData() || [];
     const {bodyHeight} = this.dataManager.getRowsHeight();
-    const hasScroll = this['bodyTable'].getBoundingClientRect().height < bodyHeight;
+    const bHeight = this['bodyTable'].getBoundingClientRect().height;
+    const hasScroll = bHeight !== 0 && bHeight < bodyHeight;
 
     if (!hasScroll) {
       return {hasScroll, showData: dataSource};

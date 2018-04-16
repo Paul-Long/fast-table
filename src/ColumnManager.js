@@ -136,6 +136,9 @@ export default class ColumnManager {
           newColumn._width = sumBy(newColumn.children, '_width');
           newColumn._minWidth = sumBy(newColumn.children, '_minWidth');
         }
+        if (newColumn._width < newColumn._minWidth) {
+          newColumn._width = newColumn._minWidth;
+        }
         if (newColumn._currentRow === 0) {
           this.width += newColumn._width;
           if (newColumn.fixed === 'left' || newColumn.fixed === true) {
@@ -259,20 +262,16 @@ export default class ColumnManager {
       let key = column._pathKey;
       if (!key) key = column.path.join('-');
       let width = column._minWidth;
-      if (width) {
-        colWidth[key] = width;
-      } else {
-        let widths = column.widths || [];
-        widths = this._calcWidth(widths, wrapperWidth);
-        width = column.width;
-        if (widths.length > 0) {
-          width = sum(widths);
-        }
-        if (key in colWidth) {
-          throw Error(`duplicate column title - ${key}`);
-        }
-        colWidth[key] = width;
+      let widths = column.widths || [];
+      widths = this._calcWidth(widths, wrapperWidth);
+      width = column.width;
+      if (widths.length > 0) {
+        width = sum(widths);
       }
+      if (key in colWidth) {
+        throw Error(`duplicate column title - ${key}`);
+      }
+      colWidth[key] = width;
       const children = column.children || [];
       if (children.length > 0) {
         colWidth = this._getColWidth(children, wrapperWidth, colWidth, currentRow + 1);
