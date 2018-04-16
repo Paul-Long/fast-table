@@ -118,7 +118,7 @@ export default class ColumnManager {
     this.width = 0;
     this.leftWidth = 0;
     this.rightWidth = 0;
-    const average = wrapperWidth < baseWidth ? 0 : floor((wrapperWidth - baseWidth) / len);
+    const average = floor((wrapperWidth - baseWidth) / len);
     const update = (columns) => {
       return columns.map(column => {
         const newColumn = {...column};
@@ -135,9 +135,6 @@ export default class ColumnManager {
           newColumn.children = update(children);
           newColumn._width = sumBy(newColumn.children, '_width');
           newColumn._minWidth = sumBy(newColumn.children, '_minWidth');
-        }
-        if (newColumn._width < newColumn._minWidth) {
-          newColumn._width = newColumn._minWidth;
         }
         if (newColumn._currentRow === 0) {
           this.width += newColumn._width;

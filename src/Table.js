@@ -69,7 +69,7 @@ class Table extends TableProps {
 
   componentDidMount() {
     this.handleWindowResize();
-    this.resizeEvent = addEventListener(document.body, 'resize', this.debouncedWindowResize);
+    this.resizeEvent = addEventListener(window, 'resize', this.debouncedWindowResize);
   }
 
   componentWillReceiveProps(nextProps) {
