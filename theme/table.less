@@ -5,8 +5,7 @@
 .@{tablePrefixCls} {
   overflow: hidden;
   position: relative;
-  display: flex;
-  flex-direction: column;
+  display: block;
   box-sizing: border-box;
   line-height: 1.5;
   background: @tableBgColor;
@@ -27,7 +26,7 @@
   &-content {
   }
   &-empty-text {
-    color: #9ab9b9;
+    color: @emptyTextColor;
     box-sizing: border-box;
   }
   &-footer {
@@ -37,6 +36,7 @@
     background: @tableHeaderBg;
     color: @tableHeaderText;
     overflow: scroll;
+    flex: 1 0 auto;
     .row-group {
       display: flex;
       flex-direction: column;

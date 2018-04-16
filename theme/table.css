@@ -180,8 +180,7 @@
 .vt {
   overflow: hidden;
   position: relative;
-  display: flex;
-  flex-direction: column;
+  display: block;
   box-sizing: border-box;
   line-height: 1.5;
   background: #172422;
@@ -210,6 +209,7 @@
   background: #121a19;
   color: #7b8082;
   overflow: scroll;
+  flex: 1 0 auto;
 }
 .vt-header .row-group {
   display: flex;
