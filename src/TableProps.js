@@ -76,7 +76,6 @@ export default class TableProps extends React.PureComponent {
     colMinWidth: 60,
     scrollEndPosition: 60,
     indentSize: 17,
-    bodyMaxHeight: '100%',
 
     style: {},
 

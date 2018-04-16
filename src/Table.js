@@ -69,7 +69,7 @@ class Table extends TableProps {
 
   componentDidMount() {
     this.handleWindowResize();
-    this.resizeEvent = addEventListener(window, 'resize', this.debouncedWindowResize);
+    this.resizeEvent = addEventListener(document.body, 'resize', this.debouncedWindowResize);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -112,7 +112,7 @@ class Table extends TableProps {
     const scrollSize = measureScrollbar();
     if (this['tableNode']) {
       const width = findDOMNode(this['tableNode']).getBoundingClientRect().width - (hasScroll ? scrollSize : 0);
-      this.columnManager.updateColWidth(width);
+      this.columnManager.updateWidth(width);
     }
   };
 

@@ -88,63 +88,70 @@ export default class ColumnManager {
     );
   }
 
+  updateGroupedColumns(columns) {
+    this._cached['groupedColumns'] = columns;
+    delete this._cached['leafColumns'];
+    delete this._cached['leftColumns'];
+    delete this._cached['rightColumns'];
+    delete this._cached['leftLeafColumns'];
+    delete this._cached['rightLeafColumns'];
+  }
+
   overflowX() {
     return this.hasOverflowX;
   }
 
-  updateColWidth(wrapperWidth) {
+  updateWidth(wrapperWidth) {
     if (this.wrapperWidth !== wrapperWidth) {
-      delete this._cached['getColWidth'];
       this.wrapperWidth = wrapperWidth;
-      const columns = this.groupedColumns();
-      const leafColumns = this.leafColumns();
-      const minWidths = this._getColWidth(columns, wrapperWidth);
-      const len = leafColumns.length;
-      const last = leafColumns[len - 1];
-      const baseWidth = sumBy(columns, column => minWidths[column._pathKey]);
-      this.width = 0;
-      this.leftWidth = 0;
-      this.rightWidth = 0;
-      const average = wrapperWidth < baseWidth ? 0 : floor((wrapperWidth - baseWidth) / len);
-      const update = (columns) => {
-        return columns.map(column => {
-          const newColumn = {...column};
-          const key = newColumn.path.join('-');
-          const width = minWidths[key];
-          if (newColumn._pathKey === last._pathKey) {
-            newColumn._width = wrapperWidth - this.width;
-          } else {
-            newColumn._width = width + average;
-          }
-          newColumn._minWidth = width;
-          const children = newColumn.children || [];
-          if (children.length > 0) {
-            newColumn.children = update(children);
-            newColumn._width = sumBy(newColumn.children, '_width');
-            newColumn._minWidth = sumBy(newColumn.children, '_minWidth');
-          }
-          if (newColumn._width < newColumn._minWidth) {
-            newColumn._width = newColumn._minWidth;
-          }
-          if (newColumn._currentRow === 0) {
-            this.width += newColumn._width;
-            if (newColumn.fixed === 'left' || newColumn.fixed === true) {
-              this.leftWidth += newColumn._width;
-            } else if (newColumn.fixed === 'right') {
-              this.rightWidth += newColumn._width;
-            }
-          }
-          return newColumn;
-        });
-      };
-      this._cached['groupedColumns'] = update(columns);
-      this.hasOverflowX = this.width > wrapperWidth;
-      delete this._cached['leafColumns'];
-      delete this._cached['leftColumns'];
-      delete this._cached['rightColumns'];
-      delete this._cached['leftLeafColumns'];
-      delete this._cached['rightLeafColumns'];
+      this.updateColWidth(wrapperWidth);
     }
+  }
+
+  updateColWidth(wrapperWidth) {
+    const columns = this.groupedColumns();
+    const leafColumns = this.leafColumns();
+    const minWidths = this._getColWidth(columns, wrapperWidth);
+    const len = leafColumns.length;
+    const last = leafColumns[len - 1];
+    const baseWidth = sumBy(columns, column => minWidths[column._pathKey]);
+    this.width = 0;
+    this.leftWidth = 0;
+    this.rightWidth = 0;
+    const average = wrapperWidth < baseWidth ? 0 : floor((wrapperWidth - baseWidth) / len);
+    const update = (columns) => {
+      return columns.map(column => {
+        const newColumn = {...column};
+        const key = newColumn.path.join('-');
+        const width = minWidths[key];
+        if (newColumn._pathKey === last._pathKey) {
+          newColumn._width = wrapperWidth - this.width;
+        } else {
+          newColumn._width = width + average;
+        }
+        newColumn._minWidth = width;
+        const children = newColumn.children || [];
+        if (children.length > 0) {
+          newColumn.children = update(children);
+          newColumn._width = sumBy(newColumn.children, '_width');
+          newColumn._minWidth = sumBy(newColumn.children, '_minWidth');
+        }
+        if (newColumn._width < newColumn._minWidth) {
+          newColumn._width = newColumn._minWidth;
+        }
+        if (newColumn._currentRow === 0) {
+          this.width += newColumn._width;
+          if (newColumn.fixed === 'left' || newColumn.fixed === true) {
+            this.leftWidth += newColumn._width;
+          } else if (newColumn.fixed === 'right') {
+            this.rightWidth += newColumn._width;
+          }
+        }
+        return newColumn;
+      });
+    };
+    this.updateGroupedColumns(update(columns));
+    this.hasOverflowX = this.width > wrapperWidth;
   }
 
   getWidth(fixed) {
@@ -159,6 +166,9 @@ export default class ColumnManager {
   reset(columns, elements) {
     this.columns = columns || this.normalize(elements);
     this._cached = {};
+    if (this.wrapperWidth) {
+      this.updateColWidth(this.wrapperWidth);
+    }
   }
 
   _calcWidth(widths, wrapperWidth) {
