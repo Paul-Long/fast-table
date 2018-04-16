@@ -14,9 +14,12 @@ function HeadTable(props, {table}) {
     return null;
   }
   const scrollbarWidth = measureScrollbar('horizontal');
-  if (scrollbarWidth > 0 && !fixed) {
+  if (scrollbarWidth > 0 && !fixed && table.columnManager.overflowX()) {
     headStyle.marginBottom = `-${scrollbarWidth}px`;
     headStyle.paddingBottom = '0px';
+  }
+  if (!table.columnManager.overflowX()) {
+    headStyle.overflowX = 'hidden';
   }
   headStyle.overflowY = hasScroll ? 'scroll' : 'auto';
   return (

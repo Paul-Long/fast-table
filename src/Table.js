@@ -25,14 +25,13 @@ class Table extends TableProps {
     this.lastScrollTop = 0;
     this.lastScrollLeft = 0;
     this.refreshAble = true;
-    this.hasScroll = false;
     this.showCount = props.defaultShowCount || 30;
     this.columnManager = new ColumnManager(props.columns, props.colMinWidth);
     this.dataManager = new DataManager({...props, rowKey: this.getRowKey});
     this.sortManager = new SortManager(this.columnManager.groupedColumns(), props.sortMulti);
     this.store = create({
       currentHoverKey: null,
-      hasScroll: this.hasScroll,
+      hasScroll: false,
       headHeight: this.columnManager.maxRowSpan() * props.headerRowHeight,
       minWidths: {},
       orders: this.sortManager.enabled(),
@@ -106,8 +105,6 @@ class Table extends TableProps {
 
   handleWindowResize = () => {
     this.showCount = this.getShowCount();
-    const {bodyHeight} = this.dataManager.getRowsHeight();
-    this.hasScroll = this['bodyTable'].getBoundingClientRect().height < bodyHeight;
     this.resetData();
   };
 
@@ -224,16 +221,18 @@ class Table extends TableProps {
     const scrollTop = target.scrollTop;
     const {rowHeight} = this.props;
     const dataSource = this.dataManager.showData() || [];
+    const {bodyHeight} = this.dataManager.getRowsHeight();
+    const hasScroll = this['bodyTable'].getBoundingClientRect().height < bodyHeight;
 
-    if (!this.hasScroll) {
-      return {hasScroll: this.hasScroll, showData: dataSource};
+    if (!hasScroll) {
+      return {hasScroll, showData: dataSource};
     }
     let startIndex = floor(scrollTop / rowHeight) - 1;
     startIndex = startIndex < 0 ? 0 : startIndex;
     let endIndex = startIndex + this.showCount;
     const showData = dataSource.slice(startIndex, endIndex);
     return {
-      hasScroll: this.hasScroll,
+      hasScroll,
       showData
     };
   };
@@ -356,7 +355,7 @@ class Table extends TableProps {
       flex: `0 1 ${rowHeight}px`,
       textAlign: 'center'
     };
-    if (scrollbarWidth > 0 && (fixedHeader && showHeader)) {
+    if (scrollbarWidth > 0 && (fixedHeader && showHeader) && this.columnManager.overflowX()) {
       style.marginTop = `${scrollbarWidth}px`;
     }
     return typeof emptyText === 'function' ? (

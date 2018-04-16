@@ -53,7 +53,7 @@ class TableHeaderCell extends React.PureComponent {
     let sorter;
     const order = orders[column.dataIndex];
     if (column.sortEnable && children.length === 0 && order) {
-      sorter = (<Sorter dataIndex={column.dataIndex} order={order} onSort={onSort} />);
+      sorter = (<Sorter dataIndex={column.dataIndex} order={order} />);
     }
     style.height = (rowSpan || 1) * this.props.headerRowHeight;
     style.lineHeight = (rowSpan || 1) * (style.height / 20);
@@ -63,9 +63,9 @@ class TableHeaderCell extends React.PureComponent {
       className: classNames('th', {'has-child': children.length > 0}),
       style
     };
-    if (column.sortEnable && !order) {
+    if (column.sortEnable) {
       props.onClick = () => {
-        onSort(column.dataIndex, 'desc');
+        onSort(column.dataIndex, order === 'desc' || order === true ? 'asc' : 'desc');
       };
     }
     return (

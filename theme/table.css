@@ -258,9 +258,9 @@
   transform-origin: 0 0;
 }
 .vt-sorter-desc:after {
-  top: -1px;
-  border-left: 2px solid #7b8082;
-  border-top: 2px solid #7b8082;
+  bottom: 0;
+  border-right: 2px solid #7b8082;
+  border-bottom: 2px solid #7b8082;
   transform: rotate(45deg);
 }
 .vt-sorter-asc {
@@ -282,9 +282,9 @@
   transform-origin: 0 0;
 }
 .vt-sorter-asc:after {
-  bottom: 0;
-  border-right: 2px solid #7b8082;
-  border-bottom: 2px solid #7b8082;
+  top: -1px;
+  border-left: 2px solid #7b8082;
+  border-top: 2px solid #7b8082;
   transform: rotate(45deg);
 }
 .vt-fixed-left,
