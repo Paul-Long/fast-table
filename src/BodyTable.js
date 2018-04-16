@@ -6,7 +6,7 @@ import {measureScrollbar} from './Utils';
 
 function BodyTable(props, {table}) {
   const {saveRef} = table;
-  const {prefixCls, fixedHeader, showHeader, footer, footerHeight, dataSource} = table.props;
+  const {prefixCls, fixedHeader, showHeader, footer, footerHeight, dataSource, bodyMaxHeight} = table.props;
   const columnManager = table.columnManager;
   const {
     fixed,
@@ -35,6 +35,9 @@ function BodyTable(props, {table}) {
     height,
     overflowY: hasScroll ? 'scroll' : 'auto'
   };
+  if (bodyMaxHeight) {
+    style.maxHeight = bodyMaxHeight;
+  }
   if (!columnManager.overflowX()) {
     style.overflowX = 'hidden';
   }
