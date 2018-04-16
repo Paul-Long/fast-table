@@ -8,7 +8,6 @@ import multiply from 'lodash/multiply';
 import isNumber from 'lodash/isNumber';
 import toNumber from 'lodash/toNumber';
 import divide from 'lodash/divide';
-import ceil from 'lodash/ceil';
 import floor from 'lodash/floor';
 
 const percentReg = /^\d+\.?\d{0,2}%$/;
@@ -166,15 +165,14 @@ export default class ColumnManager {
     widths = widths.map(w => {
       if (typeof w === 'string' && percentReg.test(w)) {
         const i = w.replace('%', '');
-        let width = this._minWidth(multiply(wrapperWidth, divide(i, 100)));
-        return ceil(width);
+        return this._minWidth(multiply(wrapperWidth, divide(i, 100)));
       }
       if (w && typeof w === 'string') {
         w = w.replace(/[^\d]/g, '');
       }
       let ww = toNumber(w);
       if (!isNaN(ww) && isNumber(ww)) {
-        return ceil(this._minWidth(ww));
+        return this._minWidth(ww);
       }
       return this._minWidth(w);
     });

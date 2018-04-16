@@ -345,7 +345,7 @@ class Table extends TableProps {
   };
 
   renderEmptyText = () => {
-    const {emptyText, dataSource, rowHeight, prefixCls} = this.props;
+    const {emptyText, dataSource, rowHeight, prefixCls, fixedHeader, showHeader} = this.props;
     if (dataSource && dataSource.length > 0) {
       return null;
     }
@@ -356,7 +356,7 @@ class Table extends TableProps {
       flex: `0 1 ${rowHeight}px`,
       textAlign: 'center'
     };
-    if (scrollbarWidth > 0) {
+    if (scrollbarWidth > 0 && (fixedHeader && showHeader)) {
       style.marginTop = `${scrollbarWidth}px`;
     }
     return typeof emptyText === 'function' ? (
