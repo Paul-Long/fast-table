@@ -137,8 +137,8 @@ export default class ColumnManager {
           return newColumn;
         });
       };
-      this.hasOverflowX = this.width > wrapperWidth;
       this._cached['groupedColumns'] = update(columns);
+      this.hasOverflowX = this.width > wrapperWidth;
       delete this._cached['leafColumns'];
       delete this._cached['leftColumns'];
       delete this._cached['rightColumns'];

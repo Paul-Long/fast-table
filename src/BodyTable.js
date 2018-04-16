@@ -35,6 +35,9 @@ function BodyTable(props, {table}) {
     height,
     overflowY: hasScroll ? 'scroll' : 'auto'
   };
+  if (!columnManager.overflowX()) {
+    style.overflowX = 'hidden';
+  }
   const scrollbarWidth = measureScrollbar();
   if (scrollbarWidth > 0 && fixed) {
     style.marginBottom = `-${scrollbarWidth}px`;
