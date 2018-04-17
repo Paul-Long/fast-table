@@ -178,10 +178,12 @@
 .@{tablePrefixCls} {
   &.@{tablePrefixCls}-scroll-position-left, &.@{tablePrefixCls}-scroll-position-middle {
     .@{tablePrefixCls}-fixed-right {
-      .@{tablePrefixCls}-body-outer {
-        position: relative;
-        .border-left();
-      }
+      box-shadow: -3px 0 3px rgba(0, 0, 0, 0.4);
+    }
+  }
+  &.@{tablePrefixCls}-scroll-position-right, &.@{tablePrefixCls}-scroll-position-middle {
+    .@{tablePrefixCls}-fixed-left {
+      box-shadow: 3px 0 3px rgba(0, 0, 0, 0.4);
     }
   }
 }
