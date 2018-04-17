@@ -417,12 +417,10 @@
   width: 8px;
   height: 1px;
 }
-
 .vt.vt-scroll-position-left .vt-fixed-right,
 .vt.vt-scroll-position-middle .vt-fixed-right {
   box-shadow: -3px 0 3px rgba(0, 0, 0, 0.4);
 }
-
 .vt.vt-scroll-position-right .vt-fixed-left,
 .vt.vt-scroll-position-middle .vt-fixed-left {
   box-shadow: 3px 0 3px rgba(0, 0, 0, 0.4);
