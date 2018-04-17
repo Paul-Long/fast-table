@@ -70,6 +70,11 @@ class Table extends TableProps {
     };
   }
 
+  componentDidMount() {
+    const scrollSize = measureScrollbar();
+    this._scrollSize = scrollSize;
+  }
+
   componentWillReceiveProps(nextProps) {
     if (!shallowEqual(nextProps.dataSource, this.props.dataSource)) {
       this.dataManager.reset(nextProps.dataSource);
@@ -106,9 +111,19 @@ class Table extends TableProps {
   };
 
   hasScroll = () => {
-    const {bodyHeight} = this.dataManager.getRowsHeight();
-    this._hasScroll = this._height > 0 && bodyHeight > this._height;
+    const fullHeight = this.fullSize();
+    this._hasScroll = this._height > 0 && fullHeight > this._height;
     return this._hasScroll;
+  };
+
+  fullSize = () => {
+    const {bodyHeight} = this.dataManager.getRowsHeight();
+    const {showHeader, footerHeight, footer, rowHeight} = this.props;
+    return bodyHeight
+      + (showHeader ? this._headHeight : 0)
+      + (footer ? footerHeight : 0)
+      + (this.dataManager.isEmpty() ? rowHeight : 0)
+      + (this.columnManager.overflowX() ? this._scrollSize : 0);
   };
 
   onResize = ({width, height}) => {
@@ -120,10 +135,9 @@ class Table extends TableProps {
   };
 
   updateColumn = () => {
-    const scrollSize = measureScrollbar();
     this.hasScroll();
     if (this._width > 0) {
-      const width = this._width - (this._hasScroll ? scrollSize : 0);
+      const width = this._width - (this._hasScroll ? this._scrollSize : 0);
       this.columnManager.updateWidth(width);
     }
   };
@@ -366,6 +380,10 @@ class Table extends TableProps {
         <AutoSizer onResize={this.onResize}>
           {({width, height}) => {
             this._width = width;
+            let fullHeight = this.fullSize();
+            if (fullHeight < height) {
+              height = fullHeight;
+            }
             this._height = height;
             this.updateColumn();
             return (
