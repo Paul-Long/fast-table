@@ -54,13 +54,8 @@ export default class AutoSizer extends React.PureComponent<Props, State> {
       this._autoSizer.parentNode instanceof
       this._autoSizer.parentNode.ownerDocument.defaultView.HTMLElement
     ) {
-      // Delay access of parentNode until mount.
-      // This handles edge-cases where the component has already been unmounted before its ref has been set,
-      // As well as libraries like react-lite which have a slightly different lifecycle.
       this._parentNode = this._autoSizer.parentNode;
 
-      // Defer requiring resize handler in order to support server-side rendering.
-      // See issue #41
       this._detectElementResize = createDetectElementResize(nonce);
       this._detectElementResize.addResizeListener(
         this._parentNode,
@@ -121,10 +116,6 @@ export default class AutoSizer extends React.PureComponent<Props, State> {
     const {disableHeight, disableWidth, onResize} = this.props;
 
     if (this._parentNode) {
-      // Guard against AutoSizer component being removed from the DOM immediately after being added.
-      // This can result in invalid style values which can result in NaN values if we don't handle them.
-      // See issue #150 for more context.
-
       const height = this._parentNode.offsetHeight || 0;
       const width = this._parentNode.offsetWidth || 0;
 

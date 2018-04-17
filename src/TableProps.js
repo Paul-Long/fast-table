@@ -73,7 +73,7 @@ export default class TableProps extends React.Component {
     headerRowHeight: 35,
     footerHeight: 30,
     defaultShowCount: 30,
-    colMinWidth: 60,
+    colMinWidth: 100,
     scrollEndPosition: 60,
     indentSize: 17,
 

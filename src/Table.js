@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {findDOMNode} from 'react-dom';
 import classNames from 'classnames';
 import merge from 'lodash/merge';
 import floor from 'lodash/floor';
@@ -13,7 +12,7 @@ import BodyTable from './BodyTable';
 import ColumnManager from './ColumnManager';
 import DataManager from './DataManager';
 import SortManager from './SortManager';
-import {debounce, measureScrollbar} from './Utils';
+import {measureScrollbar} from './Utils';
 import AutoSizer from './AutoSizer';
 import {create, Provider} from './mini-store';
 import TableProps from './TableProps';
@@ -30,16 +29,17 @@ class Table extends TableProps {
     this.columnManager = new ColumnManager(props.columns, props.colMinWidth);
     this.dataManager = new DataManager({...props, rowKey: this.getRowKey});
     this.sortManager = new SortManager(this.columnManager.groupedColumns(), props.sortMulti);
+    this._headHeight = this.columnManager.maxRowSpan() * props.headerRowHeight;
+    this._hasScroll = this.hasScroll();
     this.store = create({
       currentHoverKey: null,
-      hasScroll: false,
-      headHeight: this.columnManager.maxRowSpan() * props.headerRowHeight,
+      hasScroll: this._hasScroll,
+      headHeight: this._headHeight,
       minWidths: {},
       orders: this.sortManager.enabled(),
       ...this.dataManager.getRowsHeight(),
       newColumns: this.columnManager.groupedColumns()
     });
-    this.debouncedWindowResize = debounce(this.handleWindowResize, 150);
   }
 
   getChildContext() {
@@ -47,6 +47,7 @@ class Table extends TableProps {
       table: {
         props: this.props,
         saveRef: this.saveRef,
+        tableSize: this.tableSize,
         columnManager: this.columnManager,
         dataManager: this.dataManager,
         sortManager: this.sortManager,
@@ -69,19 +70,15 @@ class Table extends TableProps {
     };
   }
 
-  componentDidMount() {
-    // this.handleWindowResize();
-    // this.resizeEvent = addEventListener(window, 'resize', this.debouncedWindowResize);
-  }
-
   componentWillReceiveProps(nextProps) {
     if (!shallowEqual(nextProps.dataSource, this.props.dataSource)) {
       this.dataManager.reset(nextProps.dataSource);
+      this.hasScroll();
       this.resetData();
     }
     if (!shallowEqual(nextProps.columns, this.props.columns)) {
       this.columnManager.reset(nextProps.columns, this.props.colMinWidth);
-      this.handleWindowResize();
+      this.onResize({width: this._width || 0, height: this._height || 0});
     }
   }
 
@@ -89,42 +86,50 @@ class Table extends TableProps {
     return false;
   }
 
-  componentWillUnmount() {
-    if (this.resizeEvent) {
-      this.resizeEvent.remove();
-    }
-  }
-
-  componentDidUpdate() {
-    const showCount = this.getShowCount();
-    if (this.showCount !== showCount) this.resetData();
-  }
-
   getShowCount = () => {
     const dataSource = this.dataManager.showData();
-    this.bodyHeight = this._height || 0;
-    let showCount = 5 + (this.bodyHeight / this.props.rowHeight);
+    const _height = this._height || 0;
+    let showCount = 5 + (_height / this.props.rowHeight);
     showCount = showCount > dataSource.length ? dataSource.length : showCount;
     showCount = Math.max(showCount, this.props.defaultShowCount);
     return ceil(showCount) + 2;
   };
 
-  handleWindowResize = () => {
-    this.showCount = this.getShowCount();
-    this.resetData();
+  tableSize = () => {
+    const {footer, footerHeight} = this.props;
+    return {
+      width: this._width || 0,
+      height: this._height || 0,
+      headHeight: this._headHeight,
+      footerHeight: footer ? footerHeight : 0
+    };
   };
 
-  updateColumn = (hasScroll) => {
+  hasScroll = () => {
+    const {bodyHeight} = this.dataManager.getRowsHeight();
+    this._hasScroll = this._height > 0 && bodyHeight > this._height;
+    return this._hasScroll;
+  };
+
+  onResize = ({width, height}) => {
+    this._width = width;
+    this._height = height;
+    this.showCount = this.getShowCount();
+    this.resetData();
+    this.setScrollPositionClassName();
+  };
+
+  updateColumn = () => {
     const scrollSize = measureScrollbar();
-    if (this['tableNode']) {
-      const width = findDOMNode(this['tableNode']).getBoundingClientRect().width - (hasScroll ? scrollSize : 0);
+    this.hasScroll();
+    if (this._width > 0) {
+      const width = this._width - (this._hasScroll ? scrollSize : 0);
       this.columnManager.updateWidth(width);
     }
   };
 
   resetData = () => {
     const result = this.resetRenderInterval(this['bodyTable']);
-    this.updateColumn(result.hasScroll);
     this.store.setState({
       ...this.dataManager.getRowsHeight(),
       ...result,
@@ -205,11 +210,11 @@ class Table extends TableProps {
         bodyTable.scrollTop = target.scrollTop;
       }
       this.store.setState(result);
+      if (this.props.refreshEnable) {
+        this.scrollRefresh(target);
+      }
     }
     this.lastScrollTop = target.scrollTop;
-    if (this.props.refreshEnable) {
-      this.scrollRefresh(target);
-    }
   };
 
   scrollRefresh = (target) => {
@@ -231,10 +236,7 @@ class Table extends TableProps {
     }
     const {rowHeight} = this.props;
     const dataSource = this.dataManager.showData() || [];
-    const {bodyHeight} = this.dataManager.getRowsHeight();
-    const bHeight = this._height || 0;
-    const hasScroll = bHeight !== 0 && bHeight < bodyHeight;
-
+    const hasScroll = this.hasScroll();
     if (!hasScroll) {
       return {hasScroll, showData: dataSource};
     }
@@ -270,14 +272,6 @@ class Table extends TableProps {
     );
   };
 
-  getStyle = ({width, height}) => {
-    const {style} = this.props;
-    const baseStyle = Object.assign({}, style);
-    width && (baseStyle.width = width);
-    height && (baseStyle.height = height);
-    return baseStyle;
-  };
-
   getRowKey = (record, index) => {
     const rowKey = this.props.rowKey;
     if (typeof rowKey === 'function') {
@@ -291,18 +285,16 @@ class Table extends TableProps {
   };
 
   renderTable = (options) => {
-    const {columns, fixed} = options;
+    const {fixed} = options;
     const headTable = (
       <HeadTable
         key='head'
-        columns={columns}
         fixed={fixed}
       />
     );
     const bodyTable = (
       <BodyTable
         key='body'
-        columns={columns}
         fixed={fixed}
         handleBodyScroll={this.handleBodyScroll}
       />
@@ -310,36 +302,21 @@ class Table extends TableProps {
     return [headTable, bodyTable];
   };
 
-  getFixedProps = (fixed) => {
-    const {prefixCls, footerHeight, rowHeight, footer} = this.props;
-    const height = (footer ? footerHeight : 0) + (this.dataManager.isEmpty() ? rowHeight : 0);
-    return {
-      className: `${prefixCls}-fixed-${fixed}`,
-      style: {height: `calc(100% - ${height}px)`}
-    };
-  };
+  fixedClassName = fixed => `${this.props.prefixCls}-fixed-${fixed}`;
 
   renderMainTable = () => {
-    const table = this.renderTable({
-      columns: this.columnManager.groupedColumns()
-    });
+    const table = this.renderTable({});
     return [table, this.renderEmptyText(), this.renderFooter()];
   };
 
   renderLeftFixedTable = () => {
-    const table = this.renderTable({
-      columns: this.columnManager.leftColumns(),
-      fixed: 'left'
-    });
-    return (<div {...this.getFixedProps('left')}>{table}</div>);
+    const table = this.renderTable({fixed: 'left'});
+    return (<div className={this.fixedClassName('left')}>{table}</div>);
   };
 
   renderRightFixedTable = () => {
-    const table = this.renderTable({
-      columns: this.columnManager.rightColumns(),
-      fixed: 'right'
-    });
-    return (<div {...this.getFixedProps('right')}>{table}</div>);
+    const table = this.renderTable({fixed: 'right'});
+    return (<div className={this.fixedClassName('right')}>{table}</div>);
   };
 
   renderFooter = () => {
@@ -381,21 +358,21 @@ class Table extends TableProps {
 
 
   render() {
+    const {style} = this.props;
     const hasLeftFixed = this.columnManager.isAnyColumnsLeftFixed();
     const hasRightFixed = this.columnManager.isAnyColumnsRightFixed();
     return (
       <Provider store={this.store}>
-        <AutoSizer>
+        <AutoSizer onResize={this.onResize}>
           {({width, height}) => {
-            console.log(width, height);
             this._width = width;
             this._height = height;
-            this.handleWindowResize();
+            this.updateColumn();
             return (
               <div
                 className={this.getClassName()}
                 ref={this.saveRef('tableNode')}
-                style={this.getStyle({width, height})}
+                style={{...style, width, height}}
               >
                 {this.renderMainTable()}
                 {hasLeftFixed && this.renderLeftFixedTable()}

@@ -83,8 +83,6 @@ class BaseTable extends React.PureComponent {
     const table = this.context.table;
     const components = table.components;
     const columnManager = table.columnManager;
-    let width = table.columnManager.getWidth(fixed);
-    width = width || '100%';
     let body;
     const Table = components.table;
     const BodyWrapper = components.body.wrapper;
@@ -105,6 +103,8 @@ class BaseTable extends React.PureComponent {
       columns = columnManager.groupedColumns();
     }
 
+    let width = table.columnManager.getWidth(fixed);
+    width = width || '100%';
     const style = {width};
     if (!fixed) {
       style.minWidth = '100%';

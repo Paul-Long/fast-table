@@ -86,6 +86,9 @@
       width: auto;
       min-width: 0;
     }
+    .@{tablePrefixCls}-body-inner {
+      overflow: scroll;
+    }
     .vt-header, .vt-body {
       overflow: hidden;
     }
@@ -169,5 +172,16 @@
   &-icon.expanded {
     background: #ffebc8;
     .vt-icon-minus();
+  }
+}
+
+.@{tablePrefixCls} {
+  &.@{tablePrefixCls}-scroll-position-left, &.@{tablePrefixCls}-scroll-position-middle {
+    .@{tablePrefixCls}-fixed-right {
+      .@{tablePrefixCls}-body-outer {
+        position: relative;
+        .border-left();
+      }
+    }
   }
 }

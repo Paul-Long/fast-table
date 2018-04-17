@@ -4,12 +4,11 @@ import TableHeaderCell from './TableHeaderCell';
 
 function TableHeader(props, {table}) {
   const {columns, orders, onSort, fixed} = props;
-  const {headerRowHeight, bordered} = table.props;
+  const {headerRowHeight} = table.props;
   const components = table.components;
   const HeaderWrapper = components.header.wrapper;
   const HeaderRow = components.header.row;
-  const HeaderCell = components.header.cell;
-  const rowHeight = headerRowHeight - (bordered ? 1 : 0);
+  const rowHeight = headerRowHeight;
   return (
     <HeaderWrapper className='thead'>
       <HeaderRow className='tr'>

@@ -6,7 +6,7 @@ import {measureScrollbar} from './Utils';
 
 function HeadTable(props, {table}) {
   const {prefixCls, showHeader} = table.props;
-  const {columns, fixed, hasScroll} = props;
+  const {fixed, hasScroll} = props;
   const {saveRef} = table;
   let {fixedHeader} = table.props;
   const headStyle = {};
@@ -33,7 +33,6 @@ function HeadTable(props, {table}) {
         hasHead
         hasBody={false}
         fixed={fixed}
-        columns={columns}
       />
     </div>
   )
@@ -51,7 +50,6 @@ HeadTable.propTypes = {
     PropTypes.string,
     PropTypes.bool
   ]),
-  columns: PropTypes.array.isRequired,
   onSort: PropTypes.func
 };
 

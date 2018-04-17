@@ -6,31 +6,29 @@ import {measureScrollbar} from './Utils';
 
 function BodyTable(props, {table}) {
   const {saveRef} = table;
-  const {prefixCls, fixedHeader, showHeader, footer, footerHeight, dataSource, bodyMaxHeight} = table.props;
+  const {prefixCls, fixedHeader, showHeader, dataSource, bodyMaxHeight} = table.props;
   const columnManager = table.columnManager;
+  const tableSize = table.tableSize();
   const {
     fixed,
-    columns,
     hasScroll,
-    handleBodyScroll,
-    headHeight
+    handleBodyScroll
   } = props;
   const baseTable = (
     <BaseTable
       hasHead={!fixedHeader}
       hasBody
       fixed={fixed}
-      columns={columns}
     />
   );
   let height = 0;
   if (dataSource && dataSource.length > 0) {
-    const hHeight = fixedHeader ? headHeight : 0;
-    const fHeight = footer && !fixed ? footerHeight : 0;
-    height = showHeader
-      ? `calc(100% - ${hHeight + 1 + fHeight}px)`
-      : '100%';
+    height = showHeader && fixedHeader
+      ? tableSize.height - tableSize.footerHeight - tableSize.headHeight
+      : tableSize.height - tableSize.footerHeight;
   }
+
+  const scrollbarWidth = measureScrollbar();
   const style = {
     height,
     overflowY: hasScroll ? 'scroll' : 'auto'
@@ -38,11 +36,7 @@ function BodyTable(props, {table}) {
   if (bodyMaxHeight) {
     style.maxHeight = bodyMaxHeight;
   }
-  if (!columnManager.overflowX()) {
-    style.overflowX = 'hidden';
-  }
-  const scrollbarWidth = measureScrollbar();
-  if (scrollbarWidth > 0 && fixed) {
+  if (scrollbarWidth > 0 && fixed && columnManager.overflowX()) {
     style.marginBottom = `-${scrollbarWidth}px`;
     style.paddingBottom = '0px';
   }
@@ -63,8 +57,9 @@ function BodyTable(props, {table}) {
           className={`${prefixCls}-body-inner`}
           ref={saveRef(scrollRef)}
           style={{
-            height: `calc(100% - ${columnManager.overflowX() ? scrollbarWidth : 0}px)`,
-            overflowY: hasScroll ? 'scroll' : 'hidden'
+            height: '100%',
+            overflowY: hasScroll ? 'scroll' : 'hidden',
+            overflowX: columnManager.overflowX() ? 'scroll' : 'hidden'
           }}
           onScroll={handleBodyScroll}
         >
@@ -87,10 +82,9 @@ function BodyTable(props, {table}) {
 }
 
 export default connect((state) => {
-  const {hasScroll, headHeight} = state;
+  const {hasScroll} = state;
   return {
-    hasScroll,
-    headHeight
+    hasScroll
   };
 })(BodyTable);
 BodyTable.contextTypes = {
