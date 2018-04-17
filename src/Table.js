@@ -13,7 +13,8 @@ import BodyTable from './BodyTable';
 import ColumnManager from './ColumnManager';
 import DataManager from './DataManager';
 import SortManager from './SortManager';
-import {addEventListener, debounce, measureScrollbar} from './Utils';
+import {debounce, measureScrollbar} from './Utils';
+import AutoSizer from './AutoSizer';
 import {create, Provider} from './mini-store';
 import TableProps from './TableProps';
 
@@ -69,8 +70,8 @@ class Table extends TableProps {
   }
 
   componentDidMount() {
-    this.handleWindowResize();
-    this.resizeEvent = addEventListener(window, 'resize', this.debouncedWindowResize);
+    // this.handleWindowResize();
+    // this.resizeEvent = addEventListener(window, 'resize', this.debouncedWindowResize);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -82,6 +83,10 @@ class Table extends TableProps {
       this.columnManager.reset(nextProps.columns, this.props.colMinWidth);
       this.handleWindowResize();
     }
+  }
+
+  shouldComponentUpdate() {
+    return false;
   }
 
   componentWillUnmount() {
@@ -97,7 +102,7 @@ class Table extends TableProps {
 
   getShowCount = () => {
     const dataSource = this.dataManager.showData();
-    this.bodyHeight = this['bodyTable'].getBoundingClientRect().height;
+    this.bodyHeight = this._height || 0;
     let showCount = 5 + (this.bodyHeight / this.props.rowHeight);
     showCount = showCount > dataSource.length ? dataSource.length : showCount;
     showCount = Math.max(showCount, this.props.defaultShowCount);
@@ -220,11 +225,14 @@ class Table extends TableProps {
   };
 
   resetRenderInterval = (target) => {
-    const scrollTop = target.scrollTop;
+    let scrollTop = 0;
+    if (target) {
+      scrollTop = target.scrollTop;
+    }
     const {rowHeight} = this.props;
     const dataSource = this.dataManager.showData() || [];
     const {bodyHeight} = this.dataManager.getRowsHeight();
-    const bHeight = this['bodyTable'].getBoundingClientRect().height;
+    const bHeight = this._height || 0;
     const hasScroll = bHeight !== 0 && bHeight < bodyHeight;
 
     if (!hasScroll) {
@@ -262,8 +270,8 @@ class Table extends TableProps {
     );
   };
 
-  getStyle = () => {
-    const {width, height, style} = this.props;
+  getStyle = ({width, height}) => {
+    const {style} = this.props;
     const baseStyle = Object.assign({}, style);
     width && (baseStyle.width = width);
     height && (baseStyle.height = height);
@@ -377,15 +385,25 @@ class Table extends TableProps {
     const hasRightFixed = this.columnManager.isAnyColumnsRightFixed();
     return (
       <Provider store={this.store}>
-        <div
-          className={this.getClassName()}
-          ref={this.saveRef('tableNode')}
-          style={this.getStyle()}
-        >
-          {this.renderMainTable()}
-          {hasLeftFixed && this.renderLeftFixedTable()}
-          {hasRightFixed && this.renderRightFixedTable()}
-        </div>
+        <AutoSizer>
+          {({width, height}) => {
+            console.log(width, height);
+            this._width = width;
+            this._height = height;
+            this.handleWindowResize();
+            return (
+              <div
+                className={this.getClassName()}
+                ref={this.saveRef('tableNode')}
+                style={this.getStyle({width, height})}
+              >
+                {this.renderMainTable()}
+                {hasLeftFixed && this.renderLeftFixedTable()}
+                {hasRightFixed && this.renderRightFixedTable()}
+              </div>
+            );
+          }}
+        </AutoSizer>
       </Provider>
     );
   }
