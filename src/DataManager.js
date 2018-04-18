@@ -41,6 +41,7 @@ export default class DataManager {
   };
   reset = (data) => {
     this.data = data || [];
+    this.showData();
     this._cached = {};
   };
 

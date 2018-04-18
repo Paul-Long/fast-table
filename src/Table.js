@@ -19,7 +19,7 @@ import {TableDefaultParams, TableParams} from './types';
 
 import '../theme/table.css';
 
-export default class Table extends React.Component<TableParams> {
+export default class Table extends React.PureComponent<TableParams> {
   static defaultProps = TableDefaultParams;
 
   static childContextTypes = {
@@ -89,10 +89,6 @@ export default class Table extends React.Component<TableParams> {
       this.columnManager.reset(nextProps.columns, this.props.colMinWidth);
       this.onResize({width: this._width || 0, height: this._height || 0});
     }
-  }
-
-  shouldComponentUpdate() {
-    return false;
   }
 
   getShowCount = () => {
@@ -263,7 +259,7 @@ export default class Table extends React.Component<TableParams> {
     return {
       hasScroll,
       showData,
-      bodHeight: this.dataManager._bodyHeight
+      bodyHeight: this.dataManager._bodyHeight
     };
   };
 
@@ -375,7 +371,7 @@ export default class Table extends React.Component<TableParams> {
 
 
   render() {
-    const {style, prefixCls} = this.props;
+    const {style, prefixCls, useScrollY} = this.props;
     const hasLeftFixed = this.columnManager.isAnyColumnsLeftFixed();
     const hasRightFixed = this.columnManager.isAnyColumnsRightFixed();
     return (
@@ -384,7 +380,7 @@ export default class Table extends React.Component<TableParams> {
           {({width, height}) => {
             this._width = width;
             let fullHeight = this.fullSize();
-            if (fullHeight < height) {
+            if (fullHeight < height || !useScrollY) {
               height = fullHeight;
             }
             this._height = height;

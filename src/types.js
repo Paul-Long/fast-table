@@ -14,6 +14,7 @@ export type TableParams = {
   sortMulti: boolean,
   refreshEnable: boolean,
   expandedRowByClick: boolean,
+  useScrollY: boolean,
 
   rowRef: Function,
   getRowHeight: Function,
@@ -46,6 +47,7 @@ export const TableDefaultParams = {
   sortMulti: false,
   refreshEnable: true,
   expandedRowByClick: true,
+  useScrollY: true,
 
   rowRef: () => null,
   getRowHeight: () => 1,
