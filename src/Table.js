@@ -145,7 +145,8 @@ export default class Table extends React.PureComponent<TableParams> {
   resetData = () => {
     const result = this.resetShowData(this['bodyTable']);
     this.store.setState({
-      ...result
+      ...result,
+      bodyWidth: this._width
     });
   };
 

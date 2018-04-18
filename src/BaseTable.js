@@ -111,13 +111,15 @@ export default connect((state) => {
     hasScroll,
     bodyHeight,
     showData,
-    orders
+    orders,
+    bodyWidth
   } = state;
   return {
     hasScroll,
     bodyHeight,
     showData,
-    orders
+    orders,
+    bodyWidth
   };
 })(BaseTable);
 
