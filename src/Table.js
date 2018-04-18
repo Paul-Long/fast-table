@@ -15,11 +15,17 @@ import SortManager from './SortManager';
 import {measureScrollbar} from './Utils';
 import AutoSizer from './AutoSizer';
 import {create, Provider} from './mini-store';
-import TableProps from './TableProps';
+import {TableDefaultParams, TableParams} from './types';
 
 import '../theme/table.css';
 
-class Table extends TableProps {
+export default class Table extends React.Component<TableParams> {
+  static defaultProps = TableDefaultParams;
+
+  static childContextTypes = {
+    table: PropTypes.any
+  };
+
   constructor(props) {
     super(props);
     this.lastScrollTop = 0;
@@ -31,14 +37,13 @@ class Table extends TableProps {
     this.sortManager = new SortManager(this.columnManager.groupedColumns(), props.sortMulti);
     this._headHeight = this.columnManager.maxRowSpan() * props.headerRowHeight;
     this._hasScroll = this.hasScroll();
+
     this.store = create({
       currentHoverKey: null,
       hasScroll: this._hasScroll,
       headHeight: this._headHeight,
-      minWidths: {},
       orders: this.sortManager.enabled(),
-      ...this.dataManager.getRowsHeight(),
-      newColumns: this.columnManager.groupedColumns()
+      bodyHeight: this.dataManager._bodyHeight
     });
   }
 
@@ -71,8 +76,7 @@ class Table extends TableProps {
   }
 
   componentDidMount() {
-    const scrollSize = measureScrollbar();
-    this._scrollSize = scrollSize;
+    this._scrollSize = measureScrollbar();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -117,13 +121,13 @@ class Table extends TableProps {
   };
 
   fullSize = () => {
-    const {bodyHeight} = this.dataManager.getRowsHeight();
+    const bodyHeight = this.dataManager._bodyHeight;
     const {showHeader, footerHeight, footer, rowHeight} = this.props;
     return bodyHeight
       + (showHeader ? this._headHeight : 0)
       + (footer ? footerHeight : 0)
       + (this.dataManager.isEmpty() ? rowHeight : 0)
-      + (this.columnManager.overflowX() ? this._scrollSize : 0);
+      + (this.columnManager.overflowX() && this._scrollSize ? this._scrollSize : 0);
   };
 
   onResize = ({width, height}) => {
@@ -143,11 +147,9 @@ class Table extends TableProps {
   };
 
   resetData = () => {
-    const result = this.resetRenderInterval(this['bodyTable']);
+    const result = this.resetShowData(this['bodyTable']);
     this.store.setState({
-      ...this.dataManager.getRowsHeight(),
-      ...result,
-      newColumns: this.columnManager.groupedColumns()
+      ...result
     });
   };
 
@@ -213,7 +215,7 @@ class Table extends TableProps {
     }
     const {headTable, bodyTable, fixedColumnsBodyLeft, fixedColumnsBodyRight} = this;
     if (this.lastScrollTop !== target.scrollTop && target !== headTable) {
-      const result = this.resetRenderInterval(target);
+      const result = this.resetShowData(target);
       if (fixedColumnsBodyLeft && target !== fixedColumnsBodyLeft) {
         fixedColumnsBodyLeft.scrollTop = target.scrollTop;
       }
@@ -243,7 +245,7 @@ class Table extends TableProps {
     }
   };
 
-  resetRenderInterval = (target) => {
+  resetShowData = (target) => {
     let scrollTop = 0;
     if (target) {
       scrollTop = target.scrollTop;
@@ -260,7 +262,8 @@ class Table extends TableProps {
     const showData = dataSource.slice(startIndex, endIndex);
     return {
       hasScroll,
-      showData
+      showData,
+      bodHeight: this.dataManager._bodyHeight
     };
   };
 
@@ -320,7 +323,7 @@ class Table extends TableProps {
 
   renderMainTable = () => {
     const table = this.renderTable({});
-    return [table, this.renderEmptyText(), this.renderFooter()];
+    return [table, this.renderEmptyText()];
   };
 
   renderLeftFixedTable = () => {
@@ -372,7 +375,7 @@ class Table extends TableProps {
 
 
   render() {
-    const {style} = this.props;
+    const {style, prefixCls} = this.props;
     const hasLeftFixed = this.columnManager.isAnyColumnsLeftFixed();
     const hasRightFixed = this.columnManager.isAnyColumnsRightFixed();
     return (
@@ -392,9 +395,12 @@ class Table extends TableProps {
                 ref={this.saveRef('tableNode')}
                 style={{...style, width, height}}
               >
-                {this.renderMainTable()}
-                {hasLeftFixed && this.renderLeftFixedTable()}
-                {hasRightFixed && this.renderRightFixedTable()}
+                <div className={`${prefixCls}-content`}>
+                  {this.renderMainTable()}
+                  {hasLeftFixed && this.renderLeftFixedTable()}
+                  {hasRightFixed && this.renderRightFixedTable()}
+                </div>
+                {this.renderFooter()}
               </div>
             );
           }}
@@ -403,9 +409,3 @@ class Table extends TableProps {
     );
   }
 }
-
-export default Table;
-
-Table.childContextTypes = {
-  table: PropTypes.any
-};

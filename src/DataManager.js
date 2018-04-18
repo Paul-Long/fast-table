@@ -2,6 +2,8 @@ import React from 'react';
 
 export default class DataManager {
   _cached = {};
+  _bodyHeight = 0;
+  _hasExpanded = false;
 
   constructor(props) {
     this.data = props.dataSource || [];
@@ -9,6 +11,7 @@ export default class DataManager {
     this.rowHeight = props.rowHeight;
     this.expandedRowKeys = props.expandedRowKeys || [];
     this.rowKey = props.rowKey;
+    this.showData();
   }
 
   getData = () => {
@@ -18,15 +21,9 @@ export default class DataManager {
   };
 
   showData = () => {
-    return this._cache('showData', () => {
-      return this._showData(this.getData());
-    });
-  };
-
-  getRowsHeight = () => {
-    return this._cache('getRowsHeight', () => {
-      return this._getRowsHeight(this.showData());
-    });
+    return this._cache('showData', () =>
+      this._showData(this.getData())
+    );
   };
 
   isEmpty() {
@@ -67,46 +64,39 @@ export default class DataManager {
     this._cached[name] = fn();
     return this._cached[name];
   };
-  _getRowsHeight = (dataSource) => {
-    dataSource = dataSource || [];
-    let bodyRowsHeight = [];
-    let tops = [];
-    let bodyHeight = 0;
-    for (let index = 0; index < dataSource.length; index++) {
-      const record = dataSource[index];
-      const height = this.getRowHeight(record, index) * this.rowHeight;
-      tops.push(bodyHeight);
-      bodyHeight += height;
-      bodyRowsHeight.push(height);
-    }
-    return {
-      bodyRowsHeight,
-      tops,
-      bodyHeight
-    };
-  };
+
   _getData = (dataSource, level = 0) => {
     dataSource = dataSource || [];
     for (let index = 0; index < dataSource.length; index++) {
-      dataSource[index]['index'] = index;
+      const height = this.getRowHeight(dataSource[index], index) * this.rowHeight;
+      dataSource[index]['_index'] = index;
       dataSource[index]['_expandedLevel'] = level;
+      dataSource[index]['_height'] = height;
       if (!dataSource[index]['key']) {
         dataSource[index]['key'] = this.rowKey(dataSource[index], index);
       }
       const children = dataSource[index]['children'] || [];
+      dataSource[index]['_expandedEnable'] = children.length > 0;
+      this._hasExpanded = this._hasExpanded || children.length > 0;
       if (children.length > 0) {
         dataSource[index]['children'] = this._getData(children, level + 1);
       }
     }
     return dataSource;
   };
+
   _showData = (dataSource, data) => {
     dataSource = dataSource || [];
     data = data || [];
+    if (data.length === 0) {
+      this._bodyHeight = 0;
+    }
     const expandedKeys = this.expandedRowKeys || [];
     for (let index = 0; index < dataSource.length; index++) {
       const record = dataSource[index];
-      record['_showIndex'] = data.length;
+      record._showIndex = data.length;
+      record._top = this._bodyHeight;
+      this._bodyHeight += record._height;
       const children = record.children || [];
       data.push(record);
       if (expandedKeys.length > 0 && expandedKeys.indexOf(record.key) > -1 && children.length > 0) {

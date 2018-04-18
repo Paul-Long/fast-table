@@ -1,10 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Sorter from './Sorter';
 import {cellAlignStyle} from './Utils';
+import {TableHeaderCellParams} from './types';
 
-class TableHeaderCell extends React.PureComponent {
+export default class TableHeaderCell extends React.PureComponent<TableHeaderCellParams> {
   renderChildren = (columns) => {
     columns = columns || [];
     return columns.map((column, index) => {
@@ -47,9 +47,6 @@ class TableHeaderCell extends React.PureComponent {
     } else {
       style.flex = 1;
     }
-    // if (column._minWidth) {
-    //   style.minWidth = column._minWidth;
-    // }
     let sorter;
     const order = orders[column.dataIndex];
     if (column.sortEnable && children.length === 0 && order) {
@@ -103,10 +100,3 @@ class TableHeaderCell extends React.PureComponent {
   }
 }
 
-export default TableHeaderCell;
-TableHeaderCell.propTypes = {
-  column: PropTypes.object,
-  headerRowHeight: PropTypes.number,
-  columns: PropTypes.array,
-  index: PropTypes.number
-};

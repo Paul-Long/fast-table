@@ -5,6 +5,9 @@ import TableRow from './TableRow';
 import {connect} from './mini-store';
 
 class BaseTable extends React.PureComponent {
+  static contextTypes = {
+    table: PropTypes.any
+  };
   handleRowHover = (isHover, key) => {
     this.props.store.setState({
       currentHoverKey: isHover ? key : null
@@ -25,35 +28,24 @@ class BaseTable extends React.PureComponent {
     const rows = [];
     const {
       fixed,
-      showData,
-      tops
+      showData
     } = this.props;
     const table = this.context.table;
     const rowKey = table.rowKey;
     const {
       prefixCls,
       rowRef,
-      getRowHeight,
-      rowHeight,
       rowClassName,
       indentSize,
       expandedRowByClick
     } = table.props;
     const dataManager = table.dataManager;
-    const columnManager = table.columnManager;
-    let columns = [];
-    if (fixed === 'left') {
-      columns = columnManager.leftLeafColumns();
-    } else if (fixed === 'right') {
-      columns = columnManager.rightLeafColumns();
-    } else {
-      columns = columnManager.leafColumns();
-    }
+    const columns = table.columnManager.bodyColumns(fixed);
     (showData || []).forEach((record, i) => {
       const className = typeof rowClassName === 'function'
-        ? rowClassName(record, record.index)
+        ? rowClassName(record, record._index)
         : rowClassName;
-      const key = rowKey(record, record.index);
+      const key = rowKey(record, record._index);
       const props = {
         key: i,
         record,
@@ -64,11 +56,10 @@ class BaseTable extends React.PureComponent {
         expandedRowByClick,
         columns,
         rowKey: key,
-        index: record.index,
-        top: tops[record._showIndex],
-        ref: rowRef(record, record.index),
+        index: record._index,
+        ref: rowRef(record, record._index),
+        hasExpanded: dataManager._hasExpanded,
         components: table.components,
-        height: getRowHeight(record, record.index) * rowHeight,
         onHover: this.handleRowHover,
         expanded: dataManager.rowIsExpanded(record),
         onExpandedRowsChange: table.resetExpandedRowKeys
@@ -94,17 +85,7 @@ class BaseTable extends React.PureComponent {
       );
     }
 
-    let columns = [];
-    if (fixed === 'left') {
-      columns = columnManager.leftColumns();
-    } else if (fixed === 'right') {
-      columns = columnManager.rightColumns();
-    } else {
-      columns = columnManager.groupedColumns();
-    }
-
-    let width = table.columnManager.getWidth(fixed);
-    width = width || '100%';
+    const width = columnManager.getWidth(fixed) || '100%';
     const style = {width};
     if (!fixed) {
       style.minWidth = '100%';
@@ -113,7 +94,7 @@ class BaseTable extends React.PureComponent {
       <Table className='table' style={style}>
         {hasHead && (
           <TableHeader
-            columns={columns}
+            columns={columnManager.headColumns(fixed)}
             fixed={fixed}
             onSort={this.handleSort}
             orders={orders || {}}
@@ -129,21 +110,14 @@ export default connect((state) => {
   const {
     hasScroll,
     bodyHeight,
-    tops,
     showData,
-    orders,
-    newColumns
+    orders
   } = state;
   return {
     hasScroll,
     bodyHeight,
-    tops,
-    showData: showData || [],
-    orders,
-    newColumns
+    showData,
+    orders
   };
 })(BaseTable);
 
-BaseTable.contextTypes = {
-  table: PropTypes.any
-};

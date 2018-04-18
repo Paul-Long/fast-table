@@ -21,7 +21,7 @@ function HeadTable(props, {table}) {
   if (!table.columnManager.overflowX()) {
     headStyle.overflowX = 'hidden';
   }
-  headStyle.overflowY = hasScroll ? 'scroll' : 'auto';
+  headStyle.overflowY = hasScroll ? 'scroll' : 'hidden';
   return (
     <div
       key='headTable'
@@ -35,23 +35,15 @@ function HeadTable(props, {table}) {
         fixed={fixed}
       />
     </div>
-  )
+  );
 }
 
-export default connect((state, props) => {
+export default connect((state) => {
   const {hasScroll} = state;
   return {
     hasScroll
-  }
+  };
 })(HeadTable);
-
-HeadTable.propTypes = {
-  fixed: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.bool
-  ]),
-  onSort: PropTypes.func
-};
 
 HeadTable.contextTypes = {
   table: PropTypes.any

@@ -344,12 +344,6 @@
   position: relative;
   min-height: 30px;
 }
-.vt .tbody > .tr > .td {
-  background: #172422;
-}
-.vt .tbody > .tr:nth-child(2n) > .td {
-  background: #121A19;
-}
 .vt .tr {
   overflow: hidden;
   display: flex;

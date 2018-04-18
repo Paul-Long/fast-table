@@ -1,11 +1,11 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import get from 'lodash/get';
 import {cellAlignStyle} from './Utils';
 import ExpandedIcon from './ExpandedIcon';
+import {TableCellParams} from './types';
 
-class TableCell extends React.PureComponent {
+class TableCell extends React.PureComponent<TableCellParams> {
   isInvalidRenderCellText = (text) => {
     return text
       && !React.isValidElement(text)
@@ -27,16 +27,13 @@ class TableCell extends React.PureComponent {
       style = {...bodyStyle};
     }
     style = {...style, ...cellAlignStyle(align)};
-    const {_width, _minWidth} = column || {};
+    const {_width} = column || {};
     if (_width) {
       style.width = _width;
       style.minWidth = _width;
     } else {
       style.flex = 1;
     }
-    // if (_minWidth) {
-    //   style.minWidth = _minWidth;
-    // }
     return style;
   };
 
@@ -75,7 +72,8 @@ class TableCell extends React.PureComponent {
       prefixCls,
       expanded,
       indentSize,
-      fixed
+      fixed,
+      hasExpanded
     } = this.props;
     const children = record.children || [];
     if (children.length > 0 && colIndex === 0 && fixed !== 'right') {
@@ -86,6 +84,8 @@ class TableCell extends React.PureComponent {
           onClick={this.onExpandedIconClick.bind(this, record.key, !expanded)}
         />
       );
+    } else if (hasExpanded && !record._expandedEnable && colIndex === 0) {
+      return (<span style={{width: 17}} />);
     }
     if (colIndex === 0) {
       return (<span style={{width: record._expandedLevel * indentSize}} />);
@@ -130,19 +130,3 @@ class TableCell extends React.PureComponent {
 }
 
 export default TableCell;
-
-TableCell.propTypes = {
-  record: PropTypes.object,
-  prefixCls: PropTypes.string,
-  index: PropTypes.number,
-  indent: PropTypes.number,
-  indentSize: PropTypes.number,
-  column: PropTypes.object,
-  component: PropTypes.any,
-  isLast: PropTypes.bool,
-  onExpandedRowsChange: PropTypes.func
-};
-
-TableCell.defaultProps = {
-  isLast: false
-};

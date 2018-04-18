@@ -2,13 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import TableHeaderCell from './TableHeaderCell';
 
-function TableHeader(props, {table}) {
+export default function TableHeader(props, {table}) {
   const {columns, orders, onSort, fixed} = props;
   const {headerRowHeight} = table.props;
   const components = table.components;
   const HeaderWrapper = components.header.wrapper;
   const HeaderRow = components.header.row;
-  const rowHeight = headerRowHeight;
   return (
     <HeaderWrapper className='thead'>
       <HeaderRow className='tr'>
@@ -17,7 +16,7 @@ function TableHeader(props, {table}) {
             key={index}
             index={index}
             fixed={fixed}
-            headerRowHeight={rowHeight}
+            headerRowHeight={headerRowHeight}
             column={column}
             columns={columns}
             components={components}
@@ -29,13 +28,6 @@ function TableHeader(props, {table}) {
     </HeaderWrapper>
   );
 }
-
-export default TableHeader;
-
-TableHeader.propTypes = {
-  fixed: PropTypes.string,
-  columns: PropTypes.array.isRequired
-};
 
 TableHeader.contextTypes = {
   table: PropTypes.any

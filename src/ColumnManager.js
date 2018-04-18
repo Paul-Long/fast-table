@@ -46,6 +46,24 @@ export default class ColumnManager {
     });
   }
 
+  headColumns(fixed) {
+    if (fixed === 'left') {
+      return this.leftColumns();
+    } else if (fixed === 'right') {
+      return this.rightColumns();
+    }
+    return this.groupedColumns();
+  }
+
+  bodyColumns(fixed) {
+    if (fixed === 'left') {
+      return this.leftLeafColumns();
+    } else if (fixed === 'right') {
+      return this.rightLeafColumns();
+    }
+    return this.leafColumns();
+  }
+
   leftColumns() {
     return this._cache('leftColumns', () => {
       return this.groupedColumns().filter(
