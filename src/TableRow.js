@@ -1,114 +1,96 @@
 import React from 'react';
 import classNames from 'classnames';
-import TableCell from './TableCell';
-import {connect} from './mini-store';
-import {TableRowParams} from './types';
+import Cell from './TableCell';
 
-class TableRow extends React.PureComponent<TableRowParams> {
-  static defaultProps = {
-    hasExpanded: false
-  };
-  onMouseEnter = (event) => {
-    const {record, onRowMouseEnter, onHover, rowKey} = this.props;
-    onHover(true, rowKey);
-    if (onRowMouseEnter) {
-      onRowMouseEnter(record, record._index, event);
-    }
-  };
+type Props = {
+  key: string,
+  className: string,
+  record: Object,
+  prefixCls: string,
+  columns: Array,
+  onHover: Function,
+  onClick: Function,
+  expanded: boolean,
+  fixed: string,
+  components: Object,
+  renderExpandedIcon: Function,
+  expandedRowByClick: boolean,
+  handleExpanded: Function
+}
 
-  onMouseLeave = (event) => {
-    const {record, onRowMouseLeave, onHover, rowKey} = this.props;
-    onHover(false, rowKey);
-    if (onRowMouseLeave) {
-      onRowMouseLeave(record, record._index, event);
-    }
-  };
-
-  onExpandedRowsChange = (key, expanded) => {
-    const {onExpandedRowsChange} = this.props;
-    if (typeof onExpandedRowsChange === 'function') {
-      onExpandedRowsChange(key, expanded);
-    }
-  };
-
-  onClick = (e) => {
-    e.stopPropagation();
-    const {record, expanded, expandedRowByClick} = this.props;
-    if (expandedRowByClick) {
-      this.onExpandedRowsChange(record.key, !expanded);
-    }
-  };
-
-  renderCells = () => {
-    const {
-      columns, prefixCls, record, components, hasExpanded,
-      expanded, indentSize, onExpandedRowsChange, fixed
-    } = this.props;
-    const cells = [];
-    columns.forEach((column, i) => {
-      cells.push(
-        <TableCell
-          prefixCls={prefixCls}
-          record={record}
-          fixed={fixed}
-          index={record._index}
-          colIndex={i}
-          column={column}
-          key={column.key || column.dataIndex}
-          component={components.body.cell}
-          height={record._height}
-          expanded={expanded}
-          hasExpanded={hasExpanded}
-          indentSize={indentSize}
-          onExpandedRowsChange={onExpandedRowsChange}
-        />
-      );
-    });
-    return cells;
-  };
-
-  render() {
-    const {
-      components,
-      prefixCls,
-      hovered,
-      className,
-      record,
-      hasExpanded
-    } = this.props;
-    const BodyRow = components.body.row;
-    const rowClass = classNames(
-      'tr',
-      `${prefixCls}-row`,
-      `${prefixCls}-row-${record._showIndex % 2}`,
-      className,
-      {
-        [`${prefixCls}-hover`]: hovered,
-        [`${prefixCls}-expanded-row-${record._expandedLevel}`]: hasExpanded
-      });
-    const style = {
+function Row(props: Props) {
+  const {
+    key,
+    className,
+    record,
+    prefixCls,
+    columns,
+    onHover,
+    onClick,
+    expanded,
+    fixed,
+    components,
+    renderExpandedIcon,
+    expandedRowByClick,
+    handleExpanded
+  } = props;
+  const Tr = components.body.row;
+  const rowClass = classNames(
+    'tr',
+    `${prefixCls}-row`,
+    `${prefixCls}-row-${record._showIndex % 2}`,
+    className);
+  const newProps = {
+    key,
+    className: rowClass,
+    style: {
       position: 'absolute',
       top: record._top,
       height: record._height
+    },
+    onMouseEnter: function (event) {
+      event.stopPropagation();
+      onHover && onHover(true, record.key);
+    },
+    onMouseLeave: function (event) {
+      event.stopPropagation();
+      onHover && onHover(false, record.key);
+    },
+    onClick: function (event) {
+      event.stopPropagation();
+      onClick && onClick(record, record.key, event);
+      expandedRowByClick && handleExpanded && handleExpanded(record, record.key, event);
+    }
+  };
+  const cells = [];
+  for (let i = 0; i < columns.length; i++) {
+    const cellProps = {
+      key: `Row${record._showIndex}-Col${i}`,
+      column: columns[i],
+      record,
+      components,
+      ExpandedIcon: renderExpandedIcon({
+        columnIndex: i,
+        record
+      })
     };
-    return (
-      <BodyRow
-        className={rowClass}
-        style={style}
-        onMouseEnter={this.onMouseEnter}
-        onMouseLeave={this.onMouseLeave}
-        onClick={this.onClick}
-      >
-        {this.renderCells()}
-      </BodyRow>
-    );
+    if (renderExpandedIcon) {
+      cellProps.ExpandedIcon = renderExpandedIcon({
+        columnIndex: i,
+        record,
+        prefixCls,
+        fixed,
+        expanded,
+        handleExpanded
+      })
+    }
+    cells.push(Cell(cellProps));
   }
+  return (
+    <Tr {...newProps} >
+      {cells}
+    </Tr>
+  )
 }
 
-export default connect((state, props) => {
-  const {currentHoverKey} = state;
-  const {rowKey} = props;
-  return {
-    hovered: currentHoverKey === rowKey
-  };
-})(TableRow);
+export default Row;

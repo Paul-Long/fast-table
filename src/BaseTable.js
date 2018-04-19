@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import TableHeader from './TableHeader';
-import TableRow from './TableRow';
+import Row from './TableRow';
 import {connect} from './mini-store';
+import renderExpandedIcon from './ExpandedIcon';
 
 class BaseTable extends React.PureComponent {
   static contextTypes = {
@@ -24,47 +26,51 @@ class BaseTable extends React.PureComponent {
     });
   };
 
+  handleExpanded = (record, key) => {
+    const table = this.context.table;
+    const dataManager = table.dataManager;
+    table.resetExpandedRowKeys(key, !dataManager.rowIsExpanded(record));
+  };
+
   renderRows = () => {
     const rows = [];
     const {
       fixed,
-      showData
+      showData,
+      currentHoverKey
     } = this.props;
     const table = this.context.table;
-    const rowKey = table.rowKey;
     const {
       prefixCls,
-      rowRef,
       rowClassName,
-      indentSize,
       expandedRowByClick
     } = table.props;
     const dataManager = table.dataManager;
     const columns = table.columnManager.bodyColumns(fixed);
-    (showData || []).forEach((record, i) => {
+    const hasExpanded = dataManager._hasExpanded;
+    (showData || []).forEach(record => {
       const className = typeof rowClassName === 'function'
         ? rowClassName(record, record._index)
         : rowClassName;
-      const key = rowKey(record, record._index);
+      const hovered = currentHoverKey === record.key;
       const props = {
-        key: i,
+        key: `Row${record._showIndex}`,
+        className: classNames(className, {
+          [`${prefixCls}-hover`]: hovered,
+          [`${prefixCls}-expanded-row-${record._expandedLevel}`]: hasExpanded
+        }),
         record,
-        fixed,
         prefixCls,
-        className,
-        indentSize,
-        expandedRowByClick,
         columns,
-        rowKey: key,
-        index: record._index,
-        ref: rowRef(record, record._index),
-        hasExpanded: dataManager._hasExpanded,
-        components: table.components,
-        onHover: this.handleRowHover,
+        fixed,
+        expandedRowByClick,
         expanded: dataManager.rowIsExpanded(record),
-        onExpandedRowsChange: table.resetExpandedRowKeys
+        onHover: this.handleRowHover,
+        components: table.components,
+        handleExpanded: this.handleExpanded
       };
-      rows.push(<TableRow {...props} />);
+      hasExpanded && (props.renderExpandedIcon = renderExpandedIcon);
+      rows.push(Row(props));
     });
     return rows;
   };
@@ -108,6 +114,7 @@ class BaseTable extends React.PureComponent {
 
 export default connect((state) => {
   const {
+    currentHoverKey,
     hasScroll,
     bodyHeight,
     showData,
@@ -115,6 +122,7 @@ export default connect((state) => {
     bodyWidth
   } = state;
   return {
+    currentHoverKey,
     hasScroll,
     bodyHeight,
     showData,

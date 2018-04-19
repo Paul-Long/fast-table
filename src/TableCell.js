@@ -2,131 +2,57 @@ import React from 'react';
 import classNames from 'classnames';
 import get from 'lodash/get';
 import {cellAlignStyle} from './Utils';
-import ExpandedIcon from './ExpandedIcon';
-import {TableCellParams} from './types';
 
-class TableCell extends React.PureComponent<TableCellParams> {
-  isInvalidRenderCellText = (text) => {
-    return text
-      && !React.isValidElement(text)
-      && Object.prototype.toString.call(text) === '[object Object]';
-  };
+type Props = {
+  key: string,
+  className: string,
+  column: Object,
+  record: Object,
+  components: Object,
+  ExpandedIcon: React.Element<*>
+};
 
-  getStyle = () => {
-    const {
-      column,
-      record,
-      index,
-      colIndex
-    } = this.props;
-    const {bodyStyle, align} = column;
-    let style = {};
-    if (typeof bodyStyle === 'function') {
-      style = bodyStyle(record, index, colIndex) || {};
-    } else {
-      style = {...bodyStyle};
-    }
-    style = {...style, ...cellAlignStyle(align)};
-    const {_width} = column || {};
-    if (_width) {
-      style.width = _width;
-      style.minWidth = _width;
-    } else {
-      style.flex = 1;
-    }
-    return style;
-  };
-
-  getText = () => {
-    const {
-      record,
-      index,
-      column,
-    } = this.props;
-    const {dataIndex, render} = column;
-    let text;
-    if (typeof dataIndex === 'number') {
-      text = get(record, dataIndex);
-    } else if (!dataIndex || dataIndex.length === 0) {
-      text = record;
-    } else {
-      text = get(record, dataIndex);
-    }
-    if (typeof render === 'function') {
-      text = render(text, record, index);
-    }
-    return text;
-  };
-
-  onExpandedIconClick = (key, expanded) => {
-    const {onExpandedRowsChange} = this.props;
-    if (typeof onExpandedRowsChange === 'function') {
-      onExpandedRowsChange(key, expanded);
-    }
-  };
-
-  getExpandedIcon = () => {
-    const {
-      colIndex,
-      record,
-      prefixCls,
-      expanded,
-      indentSize,
-      fixed,
-      hasExpanded
-    } = this.props;
-    const children = record.children || [];
-    if (children.length > 0 && colIndex === 0 && fixed !== 'right') {
-      return (
-        <ExpandedIcon
-          prefixCls={prefixCls}
-          expanded={expanded}
-          onClick={this.onExpandedIconClick.bind(this, record.key, !expanded)}
-        />
-      );
-    } else if (hasExpanded && !record._expandedEnable && colIndex === 0) {
-      return (<span style={{width: 17}} />);
-    }
-    if (colIndex === 0) {
-      return (<span style={{width: record._expandedLevel * indentSize}} />);
-    }
-  };
-
-  render() {
-    const {
-      column,
-      component: BodyCell
-    } = this.props;
-    const {render} = column;
-    let text = this.getText();
-    let tdProps = {}, colSpan, rowSpan;
-    if (render) {
-      if (this.isInvalidRenderCellText(text)) {
-        tdProps = text.props || tdProps;
-        colSpan = tdProps.colSpan;
-        rowSpan = tdProps.rowSpan;
-        text = text.children;
-      }
-    }
-    if (this.isInvalidRenderCellText(text)) {
-      text = null;
-    }
-    if (rowSpan === 0 || colSpan === 0) {
-      return null;
-    }
-    tdProps.style = this.getStyle();
-    return (
-      <BodyCell
-        className={classNames('td', column.className)}
-        {...tdProps}
-      >
-        {this.getExpandedIcon()}
-        <div style={{maxWidth: '100%'}}>
-          {text}
-        </div>
-      </BodyCell>
-    );
-  }
+function isInvalidRenderCellText(text) {
+  return text
+    && !React.isValidElement(text)
+    && Object.prototype.toString.call(text) === '[object Object]';
 }
 
-export default TableCell;
+function Cell(props: Props) {
+  const {
+    key,
+    column,
+    record,
+    components,
+    ExpandedIcon
+  } = props;
+  const {render, dataIndex, onCell, _width, align = 'left'} = column;
+
+  let style = {...cellAlignStyle(align)};
+  _width && (style.width = _width);
+  if (onCell) {
+    style = {...style, ...onCell};
+  }
+
+  const newProps = {
+    key,
+    className: classNames('td', column.className),
+    style
+  };
+  let text = get(record, dataIndex);
+  if (typeof render === 'function') {
+    text = render(children, record, record._index);
+  }
+  if (isInvalidRenderCellText(text)) {
+    text = null;
+  }
+  const Td = components.body.cell;
+  return (
+    <Td {...newProps}>
+      {ExpandedIcon}
+      {text}
+    </Td>
+  )
+}
+
+export default Cell;
