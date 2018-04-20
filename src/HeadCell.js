@@ -3,46 +3,46 @@ import classNames from 'classnames';
 import {cellAlignStyle} from './Utils';
 import Sorter from './Sorter';
 
-function renderChildren() {
-
-}
-
 type CellProps = {
+  key: string,
   column: Object,
   components: Object,
   headerRowHeight: number,
   current: number,
   orders: Object,
-  prefixCls: string
+  prefixCls: string,
+  onSort: Function
 }
 
 function renderCell(props: CellProps) {
   const {
+    key,
     column,
     components,
     headerRowHeight,
     current = 0,
     orders,
-    prefixCls
+    prefixCls,
+    onSort
   } = props;
   const children = column.children || [];
   const Th = components.head.cell;
   const {
-    rowSpan, 
-    dataIndex, 
+    rowSpan,
+    dataIndex,
     align,
     _width,
     title,
     sortEnable
   } = column;
   const order = orders[dataIndex];
-  const style = cellAlignStyle(column.align);
+  const style = cellAlignStyle(align);
   _width ? (style.width = _width) : (style.flex = 1);
   style.height = (rowSpan || 1) * headerRowHeight;
   const cellProps = {
     className: classNames('th', {'has-child': children.length > 0}),
     style
-  }
+  };
   let text = title;
   if (typeof title === 'function') {
     text = title(column);
@@ -58,18 +58,18 @@ function renderCell(props: CellProps) {
   }
   if (sortEnable && children.length === 0) {
     cellProps.onClick = () => onSort(
-      column.dataIndex, 
+      column.dataIndex,
       order === 'desc' || order === true ? 'asc' : 'desc'
     );
   }
-
+  
   const cell = (
     <Th {...cellProps}>
       {text}
       {sorter}
     </Th>
   );
-
+  
   if (children.length > 0) {
     return (
       <div className={current === 0 ? 'row-group' : ''}>
@@ -89,9 +89,8 @@ function renderCell(props: CellProps) {
 }
 
 type HeadCellProps = {
-  column: Object, 
-  columns: Array, 
-  index: number, 
+  column: Object,
+  index: number,
   components: Object,
   prefixCls: string,
   fixed: string,
@@ -102,23 +101,22 @@ type HeadCellProps = {
 
 function HeadCell(props: HeadCellProps) {
   const {
+    key,
     column,
-    columns,
-    index,
     components,
     prefixCls,
-    fixed,
     headerRowHeight,
     orders,
     onSort
   } = props;
   return renderCell({
+    key,
     column,
     components,
     headerRowHeight,
-    current = 0,
     orders,
-    prefixCls
+    prefixCls,
+    onSort
   });
 }
 

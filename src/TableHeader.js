@@ -1,5 +1,5 @@
 import React from 'react';
-import TableHeaderCell from './TableHeaderCell';
+import HeadCell from './HeadCell';
 
 type Props = {
   columns: Array,
@@ -26,20 +26,15 @@ function TableHeader(props: Props) {
   return (
     <HeaderWrapper className='thead'>
       <HeaderRow className='tr'>
-        {columns.map((column, index) => (
-          <TableHeaderCell
-            key={index}
-            prefixCls={prefixCls}
-            index={index}
-            fixed={fixed}
-            headerRowHeight={headerRowHeight}
-            column={column}
-            columns={columns}
-            components={components}
-            orders={orders}
-            onSort={onSort}
-          />
-        ))}
+        {columns.map((column, index) => HeadCell({
+          key: `HeadCol${index}`,
+          column,
+          components,
+          prefixCls,
+          headerRowHeight,
+          orders,
+          onSort
+        }))}
       </HeaderRow>
     </HeaderWrapper>
   );
