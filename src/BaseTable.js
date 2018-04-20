@@ -15,7 +15,8 @@ type Props = {
   bodyWidth: number,
   fixed: string,
   hasHead: boolean,
-  hasBody: boolean
+  hasBody: boolean,
+  indentSize: number
 }
 
 class BaseTable extends React.PureComponent<Props> {
@@ -50,7 +51,8 @@ class BaseTable extends React.PureComponent<Props> {
       fixed,
       startIndex,
       stopIndex,
-      currentHoverKey
+      currentHoverKey,
+      indentSize
     } = this.props;
     const table = this.context.table;
     const {
@@ -81,7 +83,8 @@ class BaseTable extends React.PureComponent<Props> {
         expanded: dataManager.rowIsExpanded(record),
         onHover: this.handleRowHover,
         components: table.components,
-        handleExpanded: this.handleExpanded
+        handleExpanded: this.handleExpanded,
+        indentSize
       };
       hasExpanded && (props.renderExpandedIcon = renderExpandedIcon);
       rows.push(Row(props));

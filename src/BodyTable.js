@@ -12,7 +12,14 @@ type Props = {
 
 function BodyTable(props: Props, {table}) {
   const {saveRef} = table;
-  const {prefixCls, fixedHeader, showHeader, dataSource, bodyMaxHeight} = table.props;
+  const {
+    prefixCls,
+    fixedHeader,
+    showHeader,
+    dataSource,
+    bodyMaxHeight,
+    indentSize
+  } = table.props;
   const columnManager = table.columnManager;
   const tableSize = table.tableSize();
   const {
@@ -25,6 +32,7 @@ function BodyTable(props: Props, {table}) {
       hasHead={!fixedHeader}
       hasBody
       fixed={fixed}
+      indentSize={indentSize}
     />
   );
   let height = 0;

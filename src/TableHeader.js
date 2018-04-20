@@ -5,7 +5,6 @@ type Props = {
   columns: Array,
   orders: Object,
   onSort: Function,
-  fixed: string,
   components: Object,
   prefixCls: string,
   headerRowHeight: number
@@ -16,7 +15,6 @@ function TableHeader(props: Props) {
     columns,
     orders,
     onSort,
-    fixed,
     headerRowHeight,
     prefixCls,
     components

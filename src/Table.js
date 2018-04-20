@@ -87,7 +87,7 @@ export default class Table extends React.PureComponent<TableParams> {
     if (!shallowEqual(nextProps.dataSource, this.props.dataSource)) {
       this.dataManager.reset(nextProps.dataSource);
       this.hasScroll();
-      this.resetData();
+      this.resetShowData();
     }
     if (!shallowEqual(nextProps.columns, this.props.columns)) {
       this.columnManager.reset(nextProps.columns, this.props.colMinWidth);
@@ -136,7 +136,7 @@ export default class Table extends React.PureComponent<TableParams> {
     this._width = width;
     this._height = height;
     this.showCount = this.getShowCount();
-    this.resetData();
+    this.resetShowData();
     this.setScrollPositionClassName();
   };
 
@@ -146,14 +146,6 @@ export default class Table extends React.PureComponent<TableParams> {
       const width = this._width - (this._hasScroll ? this._scrollSizeY : 0);
       this.columnManager.updateWidth(width);
     }
-  };
-
-  resetData = () => {
-    const result = this.resetShowData(this['bodyTable']);
-    this.store.setState({
-      ...result,
-      bodyWidth: this._width
-    });
   };
 
   setScrollPosition(position) {
@@ -253,6 +245,10 @@ export default class Table extends React.PureComponent<TableParams> {
     if (target) {
       scrollTop = target.scrollTop;
     }
+    if (!target) {
+      target = this['bodyTable'];
+    }
+    if (!target) return;
     const {rowHeight} = this.props;
     const dataSource = this.dataManager.showData() || [];
     const hasScroll = this.hasScroll();
@@ -263,18 +259,18 @@ export default class Table extends React.PureComponent<TableParams> {
     startIndex = Math.max(0, startIndex);
     let stopIndex = startIndex + this.showCount;
     stopIndex = Math.min(stopIndex, dataSource.length - 1);
-    return {
+    this.store.setState({
       hasScroll,
       startIndex,
       stopIndex,
       bodyHeight: this.dataManager._bodyHeight,
       bodyWidth: this._width
-    };
+    });
   };
 
   handleExpandedRowKeysChange = (key, expanded) => {
     this.dataManager.resetExpandedRowKeys(key, expanded);
-    this.resetData();
+    this.resetShowData();
   };
 
   saveRef = (name) => (node) => {

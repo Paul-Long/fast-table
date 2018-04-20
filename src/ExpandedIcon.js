@@ -33,6 +33,7 @@ type ExpandedIconProps = {
   prefixCls: string,
   fixed: string,
   expanded: boolean,
+  indentSize: number,
   handleExpanded: Function
 }
 
@@ -46,7 +47,7 @@ export default function renderExpandedIcon(props: ExpandedIconProps) {
     indentSize,
     handleExpanded
   } = props;
-  if (columnIndex !== 0) {
+  if (columnIndex !== 0 || fixed === 'right') {
     return null;
   }
   if (record._expandedEnable && columnIndex === 0 && fixed !== 'right') {
@@ -57,9 +58,6 @@ export default function renderExpandedIcon(props: ExpandedIconProps) {
       expanded,
       onClick: handleExpanded
     });
-  } else if (!record._expandedEnable && columnIndex === 0) {
-    return (<span style={{width: 17}} />);
-  } else if (columnIndex === 0) {
-    return (<span style={{width: record._expandedLevel * indentSize}} />);
   }
+  return (<span style={{width: record._expandedLevel * indentSize}} />);
 }

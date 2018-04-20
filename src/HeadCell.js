@@ -26,7 +26,7 @@ function renderCell(props: CellProps) {
     onSort
   } = props;
   const children = column.children || [];
-  const Th = components.head.cell;
+  const Th = components.header.cell;
   const {
     rowSpan,
     dataIndex,
@@ -43,6 +43,9 @@ function renderCell(props: CellProps) {
     className: classNames('th', {'has-child': children.length > 0}),
     style
   };
+  if (children.length === 0) {
+    cellProps.key = key;
+  }
   let text = title;
   if (typeof title === 'function') {
     text = title(column);
@@ -62,24 +65,28 @@ function renderCell(props: CellProps) {
       order === 'desc' || order === true ? 'asc' : 'desc'
     );
   }
-  
+
   const cell = (
     <Th {...cellProps}>
       {text}
       {sorter}
     </Th>
   );
-  
+
   if (children.length > 0) {
     return (
-      <div className={current === 0 ? 'row-group' : ''}>
+      <div className={current === 0 ? 'row-group' : ''} key={key}>
         {cell}
         <div className='col-group'>
-          {children.map(child => renderCell({
+          {children.map((child, i) => renderCell({
+            key: `${key}-${current}-${i}`,
             column: child,
             components,
             headerRowHeight,
-            current: current + 1
+            current: current + 1,
+            orders,
+            prefixCls,
+            onSort
           }))}
         </div>
       </div>
@@ -89,6 +96,7 @@ function renderCell(props: CellProps) {
 }
 
 type HeadCellProps = {
+  key: string,
   column: Object,
   index: number,
   components: Object,

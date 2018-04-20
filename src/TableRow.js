@@ -12,6 +12,7 @@ type Props = {
   onClick: Function,
   expanded: boolean,
   fixed: string,
+  indentSize: number,
   components: Object,
   renderExpandedIcon: Function,
   expandedRowByClick: boolean,
@@ -29,6 +30,7 @@ function Row(props: Props) {
     onClick,
     expanded,
     fixed,
+    indentSize,
     components,
     renderExpandedIcon,
     expandedRowByClick,
@@ -39,7 +41,8 @@ function Row(props: Props) {
     'tr',
     `${prefixCls}-row`,
     `${prefixCls}-row-${record._showIndex % 2}`,
-    className);
+    className
+  );
   const newProps = {
     key,
     className: rowClass,
@@ -81,6 +84,7 @@ function Row(props: Props) {
         prefixCls,
         fixed,
         expanded,
+        indentSize,
         handleExpanded
       })
     }
