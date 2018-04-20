@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import TableHeaderCell from './TableHeaderCell';
 
 type Props = {
@@ -12,8 +11,16 @@ type Props = {
   headerRowHeight: number
 };
 
-export default function TableHeader(props: Props) {
-  const {columns, orders, onSort, fixed, headerRowHeight, prefixCls, components} = props;
+function TableHeader(props: Props) {
+  const {
+    columns,
+    orders,
+    onSort,
+    fixed,
+    headerRowHeight,
+    prefixCls,
+    components
+  } = props;
   const HeaderWrapper = components.header.wrapper;
   const HeaderRow = components.header.row;
   return (
@@ -37,8 +44,4 @@ export default function TableHeader(props: Props) {
     </HeaderWrapper>
   );
 }
-
-TableHeader.contextTypes = {
-  table: PropTypes.any
-};
-
+export default TableHeader;
