@@ -41,7 +41,7 @@ function Cell(props: Props) {
   };
   let text = get(record, dataIndex);
   if (typeof render === 'function') {
-    text = render(children, record, record._index);
+    text = render(text, record, record._index);
   }
   if (isInvalidRenderCellText(text)) {
     text = null;

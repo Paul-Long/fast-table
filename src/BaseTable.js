@@ -36,7 +36,8 @@ class BaseTable extends React.PureComponent {
     const rows = [];
     const {
       fixed,
-      showData,
+      startIndex,
+      stopIndex,
       currentHoverKey
     } = this.props;
     const table = this.context.table;
@@ -48,15 +49,16 @@ class BaseTable extends React.PureComponent {
     const dataManager = table.dataManager;
     const columns = table.columnManager.bodyColumns(fixed);
     const hasExpanded = dataManager._hasExpanded;
-    (showData || []).forEach(record => {
+    const showData = dataManager.showData();
+    for (let index = startIndex; index <= stopIndex; index++) {
+      const record = showData[index];
       const className = typeof rowClassName === 'function'
         ? rowClassName(record, record._index)
         : rowClassName;
-      const hovered = currentHoverKey === record.key;
       const props = {
         key: `Row${record._showIndex}`,
         className: classNames(className, {
-          [`${prefixCls}-hover`]: hovered,
+          [`${prefixCls}-hover`]: currentHoverKey === record.key,
           [`${prefixCls}-expanded-row-${record._expandedLevel}`]: hasExpanded
         }),
         record,
@@ -71,7 +73,7 @@ class BaseTable extends React.PureComponent {
       };
       hasExpanded && (props.renderExpandedIcon = renderExpandedIcon);
       rows.push(Row(props));
-    });
+    }
     return rows;
   };
 
@@ -115,17 +117,17 @@ class BaseTable extends React.PureComponent {
 export default connect((state) => {
   const {
     currentHoverKey,
-    hasScroll,
     bodyHeight,
-    showData,
+    startIndex,
+    stopIndex,
     orders,
     bodyWidth
   } = state;
   return {
     currentHoverKey,
-    hasScroll,
     bodyHeight,
-    showData,
+    startIndex,
+    stopIndex,
     orders,
     bodyWidth
   };

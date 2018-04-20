@@ -251,16 +251,18 @@ export default class Table extends React.PureComponent<TableParams> {
     const dataSource = this.dataManager.showData() || [];
     const hasScroll = this.hasScroll();
     if (!hasScroll) {
-      return {hasScroll, showData: dataSource};
+      return {hasScroll, startIndex: 0, stopIndex: dataSource.length - 1};
     }
     let startIndex = floor(scrollTop / rowHeight) - 1;
-    startIndex = startIndex < 0 ? 0 : startIndex;
-    let endIndex = startIndex + this.showCount;
-    const showData = dataSource.slice(startIndex, endIndex);
+    startIndex = Math.max(0, startIndex);
+    let stopIndex = startIndex + this.showCount;
+    stopIndex = Math.min(stopIndex, dataSource.length - 1);
     return {
       hasScroll,
-      showData,
-      bodyHeight: this.dataManager._bodyHeight
+      startIndex,
+      stopIndex,
+      bodyHeight: this.dataManager._bodyHeight,
+      bodyWidth: this._width
     };
   };
 
