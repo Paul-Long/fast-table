@@ -6,7 +6,19 @@ import Row from './TableRow';
 import {connect} from './mini-store';
 import renderExpandedIcon from './ExpandedIcon';
 
-class BaseTable extends React.PureComponent {
+type Props = {
+  currentHoverKey: string,
+  bodyHeight: number,
+  startIndex: number,
+  stopIndex: number,
+  orders: Object,
+  bodyWidth: number,
+  fixed: string,
+  hasHead: boolean,
+  hasBody: boolean
+}
+
+class BaseTable extends React.PureComponent<Props> {
   static contextTypes = {
     table: PropTypes.any
   };
@@ -80,6 +92,7 @@ class BaseTable extends React.PureComponent {
   render() {
     const {hasHead, hasBody, fixed, bodyHeight, orders} = this.props;
     const table = this.context.table;
+    const {prefixCls, headerRowHeight} = table.props;
     const components = table.components;
     const columnManager = table.columnManager;
     let body;
@@ -98,16 +111,19 @@ class BaseTable extends React.PureComponent {
     if (!fixed) {
       style.minWidth = '100%';
     }
+    const header = hasHead
+      && TableHeader({
+        columns: columnManager.headColumns(fixed),
+        fixed,
+        onSort: this.handleSort,
+        orders,
+        prefixCls,
+        headerRowHeight,
+        components
+      });
     return (
       <Table className='table' style={style}>
-        {hasHead && (
-          <TableHeader
-            columns={columnManager.headColumns(fixed)}
-            fixed={fixed}
-            onSort={this.handleSort}
-            orders={orders || {}}
-          />
-        )}
+        {header}
         {body}
       </Table>
     );

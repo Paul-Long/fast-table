@@ -91,6 +91,7 @@ export type TableCellParams = {
 
 export type TableHeaderCellParams = {
   column: Object,
+  prefixCls: string,
   headerRowHeight: number,
   columns: Array,
   index: number

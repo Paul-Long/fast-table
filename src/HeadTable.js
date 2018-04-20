@@ -2,9 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import BaseTable from './BaseTable';
 import {connect} from './mini-store';
-import {measureScrollbar} from './Utils';
 
-function HeadTable(props, {table}) {
+type Props = {
+  fixed: string,
+  hasScroll: boolean
+}
+
+function HeadTable(props: Props, {table}) {
   const {prefixCls, showHeader} = table.props;
   const {fixed, hasScroll} = props;
   const {saveRef} = table;
@@ -13,7 +17,7 @@ function HeadTable(props, {table}) {
   if (!fixedHeader || !showHeader) {
     return null;
   }
-  const scrollbarWidth = measureScrollbar('horizontal');
+  const scrollbarWidth = table.tableSize().scrollSizeX;
   if (scrollbarWidth > 0 && !fixed && table.columnManager.overflowX()) {
     headStyle.marginBottom = `-${scrollbarWidth}px`;
     headStyle.paddingBottom = '0px';

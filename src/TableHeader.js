@@ -2,10 +2,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import TableHeaderCell from './TableHeaderCell';
 
-export default function TableHeader(props, {table}) {
-  const {columns, orders, onSort, fixed} = props;
-  const {headerRowHeight} = table.props;
-  const components = table.components;
+type Props = {
+  columns: Array,
+  orders: Object,
+  onSort: Function,
+  fixed: string,
+  components: Object,
+  prefixCls: string,
+  headerRowHeight: number
+};
+
+export default function TableHeader(props: Props) {
+  const {columns, orders, onSort, fixed, headerRowHeight, prefixCls, components} = props;
   const HeaderWrapper = components.header.wrapper;
   const HeaderRow = components.header.row;
   return (
@@ -14,6 +22,7 @@ export default function TableHeader(props, {table}) {
         {columns.map((column, index) => (
           <TableHeaderCell
             key={index}
+            prefixCls={prefixCls}
             index={index}
             fixed={fixed}
             headerRowHeight={headerRowHeight}

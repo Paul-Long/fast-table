@@ -2,9 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import BaseTable from './BaseTable';
 import {connect} from './mini-store';
-import {measureScrollbar} from './Utils';
 
-function BodyTable(props, {table}) {
+type Props = {
+  saveRef: Function,
+  fixed: string,
+  hasScroll: boolean,
+  handleBodyScroll: Function
+}
+
+function BodyTable(props: Props, {table}) {
   const {saveRef} = table;
   const {prefixCls, fixedHeader, showHeader, dataSource, bodyMaxHeight} = table.props;
   const columnManager = table.columnManager;
@@ -28,7 +34,7 @@ function BodyTable(props, {table}) {
       : tableSize.height - tableSize.footerHeight;
   }
 
-  const scrollbarWidth = measureScrollbar();
+  const scrollSize = tableSize.scrollSizeY;
   const style = {
     height,
     overflowY: hasScroll ? 'scroll' : 'auto'
@@ -36,12 +42,12 @@ function BodyTable(props, {table}) {
   if (bodyMaxHeight) {
     style.maxHeight = bodyMaxHeight;
   }
-  if (scrollbarWidth > 0 && fixed && columnManager.overflowX()) {
-    style.marginBottom = `-${scrollbarWidth}px`;
+  if (scrollSize > 0 && fixed && columnManager.overflowX()) {
+    style.marginBottom = `-${scrollSize}px`;
     style.paddingBottom = '0px';
   }
   let scrollRef = 'bodyTable';
-  if (fixed === 'left' || fixed === true) {
+  if (fixed === 'left') {
     scrollRef = 'fixedColumnsBodyLeft';
   } else if (fixed === 'right') {
     scrollRef = 'fixedColumnsBodyRight';

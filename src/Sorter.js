@@ -1,15 +1,19 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 const Order = {
   desc: 'desc',
   asc: 'asc'
 };
+type Props = {
+  onSort: Function,
+  dataIndex: string,
+  order: boolean | string,
+  prefixCls: string
+};
 
-function Sorter(props, {table}) {
-  const {prefixCls} = table.props;
-  const {onSort, dataIndex} = props;
+function Sorter(props: Props) {
+  const {onSort, dataIndex, prefixCls} = props;
   let order = props.order;
   if (order === true) {
     order = 'desc';
@@ -32,10 +36,3 @@ function Sorter(props, {table}) {
 }
 
 export default Sorter;
-Sorter.propTypes = {
-  order: PropTypes.oneOf([true, Order.desc, Order.asc]),
-  column: PropTypes.object
-};
-Sorter.contextTypes = {
-  table: PropTypes.any
-};

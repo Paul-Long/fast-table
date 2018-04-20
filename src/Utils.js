@@ -12,7 +12,7 @@ const scrollbarMeasure = {
   overflow: 'scroll',
 };
 
-export function measureScrollbar(direction = 'vertical') {
+export function measureScrollbar() {
   if (typeof document === 'undefined' || typeof window === 'undefined') {
     return 0;
   }
@@ -26,13 +26,10 @@ export function measureScrollbar(direction = 'vertical') {
     }
   }
   document.body.appendChild(scrollDiv);
-  let size = 0;
-  if (direction === 'vertical') {
-    size = scrollDiv.offsetWidth - scrollDiv.clientWidth;
-  } else if (direction === 'horizontal') {
-    size = scrollDiv.offsetHeight - scrollDiv.clientHeight;
-  }
-
+  const size = {
+    y: scrollDiv.offsetWidth - scrollDiv.clientWidth,
+    x: scrollDiv.offsetHeight - scrollDiv.clientHeight
+  };
   document.body.removeChild(scrollDiv);
   scrollbarSize = size;
   return scrollbarSize;

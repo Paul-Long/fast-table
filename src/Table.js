@@ -75,8 +75,12 @@ export default class Table extends React.PureComponent<TableParams> {
     };
   }
 
-  componentDidMount() {
-    this._scrollSize = measureScrollbar();
+  componentWillMount() {
+    const scrollSize = measureScrollbar();
+    if (scrollSize) {
+      this._scrollSizeY = scrollSize.y;
+      this._scrollSizeX = scrollSize.x;
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -106,7 +110,9 @@ export default class Table extends React.PureComponent<TableParams> {
       width: this._width || 0,
       height: this._height || 0,
       headHeight: this._headHeight,
-      footerHeight: footer ? footerHeight : 0
+      footerHeight: footer ? footerHeight : 0,
+      scrollSizeY: this._scrollSizeY,
+      scrollSizeX: this._scrollSizeX
     };
   };
 
@@ -123,7 +129,7 @@ export default class Table extends React.PureComponent<TableParams> {
       + (showHeader ? this._headHeight : 0)
       + (footer ? footerHeight : 0)
       + (this.dataManager.isEmpty() ? rowHeight : 0)
-      + (this.columnManager.overflowX() && this._scrollSize ? this._scrollSize : 0);
+      + (this.columnManager.overflowX() && this._scrollSizeY ? this._scrollSizeY : 0);
   };
 
   onResize = ({width, height}) => {
@@ -137,7 +143,7 @@ export default class Table extends React.PureComponent<TableParams> {
   updateColumn = () => {
     this.hasScroll();
     if (this._width > 0) {
-      const width = this._width - (this._hasScroll ? this._scrollSize : 0);
+      const width = this._width - (this._hasScroll ? this._scrollSizeY : 0);
       this.columnManager.updateWidth(width);
     }
   };
@@ -352,15 +358,14 @@ export default class Table extends React.PureComponent<TableParams> {
     if (dataSource && dataSource.length > 0) {
       return null;
     }
-    const scrollbarWidth = measureScrollbar();
     const style = {
       height: rowHeight,
       lineHeight: rowHeight + 'px',
       flex: `0 1 ${rowHeight}px`,
       textAlign: 'center'
     };
-    if (scrollbarWidth > 0 && (fixedHeader && showHeader) && this.columnManager.overflowX()) {
-      style.marginTop = `${scrollbarWidth}px`;
+    if (this._scrollSizeY > 0 && (fixedHeader && showHeader) && this.columnManager.overflowX()) {
+      style.marginTop = `${this._scrollSizeY}px`;
     }
     return typeof emptyText === 'function' ? (
       <div
@@ -379,7 +384,7 @@ export default class Table extends React.PureComponent<TableParams> {
     const hasRightFixed = this.columnManager.isAnyColumnsRightFixed();
     return (
       <Provider store={this.store}>
-        <AutoSizer onResize={this.onResize}>
+        <AutoSizer onResize={this.onResize} className={`${prefixCls}-auto-size`}>
           {({width, height}) => {
             this._width = width;
             let fullHeight = this.fullSize();

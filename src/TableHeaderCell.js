@@ -36,7 +36,7 @@ export default class TableHeaderCell extends React.PureComponent<TableHeaderCell
   };
 
   renderCell = (column, key, columns, index, isChild = true, isBase) => {
-    const {components, orders, onSort} = this.props;
+    const {components, orders, onSort, prefixCls} = this.props;
     const HeadCell = isBase ? components.header.cell : 'div';
     const style = cellAlignStyle(column.align);
     const {children = [], rowSpan, dataIndex} = column;
@@ -50,7 +50,7 @@ export default class TableHeaderCell extends React.PureComponent<TableHeaderCell
     let sorter;
     const order = orders[column.dataIndex];
     if (column.sortEnable && children.length === 0 && order) {
-      sorter = (<Sorter dataIndex={column.dataIndex} order={order} />);
+      sorter = (<Sorter dataIndex={column.dataIndex} order={order} prefixCls={prefixCls} />);
     }
     style.height = (rowSpan || 1) * this.props.headerRowHeight;
     style.lineHeight = (rowSpan || 1) * (style.height / 20);
