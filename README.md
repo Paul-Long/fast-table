@@ -2,18 +2,26 @@
 
 **一个支持大数据渲染的table表格react组件**
 
-# 在线Demo
+### 在线Demo
 https://paul-long.github.io/table-virtualized/
 
-# 安装
+### 安装
 
 ```bash
 npm install fast-table
 ```
 
-# API
+### 支持
+- 多数据快速渲染，虚拟渲染
+- 固定表头
+- 固定列
+- 表头排序
+- 表头分组
+- 树形数据展示
 
-**table props:**
+### API
+
+**Table Props:**
 
 | 参数 | 说明 | 类型 | 默认值 |
 |---|---|---|---|
@@ -43,7 +51,7 @@ npm install fast-table
 | useScrollY | 使用Y轴 Scroll | Boolean | true |
 
 
-**column props:**
+**Column Props:**
 
 | 参数 | 说明 | 类型 | 默认值 |
 |---|---|---|---|
@@ -62,10 +70,59 @@ npm install fast-table
 | width | 列宽度| String `or` Number | - |
 
 
-# 示例
+### 示例
 
 ```javascript
 import Table from 'fast-table';
-ReactDOM.render(<Table {...props} />, mountNode);
+const columns = [
+  {
+    title: '第一列',
+    align: 'left',
+    dataIndex: 'key',
+    sortEnable: true,
+    order: true,
+    fixed: 'left',
+    width: 100,
+    render: (text) => (<span>{text}</span>)
+  },
+  {
+    title: '第二列',
+    dataIndex: 'key0',
+    width: 100,
+    fixed: 'left',
+    sortEnable: true
+  },
+  {
+    title: '第三列',
+    dataIndex: 'key1',
+    width: 100,
+    bodyStyle: {background: '#122024', color: '#11A1FF'}
+  },
+  {
+    title: '第四列',
+    align: 'left',
+    dataIndex: 'key2',
+    width: 130
+  },
+  {
+    title: '第五列',
+    align: 'left',
+    dataIndex: 'key3',
+    width: 120
+  },
+  {
+    title: '第六列',
+    align: 'left',
+    fixed: 'right',
+    dataIndex: 'key4',
+    width: 100,
+  }
+];
+
+const dataSource = [
+  {key: 0, key0: 'a', key1: 'b', key2: 'c', key3: 'd', key4: 'e'}
+]
+const otherProps = {};
+ReactDOM.render(<Table columns={columns} dataSource={dataSource} {...otherProps} />, mountNode);
 ```
 
