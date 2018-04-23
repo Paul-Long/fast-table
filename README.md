@@ -2,16 +2,16 @@
 
 **一个支持大数据渲染的table表格react组件**
 
-### 在线Demo
+# 在线Demo
 https://paul-long.github.io/react-components/
 
-### 安装
+# 安装
 
 ```bash
 npm install fast-table
 ```
 
-### 支持
+# 支持
 - 多数据快速渲染，虚拟渲染
 - 固定表头
 - 固定列
@@ -19,7 +19,7 @@ npm install fast-table
 - 表头分组
 - 树形数据展示
 
-### API
+# API
 
 **Table Props:**
 
@@ -69,7 +69,7 @@ npm install fast-table
 | width | 列宽度| String `or` Number | - |
 
 
-### 示例
+# 示例
 
 ```javascript
 import Table from 'fast-table';
