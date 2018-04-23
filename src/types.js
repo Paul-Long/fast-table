@@ -56,8 +56,8 @@ export const TableDefaultParams = {
   onScrollEnd: () => null,
   onExpandedRowsChange: () => null,
 
-  rowHeight: 30,
-  headerRowHeight: 35,
+  rowHeight: 40,
+  headerRowHeight: 45,
   footerHeight: 30,
   defaultShowCount: 30,
   colMinWidth: 100,
