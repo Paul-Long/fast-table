@@ -262,25 +262,28 @@ export default class Table extends React.PureComponent<TableParams> {
     const {rowHeight} = this.props;
     const dataSource = this.dataManager.showData() || [];
     const hasScroll = this.hasScroll();
-    if (!hasScroll) {
-      return {hasScroll, startIndex: 0, stopIndex: dataSource.length - 1};
-    }
-    let startIndex = floor(scrollTop / rowHeight) - 1;
-    let stopIndex = startIndex + this.showCount;
-    if (this.lastScrollTop > scrollTop) {
-      startIndex -= 5;
-    } else {
-      stopIndex += 5;
-    }
-    startIndex = Math.max(0, startIndex);
-    stopIndex = Math.min(stopIndex, dataSource.length - 1);
-    this.store.setState({
+    const state = {
       hasScroll,
-      startIndex,
-      stopIndex,
       bodyHeight: this.dataManager._bodyHeight,
       bodyWidth: this._width
-    });
+    };
+    if (!hasScroll) {
+      state.startIndex = 0;
+      state.stopIndex = dataSource.length - 1;
+    } else {
+      let startIndex = floor(scrollTop / rowHeight) - 1;
+      let stopIndex = startIndex + this.showCount;
+      if (this.lastScrollTop > scrollTop) {
+        startIndex -= 5;
+      } else {
+        stopIndex += 5;
+      }
+      startIndex = Math.max(0, startIndex);
+      stopIndex = Math.min(stopIndex, dataSource.length - 1);
+      state.startIndex = startIndex;
+      state.stopIndex = stopIndex;
+    }
+    this.store.setState(state);
   };
 
   handleExpandedRowKeysChange = (key, expanded) => {
@@ -406,7 +409,7 @@ export default class Table extends React.PureComponent<TableParams> {
               <div
                 className={this.getClassName()}
                 ref={this.saveRef('tableNode')}
-                style={{...style, width, height}}
+                style={{...style, width: this._width, height: this._height}}
               >
                 <div className={`${prefixCls}-content`}>
                   {this.renderMainTable()}
