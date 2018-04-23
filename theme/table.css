@@ -223,13 +223,16 @@
   overflow-y: scroll;
   background: #172422;
 }
-.vt-row-0 > .td {
+
+.vt-row-0 {
   background: #172422;
 }
-.vt-row-1 > .td {
+
+.vt-row-1 {
   background: #121A19;
 }
-.vt-hover > .td {
+
+.vt-hover {
   background: #193D37 !important;
 }
 .vt-sorter {

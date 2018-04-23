@@ -31,7 +31,7 @@ function Cell(props: Props) {
   let style = {...cellAlignStyle(align)};
   _width && (style.width = _width);
   if (onCell) {
-    style = {...style, ...onCell};
+    style = {...style, ...onCell(column, record)};
   }
 
   const newProps = {

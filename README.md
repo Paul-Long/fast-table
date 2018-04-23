@@ -56,13 +56,12 @@ npm install fast-table
 | 参数 | 说明 | 类型 | 默认值 |
 |---|---|---|---|
 | align | 对齐方式 | String(`left` or `center` or `right`) | `left` |
-| bodyStyle | body中列的样式 | Object `or` Function(`record`, `index`):Object | - |
 | className | 设置列className | String `or` Function(`column`, `record`, `index`):String |  |
 | children | 多行表头属性 | Object：Column |  |
 | dataIndex | 列数据在数据项中对应的 key，支持 a.b.c 的嵌套写法 | String | - |
 | fixed | 设置固定列 | String(`left` or `right`) |  |
 | key | React 需要的 key，如果已经设置了唯一的 dataIndex，<br>可以忽略这个属性 | String | - |
-| onCell | 设置Body单元格style | Function |  |
+| onCell | 设置Body单元格style | Function(column, record):Object |  |
 | order | 默认排序规则 | String(`desc` or `asc`) |  |
 | render | 生成复杂数据的渲染函数，<br>参数分别为当前行的值，当前行数据，行索引，<br>@return里面可以设置表格行/列合并 | Function(text, record, index) {} | - |
 | sortEnable | 是否可排序 | Boolean |  |
@@ -83,7 +82,8 @@ const columns = [
     order: true,
     fixed: 'left',
     width: 100,
-    render: (text) => (<span>{text}</span>)
+    render: (text) => (<span>{text}</span>),
+    onCell: () => ({color: '#F9C152'})
   },
   {
     title: '第二列',
