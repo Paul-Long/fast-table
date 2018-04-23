@@ -50,14 +50,16 @@
     overflow-y: scroll;
     background: @tableBgColor;
   }
-  &-row-0 {
+  &-row-0 > .td {
     background: @tableBgColor;
   }
-  &-row-1 {
+  &-row-1 > .td {
     background: @tableBodyNthColor;
   }
   &-hover {
-    background: @tableRowHoverColor !important;
+    & > .td {
+      background: @tableRowHoverColor !important;
+    }
   }
   &-sorter {
     margin-left: 5px;

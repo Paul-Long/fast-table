@@ -224,15 +224,15 @@
   background: #172422;
 }
 
-.vt-row-0 {
+.vt-row-0 > .td {
   background: #172422;
 }
 
-.vt-row-1 {
+.vt-row-1 > .td {
   background: #121A19;
 }
 
-.vt-hover {
+.vt-hover > .td {
   background: #193D37 !important;
 }
 .vt-sorter {
