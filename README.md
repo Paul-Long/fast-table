@@ -3,7 +3,7 @@
 **一个支持大数据渲染的table表格react组件**
 
 # 在线Demo
-https://paul-long.github.io/table-virtualized/
+https://paul-long.github.io/react-components/
 
 # 安装
 
