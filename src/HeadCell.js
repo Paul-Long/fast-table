@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import classNames from 'classnames';
 import {cellAlignStyle} from './Utils';
 import Sorter from './Sorter';
@@ -33,12 +33,16 @@ function renderCell(props: CellProps) {
     align,
     _width,
     title,
-    sortEnable
+    sortEnable,
+    onHeaderCell
   } = column;
   const order = orders[dataIndex];
-  const style = cellAlignStyle(align);
+  let style = cellAlignStyle(align);
   _width ? (style.width = _width) : (style.flex = 1);
   style.height = (rowSpan || 1) * headerRowHeight;
+  if (onHeaderCell) {
+    style = {...style, ...onHeaderCell(column)};
+  }
   const cellProps = {
     className: classNames('th', {'has-child': children.length > 0}),
     style

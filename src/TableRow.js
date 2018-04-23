@@ -71,11 +71,7 @@ function Row(props: Props) {
       key: `Row${record._showIndex}-Col${i}`,
       column: columns[i],
       record,
-      components,
-      ExpandedIcon: renderExpandedIcon({
-        columnIndex: i,
-        record
-      })
+      components
     };
     if (renderExpandedIcon) {
       cellProps.ExpandedIcon = renderExpandedIcon({
