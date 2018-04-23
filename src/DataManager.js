@@ -56,6 +56,7 @@ export default class DataManager {
     this.expandedRowKeys = keys;
     delete this._cached['getRowsHeight'];
     delete this._cached['showData'];
+    return this.expandedRowKeys;
   };
 
   _cache = (name, fn) => {

@@ -284,7 +284,11 @@ export default class Table extends React.PureComponent<TableParams> {
   };
 
   handleExpandedRowKeysChange = (key, expanded) => {
-    this.dataManager.resetExpandedRowKeys(key, expanded);
+    const {onExpandedRowsChange} = this.props;
+    const result = this.dataManager.resetExpandedRowKeys(key, expanded);
+    if (typeof onExpandedRowsChange === 'function') {
+      onExpandedRowsChange(result);
+    }
     this.resetShowData();
   };
 

@@ -16,7 +16,6 @@ export type TableParams = {
   expandedRowByClick: boolean,
   useScrollY: boolean,
 
-  rowRef: Function,
   getRowHeight: Function,
   rowClassName: Function,
   footer: Function,
@@ -49,15 +48,14 @@ export const TableDefaultParams = {
   expandedRowByClick: true,
   useScrollY: true,
 
-  rowRef: () => null,
   getRowHeight: () => 1,
   rowClassName: () => '',
   emptyText: () => '暂无数据',
   onScrollEnd: () => null,
   onExpandedRowsChange: () => null,
 
-  rowHeight: 40,
-  headerRowHeight: 45,
+  rowHeight: 30,
+  headerRowHeight: 35,
   footerHeight: 30,
   defaultShowCount: 30,
   colMinWidth: 100,
@@ -67,32 +65,3 @@ export const TableDefaultParams = {
   style: {}
 };
 
-export type TableRowParams = {
-  record: Object,
-  prefixCls: string,
-  columns: Array,
-  indentSize: number,
-  rowKey: string | number,
-  className: string,
-  fixed: string,
-  onExpandedRowsChange: Function,
-  expanded: boolean,
-  hasExpanded: boolean,
-  hovered: boolean
-}
-
-export type TableCellParams = {
-  record: Object,
-  prefixCls: string,
-  index: number,
-  indent: number,
-  indentSize: number
-}
-
-export type TableHeaderCellParams = {
-  column: Object,
-  prefixCls: string,
-  headerRowHeight: number,
-  columns: Array,
-  index: number
-}
