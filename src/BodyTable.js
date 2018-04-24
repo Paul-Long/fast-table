@@ -1,17 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import BaseTable from './BaseTable';
-import {connect} from './mini-store';
 
 type Props = {
   saveRef: Function,
   fixed: string,
-  hasScroll: boolean,
-  handleBodyScroll: Function
+  handleBodyScroll: Function,
+  registerForce: Function
 }
 
 function BodyTable(props: Props, {table}) {
-  const {saveRef} = table;
+  const {
+    saveRef,
+    columnManager,
+    sizeManager
+  } = table;
   const {
     prefixCls,
     fixedHeader,
@@ -20,12 +23,10 @@ function BodyTable(props: Props, {table}) {
     bodyMaxHeight,
     indentSize
   } = table.props;
-  const columnManager = table.columnManager;
-  const tableSize = table.tableSize();
   const {
     fixed,
-    hasScroll,
-    handleBodyScroll
+    handleBodyScroll,
+    registerForce
   } = props;
   const baseTable = (
     <BaseTable
@@ -33,24 +34,26 @@ function BodyTable(props: Props, {table}) {
       hasBody
       fixed={fixed}
       indentSize={indentSize}
+      registerForce={registerForce}
+      columns={columnManager.headColumns(fixed)}
     />
   );
   let height = 0;
   if (dataSource && dataSource.length > 0) {
     height = showHeader && fixedHeader
-      ? tableSize.height - tableSize.footerHeight - tableSize.headHeight
-      : tableSize.height - tableSize.footerHeight;
+      ? sizeManager._wrapperHeight - sizeManager.footerHeight - sizeManager._headerHeight
+      : sizeManager._wrapperHeight - sizeManager.footerHeight;
   }
 
-  const scrollSize = tableSize.scrollSizeY;
+  const scrollSize = sizeManager._scrollSizeY;
   const style = {
     height,
-    overflowY: hasScroll ? 'scroll' : 'auto'
+    overflowY: sizeManager._hasScrollY() ? 'scroll' : 'auto'
   };
   if (bodyMaxHeight) {
     style.maxHeight = bodyMaxHeight;
   }
-  if (scrollSize > 0 && fixed && columnManager.overflowX()) {
+  if (scrollSize > 0 && fixed && sizeManager._hasScrollX) {
     style.marginBottom = `-${scrollSize}px`;
     style.paddingBottom = '0px';
   }
@@ -72,8 +75,8 @@ function BodyTable(props: Props, {table}) {
           ref={saveRef(scrollRef)}
           style={{
             height: '100%',
-            overflowY: hasScroll ? 'scroll' : 'hidden',
-            overflowX: columnManager.overflowX() ? 'scroll' : 'hidden'
+            overflowY: sizeManager._hasScrollY() ? 'scroll' : 'hidden',
+            overflowX: sizeManager._hasScrollX ? 'scroll' : 'hidden'
           }}
           onScroll={handleBodyScroll}
         >
@@ -95,12 +98,7 @@ function BodyTable(props: Props, {table}) {
   );
 }
 
-export default connect((state) => {
-  const {hasScroll} = state;
-  return {
-    hasScroll
-  };
-})(BodyTable);
+export default BodyTable;
 BodyTable.contextTypes = {
   table: PropTypes.any
 };

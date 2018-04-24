@@ -8,21 +8,39 @@ import renderExpandedIcon from './ExpandedIcon';
 
 type Props = {
   currentHoverKey: string,
-  bodyHeight: number,
   startIndex: number,
   stopIndex: number,
   orders: Object,
-  bodyWidth: number,
   fixed: string,
   hasHead: boolean,
   hasBody: boolean,
-  indentSize: number
+  indentSize: number,
+  registerForce: Function,
+  columns: Array
 }
 
 class BaseTable extends React.PureComponent<Props> {
+
+  _children = [];
+  _startIndex;
+  _stopIndex;
+
   static contextTypes = {
     table: PropTypes.any
   };
+
+  componentDidMount() {
+    const {registerForce, fixed} = this.props;
+    if (registerForce) {
+      registerForce(fixed, this.recomputeBody);
+    }
+    this.renderRows(this.props);
+  }
+
+  componentWillUpdate(nextProps) {
+    this.renderRows(nextProps);
+  }
+
   handleRowHover = (isHover, key) => {
     this.props.store.setState({
       currentHoverKey: isHover ? key : null
@@ -45,15 +63,19 @@ class BaseTable extends React.PureComponent<Props> {
     table.resetExpandedRowKeys(key, !dataManager.rowIsExpanded(record));
   };
 
-  renderRows = () => {
+  recomputeBody = ({startIndex, stopIndex}) => {
+    this._startIndex = startIndex;
+    this._stopIndex = stopIndex;
+    this.forceUpdate();
+  };
+
+  renderRows = (props) => {
     const rows = [];
     const {
       fixed,
-      startIndex,
-      stopIndex,
       currentHoverKey,
       indentSize
-    } = this.props;
+    } = props;
     const table = this.context.table;
     const {
       prefixCls,
@@ -64,7 +86,7 @@ class BaseTable extends React.PureComponent<Props> {
     const columns = table.columnManager.bodyColumns(fixed);
     const hasExpanded = dataManager._hasExpanded;
     const showData = dataManager.showData();
-    for (let index = startIndex; index <= stopIndex; index++) {
+    for (let index = this._startIndex; index <= this._stopIndex; index++) {
       const record = showData[index];
       const className = typeof rowClassName === 'function'
         ? rowClassName(record, record._index)
@@ -89,22 +111,33 @@ class BaseTable extends React.PureComponent<Props> {
       hasExpanded && (props.renderExpandedIcon = renderExpandedIcon);
       rows.push(Row(props));
     }
-    return rows;
+    this._children = rows;
+    return this._children;
   };
 
   render() {
-    const {hasHead, hasBody, fixed, bodyHeight, orders} = this.props;
+    const {
+      hasHead,
+      hasBody,
+      fixed,
+      orders,
+      columns
+    } = this.props;
     const table = this.context.table;
-    const {prefixCls, headerRowHeight} = table.props;
-    const components = table.components;
-    const columnManager = table.columnManager;
+    const {
+      props,
+      components,
+      columnManager,
+      sizeManager
+    } = table;
+    const {prefixCls, headerRowHeight} = props;
     let body;
     const Table = components.table;
     const BodyWrapper = components.body.wrapper;
     if (hasBody) {
       body = (
-        <BodyWrapper className='tbody' style={{height: bodyHeight, minHeight: table.props.rowHeight}}>
-          {this.renderRows()}
+        <BodyWrapper className='tbody' style={{height: sizeManager._dataHeight, minHeight: table.props.rowHeight}}>
+          {this._children}
         </BodyWrapper>
       );
     }
@@ -116,7 +149,7 @@ class BaseTable extends React.PureComponent<Props> {
     }
     const header = hasHead
       && TableHeader({
-        columns: columnManager.headColumns(fixed),
+        columns,
         fixed,
         onSort: this.handleSort,
         orders,
@@ -136,19 +169,11 @@ class BaseTable extends React.PureComponent<Props> {
 export default connect((state) => {
   const {
     currentHoverKey,
-    bodyHeight,
-    startIndex,
-    stopIndex,
-    orders,
-    bodyWidth
+    orders
   } = state;
   return {
     currentHoverKey,
-    bodyHeight,
-    startIndex,
-    stopIndex,
-    orders,
-    bodyWidth
+    orders
   };
 })(BaseTable);
 

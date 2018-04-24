@@ -12,6 +12,7 @@ import BodyTable from './BodyTable';
 import ColumnManager from './ColumnManager';
 import DataManager from './DataManager';
 import SortManager from './SortManager';
+import SizeManager from './utils/SizeManager';
 import {measureScrollbar} from './Utils';
 import AutoSizer from './AutoSizer';
 import {create, Provider} from './mini-store';
@@ -26,6 +27,8 @@ export default class Table extends React.PureComponent<TableParams> {
     table: PropTypes.any
   };
 
+  _forceTable = {};
+
   constructor(props) {
     super(props);
     this.lastScrollTop = 0;
@@ -35,27 +38,33 @@ export default class Table extends React.PureComponent<TableParams> {
     this.columnManager = new ColumnManager(props.columns, props.colMinWidth);
     this.dataManager = new DataManager({...props, rowKey: this.getRowKey});
     this.sortManager = new SortManager(this.columnManager.groupedColumns(), props.sortMulti);
-    this._headHeight = this.columnManager.maxRowSpan() * props.headerRowHeight;
-    this._hasScroll = this.hasScroll();
+    this.sizeManager = new SizeManager(props);
+
+    this.sizeManager.dataHeight(this.dataManager._bodyHeight);
+    this.sizeManager.headerHeight(this.columnManager.maxRowSpan() * props.headerRowHeight);
+    this.sizeManager.hasScrollX(this.columnManager.overflowX());
+    this.sizeManager.dataEmpty(this.dataManager.isEmpty());
 
     this.store = create({
       currentHoverKey: null,
-      hasScroll: this._hasScroll,
-      headHeight: this._headHeight,
-      orders: this.sortManager.enabled(),
-      bodyHeight: this.dataManager._bodyHeight
+      orders: this.sortManager.enabled()
     });
   }
+
+  state = {
+    width: 0,
+    height: 0
+  };
 
   getChildContext() {
     return {
       table: {
         props: this.props,
         saveRef: this.saveRef,
-        tableSize: this.tableSize,
         columnManager: this.columnManager,
         dataManager: this.dataManager,
         sortManager: this.sortManager,
+        sizeManager: this.sizeManager,
         rowKey: this.getRowKey,
         resetExpandedRowKeys: this.handleExpandedRowKeysChange,
         components: merge({
@@ -78,15 +87,16 @@ export default class Table extends React.PureComponent<TableParams> {
   componentWillMount() {
     const scrollSize = measureScrollbar();
     if (scrollSize) {
-      this._scrollSizeY = scrollSize.y;
-      this._scrollSizeX = scrollSize.x;
+      this.sizeManager.scrollSizeY(scrollSize.y);
+      this.sizeManager.scrollSizeX(scrollSize.x);
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (!shallowEqual(nextProps.dataSource, this.props.dataSource)) {
       this.dataManager.reset(nextProps.dataSource);
-      this.hasScroll();
+      this.sizeManager.dataHeight(this.dataManager._bodyHeight);
+      this.sizeManager.dataEmpty(this.dataManager.isEmpty());
       this.resetShowData();
     }
     if (!shallowEqual(nextProps.columns, this.props.columns)) {
@@ -104,52 +114,26 @@ export default class Table extends React.PureComponent<TableParams> {
     return ceil(showCount) + 2;
   };
 
-  tableSize = () => {
-    const {footer, footerHeight} = this.props;
-    return {
-      width: this._width || 0,
-      height: this._height || 0,
-      headHeight: this._headHeight,
-      footerHeight: footer ? footerHeight : 0,
-      scrollSizeY: this._scrollSizeY,
-      scrollSizeX: this._scrollSizeX
-    };
-  };
-
-  hasScroll = () => {
-    const fullHeight = this.fullSize();
-    this._hasScroll = this._height > 0 && fullHeight > this._height;
-    return this._hasScroll;
-  };
-
-  fullSize = () => {
-    const bodyHeight = this.dataManager._bodyHeight;
-    const {showHeader, footerHeight, footer, rowHeight} = this.props;
-    return bodyHeight
-      + (showHeader ? this._headHeight : 0)
-      + (footer ? footerHeight : 0)
-      + (this.dataManager.isEmpty() ? rowHeight : 0)
-      + (this.columnManager.overflowX() && this._scrollSizeY ? this._scrollSizeY : 0);
-  };
-
   onResize = ({width, height}) => {
     this.updateColumn({width, height});
     this.showCount = this.getShowCount();
     this.resetShowData();
     this.setScrollPositionClassName();
+    this.setState({width, height});
   };
 
   updateColumn = ({width, height}) => {
     this._width = width;
-    let fullHeight = this.fullSize();
+    let fullHeight = this.sizeManager._totalHeight();
     if (fullHeight < height || !this.props.useScrollY) {
       height = fullHeight;
     }
     this._height = height;
-    this.hasScroll();
-    if (this._width > 0) {
-      const width = this._width - (this._hasScroll ? this._scrollSizeY : 0);
-      this.columnManager.updateWidth(width);
+    this.sizeManager.wrapperWidth(width);
+    this.sizeManager.wrapperHeight(height);
+    if (width > 0) {
+      this.columnManager.updateWidth(width - (this.sizeManager._hasScrollY() ? this.sizeManager._scrollSizeY : 0));
+      this.sizeManager.hasScrollX(this.columnManager.overflowX());
     }
   };
 
@@ -261,7 +245,7 @@ export default class Table extends React.PureComponent<TableParams> {
     }
     const {rowHeight} = this.props;
     const dataSource = this.dataManager.showData() || [];
-    const hasScroll = this.hasScroll();
+    const hasScroll = this.sizeManager._hasScrollY();
     const state = {
       hasScroll,
       bodyHeight: this.dataManager._bodyHeight,
@@ -283,7 +267,12 @@ export default class Table extends React.PureComponent<TableParams> {
       state.startIndex = startIndex;
       state.stopIndex = stopIndex;
     }
-    this.store.setState(state);
+    for (let key in this._forceTable) {
+      const fn = this._forceTable[key];
+      if (fn) {
+        fn(state);
+      }
+    }
   };
 
   handleExpandedRowKeysChange = (key, expanded) => {
@@ -297,6 +286,10 @@ export default class Table extends React.PureComponent<TableParams> {
 
   saveRef = (name) => (node) => {
     this[name] = node;
+  };
+
+  registerForce = (name, fn) => {
+    this._forceTable[name || 'body'] = fn;
   };
 
   getClassName = () => {
@@ -337,6 +330,7 @@ export default class Table extends React.PureComponent<TableParams> {
         key='body'
         fixed={fixed}
         handleBodyScroll={this.handleBodyScroll}
+        registerForce={this.registerForce}
       />
     );
     return [headTable, bodyTable];
@@ -382,8 +376,8 @@ export default class Table extends React.PureComponent<TableParams> {
       flex: `0 1 ${rowHeight}px`,
       textAlign: 'center'
     };
-    if (this._scrollSizeY > 0 && (fixedHeader && showHeader) && this.columnManager.overflowX()) {
-      style.marginTop = `${this._scrollSizeY}px`;
+    if (this.sizeManager._scrollSizeY > 0 && (fixedHeader && showHeader) && this.columnManager.overflowX()) {
+      style.marginTop = `${this.sizeManager._scrollSizeY}px`;
     }
     return typeof emptyText === 'function' ? (
       <div
@@ -404,12 +398,11 @@ export default class Table extends React.PureComponent<TableParams> {
       <Provider store={this.store}>
         <AutoSizer onResize={this.onResize} className={`${prefixCls}-auto-size`}>
           {({width, height}) => {
-            this.updateColumn({width, height});
             return (
               <div
                 className={this.getClassName()}
                 ref={this.saveRef('tableNode')}
-                style={{...style, width: this._width, height: this._height}}
+                style={{...style, width: this.sizeManager._wrapperWidth, height: this.sizeManager._wrapperHeight}}
               >
                 <div className={`${prefixCls}-content`}>
                   {this.renderMainTable()}
