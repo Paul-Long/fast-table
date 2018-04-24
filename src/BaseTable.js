@@ -130,13 +130,17 @@ class BaseTable extends React.PureComponent<Props> {
       columnManager,
       sizeManager
     } = table;
-    const {prefixCls, headerRowHeight} = props;
+    const {
+      prefixCls,
+      headerRowHeight,
+      rowHeight
+    } = props;
     let body;
     const Table = components.table;
     const BodyWrapper = components.body.wrapper;
     if (hasBody) {
       body = (
-        <BodyWrapper className='tbody' style={{height: sizeManager._dataHeight, minHeight: table.props.rowHeight}}>
+        <BodyWrapper className='tbody' style={{height: sizeManager._dataHeight, minHeight: rowHeight}}>
           {this._children}
         </BodyWrapper>
       );

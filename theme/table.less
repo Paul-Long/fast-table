@@ -50,10 +50,10 @@
     overflow-y: scroll;
     background: @tableBgColor;
   }
-  &-row-0 > .td {
+  &-row-0 {
     background: @tableBgColor;
   }
-  &-row-1 > .td {
+  &-row-1 {
     background: @tableBodyNthColor;
   }
   &-hover {
@@ -80,7 +80,7 @@
     position: absolute;
     top: 0;
     overflow: hidden;
-    z-index: 2;
+    z-index: @fixedTableZIndex;
     background: @tableBgColor;
     .table {
       width: auto;

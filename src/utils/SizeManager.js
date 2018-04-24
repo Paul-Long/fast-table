@@ -30,6 +30,12 @@ class SizeManager {
     this._dataEmpty = dataSource.length === 0;
   }
 
+  update = (size = {}) => {
+    for (let key in size) {
+      this[key] = size[key];
+    }
+  };
+
   dataHeight = (dataHeight) => {
     this._dataHeight = dataHeight;
   };

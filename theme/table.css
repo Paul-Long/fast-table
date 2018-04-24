@@ -96,7 +96,7 @@
   border-width: 1px;
   border-style: solid;
   border-color: #000000;
-  z-index: 10;
+  z-index: 1;
 }
 .vt.bordered .th.has-child:after {
   border: 0;
@@ -223,10 +223,10 @@
   overflow-y: scroll;
   background: #172422;
 }
-.vt-row-0 > .td {
+.vt-row-0 {
   background: #172422;
 }
-.vt-row-1 > .td {
+.vt-row-1 {
   background: #121A19;
 }
 .vt-hover > .td {
