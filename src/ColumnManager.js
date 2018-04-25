@@ -15,6 +15,7 @@ const percentReg = /^\d+\.?\d{0,2}%$/;
 
 export default class ColumnManager {
   _cached = {};
+  _maxRowSpan = 1;
 
   constructor(columns, minWidth) {
     this.columns = columns;
@@ -230,6 +231,9 @@ export default class ColumnManager {
       }
       if (index + 1 === columns.length) {
         setRowSpan(newColumn);
+      }
+      if (this._maxRowSpan < currentRow + 1) {
+        this._maxRowSpan = currentRow + 1;
       }
       grouped.push(newColumn);
     }

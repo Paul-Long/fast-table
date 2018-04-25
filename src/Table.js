@@ -42,7 +42,7 @@ export default class Table extends React.PureComponent<TableParams> {
 
     this.sizeManager.update({
       _dataHeight: this.dataManager._bodyHeight,
-      _headerHeight: this.columnManager.maxRowSpan() * props.headerRowHeight,
+      _headerHeight: this.columnManager._maxRowSpan * props.headerRowHeight,
       _hasScrollX: this.columnManager.overflowX(),
       _dataEmpty: this.dataManager.isEmpty()
     });
@@ -105,7 +105,7 @@ export default class Table extends React.PureComponent<TableParams> {
     if (!shallowEqual(nextProps.columns, this.props.columns)) {
       this.columnManager.reset(nextProps.columns, this.props.colMinWidth);
       this.sizeManager.update({
-        _headerHeight: this.columnManager.maxRowSpan() * this.props.headerRowHeight,
+        _headerHeight: this.columnManager._maxRowSpan * this.props.headerRowHeight,
         _hasScrollX: this.columnManager.overflowX()
       });
       this.onResize({width: this._width || 0, height: this._height || 0});
