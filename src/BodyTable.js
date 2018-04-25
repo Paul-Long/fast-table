@@ -43,9 +43,8 @@ function BodyTable(props: Props, {table}) {
   );
   let height = 0;
   if (dataSource && dataSource.length > 0) {
-    height = showHeader && fixedHeader
-      ? sizeManager._wrapperHeight - sizeManager.footerHeight - sizeManager._headerHeight
-      : sizeManager._wrapperHeight - sizeManager.footerHeight;
+    height = sizeManager._wrapperHeight - sizeManager.footerHeight;
+    height = height - (showHeader && fixedHeader ? sizeManager._headerHeight : 0);
   }
   height = Math.min(
     height,
@@ -53,6 +52,7 @@ function BodyTable(props: Props, {table}) {
       ? sizeManager._dataHeight
       : sizeManager._dataHeight + sizeManager._headerHeight
   );
+  height = height + (sizeManager._hasScrollX ? sizeManager._scrollSizeX : 0);
 
   const scrollSize = sizeManager._scrollSizeY;
   const style = {
