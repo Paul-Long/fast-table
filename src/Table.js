@@ -18,7 +18,7 @@ import AutoSizer from './AutoSizer';
 import {create, Provider} from './mini-store';
 import {TableDefaultParams, TableParams} from './types';
 
-import '../theme/table.less';
+import '../theme/table.css';
 
 export default class Table extends React.PureComponent<TableParams> {
   static defaultProps = TableDefaultParams;
