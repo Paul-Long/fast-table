@@ -124,20 +124,29 @@ export default class AutoSizer extends React.PureComponent<Props, State> {
       const paddingRight = parseInt(style.paddingRight, 10) || 0;
       const paddingTop = parseInt(style.paddingTop, 10) || 0;
       const paddingBottom = parseInt(style.paddingBottom, 10) || 0;
+      const borderLeftWidth = parseInt(style.borderLeftWidth, 10) || 0;
+      const borderTopWidth = parseInt(style.borderTopWidth, 10) || 0;
+      const borderRightWidth = parseInt(style.borderRightWidth, 10) || 0;
+      const borderBottomWidth = parseInt(style.borderBottomWidth, 10) || 0;
 
-      const newHeight = height - paddingTop - paddingBottom;
-      const newWidth = width - paddingLeft - paddingRight;
+      let newHeight = height - paddingTop - paddingBottom;
+      let newWidth = width - paddingLeft - paddingRight;
+      if (style.boxSizing === 'border-box') {
+        newHeight = newHeight - borderTopWidth - borderBottomWidth;
+        newWidth = newWidth - borderLeftWidth - borderRightWidth;
+      }
 
       if (
         (!disableHeight && this.state.height !== newHeight) ||
         (!disableWidth && this.state.width !== newWidth)
       ) {
-        this.setState({
-          height: height - paddingTop - paddingBottom,
-          width: width - paddingLeft - paddingRight,
-        });
+        const state = {
+          height: newHeight,
+          width: newWidth,
+        };
+        this.setState(state);
 
-        onResize({height, width});
+        onResize(state);
       }
     }
   };
