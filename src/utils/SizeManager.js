@@ -22,57 +22,22 @@ class SizeManager {
 
   constructor({showHeader, footerHeight, rowHeight, footer, dataSource, useScrollY}) {
     this.showHeader = showHeader;
-    this.footerHeight = footerHeight;
+    this.footerHeight = footer
+      ? footerHeight
+      : 0;
     this.rowHeight = rowHeight;
     this.footer = footer;
     this.useScrollY = useScrollY;
     dataSource = dataSource || [];
     this._dataEmpty = dataSource.length === 0;
+    this._emptyTextHeight = this._dataEmpty ? rowHeight : 0;
   }
 
   update = (size = {}) => {
     for (let key in size) {
       this[key] = size[key];
     }
-  };
-
-  dataHeight = (dataHeight) => {
-    this._dataHeight = dataHeight;
-  };
-  dataWidth = dataWidth => {
-    this._dataWidth = dataWidth;
-  };
-
-  wrapperWidth = wrapperWidth => {
-    this._wrapperWidth = wrapperWidth;
-  };
-
-  wrapperHeight = (wrapperHeight) => {
-    this._wrapperHeight = wrapperHeight;
-  };
-
-  leftWidth = (leftWidth) => {
-    this._leftWidth = leftWidth;
-  };
-
-  rightWidth = (rightWidth) => {
-    this._rightWidth = rightWidth;
-  };
-
-  headerHeight = headerHeight => {
-    this._headerHeight = headerHeight;
-  };
-
-  headerWidth = headerWidth => {
-    this._headerWidth = headerWidth;
-  };
-
-  scrollTop = scrollTop => {
-    this._scrollTop = scrollTop;
-  };
-
-  scrollLeft = scrollLeft => {
-    this._scrollLeft = scrollLeft;
+    this._emptyTextHeight = this._dataEmpty ? 0 : this.rowHeight;
   };
 
   startIndex = startIndex => {
@@ -83,35 +48,15 @@ class SizeManager {
     this._stopIndex = stopIndex;
   };
 
-  scrollSizeY = scrollSizeY => {
-    this._scrollSizeY = scrollSizeY;
-  };
-
-  scrollSizeX = scrollSizeX => {
-    this._scrollSizeX = scrollSizeX;
-  };
-
-  showCount = showCount => {
-    this._showCount = showCount;
-  };
-
-  hasScrollX = hasScrollX => {
-    this._hasScrollX = hasScrollX;
-  };
-
   _hasScrollY = () => {
     return this._wrapperHeight > 0 && this._wrapperHeight < this._totalHeight();
-  };
-
-  dataEmpty = dataEmpty => {
-    this._dataEmpty = dataEmpty;
   };
 
   _totalHeight = () => {
     return this._dataHeight
       + (this.showHeader ? this._headerHeight : 0)
-      + (this.footer ? this.footerHeight : 0)
-      + (this._dataEmpty ? this.rowHeight : 0)
+      + this.footerHeight
+      + this._emptyTextHeight
       + (this._hasScrollX && this._scrollSizeY ? this._scrollSizeY : 0);
   };
 

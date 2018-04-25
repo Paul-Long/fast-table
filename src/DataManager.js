@@ -41,8 +41,9 @@ export default class DataManager {
   };
   reset = (data) => {
     this.data = data || [];
-    this.showData();
+    this._bodyHeight = 0;
     this._cached = {};
+    this.showData();
   };
 
   resetExpandedRowKeys = (key, expanded) => {

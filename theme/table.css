@@ -183,7 +183,6 @@
   display: block;
   box-sizing: border-box;
   line-height: 1.5;
-  background: #172422;
   color: #ffebc8;
   cursor: default;
 }
@@ -201,6 +200,7 @@
 .vt-empty-text {
   color: #9ab9b9;
   box-sizing: border-box;
+  background: #172422;
 }
 .vt-footer {
   box-sizing: border-box;
@@ -419,4 +419,3 @@
 .vt.vt-scroll-position-middle .vt-fixed-left {
   box-shadow: 3px 0 3px rgba(0, 0, 0, 0.4);
 }
-/*# sourceMappingURL=table.css.map */

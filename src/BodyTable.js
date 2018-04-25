@@ -47,11 +47,18 @@ function BodyTable(props: Props, {table}) {
       ? sizeManager._wrapperHeight - sizeManager.footerHeight - sizeManager._headerHeight
       : sizeManager._wrapperHeight - sizeManager.footerHeight;
   }
+  height = Math.min(
+    height,
+    showHeader && fixedHeader
+      ? sizeManager._dataHeight
+      : sizeManager._dataHeight + sizeManager._headerHeight
+  );
 
   const scrollSize = sizeManager._scrollSizeY;
   const style = {
     height,
-    overflowY: sizeManager._hasScrollY() ? 'scroll' : 'auto'
+    overflowY: sizeManager._hasScrollY() ? 'scroll' : 'auto',
+    overflowX: sizeManager._hasScrollX ? 'scroll' : 'hidden'
   };
   if (bodyMaxHeight) {
     style.maxHeight = bodyMaxHeight;
