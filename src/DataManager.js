@@ -75,7 +75,7 @@ export default class DataManager {
       dataSource[index]['_expandedLevel'] = level;
       dataSource[index]['_height'] = height;
       if (!dataSource[index]['key']) {
-        dataSource[index]['key'] = this.rowKey(dataSource[index], index);
+        dataSource[index]['key'] = this._rowKey(dataSource[index], index);
       }
       const children = dataSource[index]['children'] || [];
       dataSource[index]['_expandedEnable'] = children.length > 0;
@@ -107,4 +107,15 @@ export default class DataManager {
     }
     return data;
   };
+  _rowKey = (record, index) => {
+    const rowKey = this.rowKey;
+    if (typeof rowKey === 'function') {
+      return rowKey(record, index);
+    } else if (typeof rowKey === 'string') {
+      return record[rowKey];
+    } else if (record['key']) {
+      return record['key'];
+    }
+    return index;
+  }
 }

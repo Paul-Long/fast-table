@@ -16,7 +16,8 @@ type Props = {
   hasBody: boolean,
   indentSize: number,
   registerForce: Function,
-  columns: Array
+  columns: Array,
+  handleExpandChange: Function
 }
 
 class BaseTable extends React.PureComponent<Props> {
@@ -57,12 +58,6 @@ class BaseTable extends React.PureComponent<Props> {
     });
   };
 
-  handleExpanded = (record, key) => {
-    const table = this.context.table;
-    const dataManager = table.dataManager;
-    table.resetExpandedRowKeys(key, !dataManager.rowIsExpanded(record));
-  };
-
   recomputeBody = ({startIndex, stopIndex}) => {
     this._startIndex = startIndex;
     this._stopIndex = stopIndex;
@@ -74,7 +69,8 @@ class BaseTable extends React.PureComponent<Props> {
     const {
       fixed,
       currentHoverKey,
-      indentSize
+      indentSize,
+      handleExpandChange
     } = props;
     const table = this.context.table;
     const {
@@ -105,7 +101,7 @@ class BaseTable extends React.PureComponent<Props> {
         expanded: dataManager.rowIsExpanded(record),
         onHover: this.handleRowHover,
         components: table.components,
-        handleExpanded: this.handleExpanded,
+        handleExpanded: handleExpandChange,
         indentSize
       };
       hasExpanded && (props.renderExpandedIcon = renderExpandedIcon);

@@ -3,14 +3,24 @@ import PropTypes from 'prop-types';
 import BaseTable from './BaseTable';
 
 type Props = {
+  saveRef: Function,
   fixed: string
 }
 
 function HeadTable(props: Props, {table}) {
-  const {prefixCls, showHeader} = table.props;
-  const {fixed} = props;
-  const {saveRef, sizeManager, columnManager} = table;
-  let {fixedHeader} = table.props;
+  const {
+    fixedHeader,
+    prefixCls,
+    showHeader
+  } = table.props;
+  const {
+    saveRef,
+    fixed
+  } = props;
+  const {
+    sizeManager,
+    columnManager
+  } = table;
   const headStyle = {};
   if (fixedHeader && showHeader) {
     const scrollbarWidth = sizeManager._scrollSizeX;

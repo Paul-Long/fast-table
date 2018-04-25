@@ -6,12 +6,12 @@ type Props = {
   saveRef: Function,
   fixed: string,
   handleBodyScroll: Function,
+  handleExpandChange: Function,
   registerForce: Function
 }
 
 function BodyTable(props: Props, {table}) {
   const {
-    saveRef,
     columnManager,
     sizeManager
   } = table;
@@ -24,9 +24,11 @@ function BodyTable(props: Props, {table}) {
     indentSize
   } = table.props;
   const {
+    saveRef,
     fixed,
     handleBodyScroll,
-    registerForce
+    registerForce,
+    handleExpandChange
   } = props;
   const baseTable = (
     <BaseTable
@@ -36,6 +38,7 @@ function BodyTable(props: Props, {table}) {
       indentSize={indentSize}
       registerForce={registerForce}
       columns={columnManager.headColumns(fixed)}
+      handleExpandChange={handleExpandChange}
     />
   );
   let height = 0;
