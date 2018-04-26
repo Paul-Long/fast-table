@@ -46,9 +46,10 @@ function BodyTable(props: Props, {table}) {
     height = sizeManager._wrapperHeight - sizeManager.footerHeight;
     height = height - (showHeader && fixedHeader ? sizeManager._headerHeight : 0);
   }
-  let dataHeight = showHeader && fixedHeader
-      ? sizeManager._dataHeight
-      : sizeManager._dataHeight + sizeManager._headerHeight;
+  let dataHeight = sizeManager._dataHeight;
+  if (showHeader) {
+    dataHeight += fixedHeader ? 0 : sizeManager._headerHeight;
+  }
   dataHeight = dataHeight + (sizeManager._hasScrollX ? sizeManager._scrollSizeX : 0);
   height = Math.min(height, dataHeight); 
   const scrollSize = sizeManager._scrollSizeY;
