@@ -17,9 +17,10 @@ export default class ColumnManager {
   _cached = {};
   _maxRowSpan = 1;
 
-  constructor(columns, minWidth) {
+  constructor({columns, minWidth, headerRowHeight}) {
     this.columns = columns;
     this.minWidth = minWidth;
+    this.headerRowHeight = headerRowHeight;
     this.wrapperWidth = 0;
     this.hasOverflowX = false;
     this.init();
@@ -99,22 +100,21 @@ export default class ColumnManager {
     );
   }
 
-  maxRowSpan() {
-    return this._cache('maxRowSpan', () => {
-      let max = maxBy(this.groupedColumns(), 'rowSpan');
-      return max ? max['rowSpan'] : 1;
-    });
-  }
-
   groupedColumns() {
     return this._cache('groupedColumns', () =>
       this._updateWidth(this._groupColumns(this.columns))
     );
   }
 
-  overflowX() {
-    return this.hasOverflowX;
-  }
+  headerSize = () => {
+    return {
+      _leftWidth: this.leftWidth,
+      _rightWidth: this.rightWidth,
+      _headerWidth: this.width,
+      _hasScrollX: this.hasOverflowX,
+      _headerHeight: this._maxRowSpan * this.headerRowHeight
+    };
+  };
 
   updateWidth(wrapperWidth) {
     if (this.wrapperWidth !== wrapperWidth) {
@@ -123,6 +123,7 @@ export default class ColumnManager {
       this.init();
       this.groupedColumns();
     }
+    return this.headerSize();
   }
 
   getWidth(fixed) {
@@ -138,6 +139,8 @@ export default class ColumnManager {
     this.columns = columns || this.normalize(elements);
     this._cached = {};
     this.init();
+    this.groupedColumns();
+    return this.headerSize();
   }
 
   _calcWidth(widths, wrapperWidth) {

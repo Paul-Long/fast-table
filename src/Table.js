@@ -42,9 +42,8 @@ export default class Table extends React.PureComponent<TableParams> {
 
     this.sizeManager.update({
       _dataHeight: this.dataManager._bodyHeight,
-      _headerHeight: this.columnManager._maxRowSpan * props.headerRowHeight,
-      _hasScrollX: this.columnManager.overflowX(),
-      _dataEmpty: this.dataManager.isEmpty()
+      _dataEmpty: this.dataManager.isEmpty(),
+      ...this.columnManager.headerSize()
     });
 
     this.store = create({
@@ -103,11 +102,7 @@ export default class Table extends React.PureComponent<TableParams> {
       this.onResize({width: this._width || 0, height: this._height || 0});
     }
     if (!shallowEqual(nextProps.columns, this.props.columns)) {
-      this.columnManager.reset(nextProps.columns, this.props.colMinWidth);
-      this.sizeManager.update({
-        _headerHeight: this.columnManager._maxRowSpan * this.props.headerRowHeight,
-        _hasScrollX: this.columnManager.overflowX()
-      });
+      this.sizeManager.update(this.columnManager.reset(nextProps));
       this.onResize({width: this._width || 0, height: this._height || 0});
     }
   }
@@ -137,10 +132,8 @@ export default class Table extends React.PureComponent<TableParams> {
       _wrapperHeight: height
     });
     if (width > 0) {
-      this.columnManager.updateWidth(width - (this.sizeManager._hasScrollY() ? this.sizeManager._scrollSizeY : 0));
-      this.sizeManager.update({
-        _hasScrollX: this.columnManager.overflowX()
-      });
+      const cWidth = width - (this.sizeManager._hasScrollY() ? this.sizeManager._scrollSizeY : 0);
+      this.sizeManager.update(this.columnManager.updateWidth(cWidth));
     }
   };
 
@@ -280,7 +273,7 @@ export default class Table extends React.PureComponent<TableParams> {
   handleExpandChange = (record) => {
     const {onExpandedRowsChange} = this.props;
     const dataManager = this.dataManager;
-    const result = dataManager.resetExpandedRowKeys(record.key, !dataManager.rowIsExpanded(record));
+    const result = dataManager.expanded(record.key);
     if (typeof onExpandedRowsChange === 'function') {
       onExpandedRowsChange(result);
     }

@@ -46,15 +46,14 @@ export default class DataManager {
     this.showData();
   };
 
-  resetExpandedRowKeys = (key, expanded) => {
+  expanded = (key) => {
     let keys = this.expandedRowKeys || [];
-    if (expanded) {
+    if (keys.indexOf(key) < 0) {
       keys.push(key);
-      keys = Array.from(new Set(keys));
     } else {
       keys = keys.filter(k => key !== k);
     }
-    this.expandedRowKeys = keys;
+    this.expandedRowKeys = Array.from(new Set(keys));
     delete this._cached['getRowsHeight'];
     delete this._cached['showData'];
     return this.expandedRowKeys;

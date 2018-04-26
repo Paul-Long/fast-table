@@ -1,7 +1,6 @@
 import React from 'react';
 
 class SizeManager {
-  _cached = {};
   _dataWidth = 0;
   _dataHeight = 0;
   _wrapperWidth = 0;
@@ -39,15 +38,6 @@ class SizeManager {
     }
     this._emptyTextHeight = this._dataEmpty ? 0 : this.rowHeight;
   };
-
-  startIndex = startIndex => {
-    this._startIndex = startIndex;
-  };
-
-  stopIndex = stopIndex => {
-    this._stopIndex = stopIndex;
-  };
-
   _hasScrollY = () => {
     return this._wrapperHeight > 0 && this._wrapperHeight < this._totalHeight();
   };
@@ -59,14 +49,6 @@ class SizeManager {
       + this._emptyTextHeight
       + (this._hasScrollX && this._scrollSizeY ? this._scrollSizeY : 0);
   };
-
-  _cache(name, fn) {
-    if (name in this._cached) {
-      return this._cached[name];
-    }
-    this._cached[name] = fn();
-    return this._cached[name];
-  }
 }
 
 export default SizeManager;
