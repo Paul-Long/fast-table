@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import {cellAlignStyle} from './Utils';
+import {cellAlignStyle} from './utils';
 import Sorter from './Sorter';
 
 type CellProps = {

@@ -17,6 +17,7 @@ class SizeManager {
   _scrollSizeX = 0;
   _showCount = 10;
   _hasScrollX = false;
+  _hasScrollY = false;
   _dataEmpty = true;
 
   constructor({showHeader, footerHeight, rowHeight, footer, dataSource, useScrollY}) {
@@ -25,21 +26,29 @@ class SizeManager {
       ? footerHeight
       : 0;
     this.rowHeight = rowHeight;
-    this.footer = footer;
     this.useScrollY = useScrollY;
     dataSource = dataSource || [];
     this._dataEmpty = dataSource.length === 0;
     this._emptyTextHeight = this._dataEmpty ? rowHeight : 0;
+    this._hasScrollY = this._wrapperHeight > 0 && this._wrapperHeight < this._totalHeight();
   }
 
   update = (size = {}) => {
     for (let key in size) {
-      this[key] = size[key];
+      if (size.hasOwnProperty(key)) {
+        this[key] = size[key];
+      }
     }
     this._emptyTextHeight = this._dataEmpty ? 0 : this.rowHeight;
+    this._hasScrollY = this._wrapperHeight > 0 && this._wrapperHeight < this._totalHeight();
   };
-  _hasScrollY = () => {
-    return this._wrapperHeight > 0 && this._wrapperHeight < this._totalHeight();
+  
+  scrollSizeX = () => {
+    return this._hasScrollX ? this._scrollSizeX : 0;
+  };
+  
+  scrollSizeY = () => {
+    return this._hasScrollY ? this._scrollSizeY : 0;
   };
 
   _totalHeight = () => {

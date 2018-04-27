@@ -9,11 +9,11 @@ import classes from 'component-classes';
 
 import HeadTable from './HeadTable';
 import BodyTable from './BodyTable';
-import ColumnManager from './ColumnManager';
-import DataManager from './DataManager';
-import SortManager from './SortManager';
-import SizeManager from './utils/SizeManager';
-import {measureScrollbar} from './Utils';
+import ColumnManager from './managers/ColumnManager';
+import DataManager from './managers/DataManager';
+import SortManager from './managers/SortManager';
+import SizeManager from './managers/SizeManager';
+import {measureScrollbar} from './utils';
 import AutoSizer from './AutoSizer';
 import {create, Provider} from './mini-store';
 import {TableDefaultParams, TableParams} from './types';
@@ -35,7 +35,7 @@ export default class Table extends React.PureComponent<TableParams> {
     this.lastScrollLeft = 0;
     this.refreshAble = true;
     this.showCount = props.defaultShowCount || 30;
-    this.columnManager = new ColumnManager(props.columns, props.colMinWidth);
+    this.columnManager = new ColumnManager(props);
     this.dataManager = new DataManager(props);
     this.sortManager = new SortManager(this.columnManager.groupedColumns(), props.sortMulti);
     this.sizeManager = new SizeManager(props);
@@ -132,7 +132,7 @@ export default class Table extends React.PureComponent<TableParams> {
       _wrapperHeight: height
     });
     if (width > 0) {
-      const cWidth = width - (this.sizeManager._hasScrollY() ? this.sizeManager._scrollSizeY : 0);
+      const cWidth = width - this.sizeManager.scrollSizeY();
       this.sizeManager.update(this.columnManager.updateWidth(cWidth));
     }
   };
@@ -245,9 +245,8 @@ export default class Table extends React.PureComponent<TableParams> {
     }
     const {rowHeight} = this.props;
     const dataSource = this.dataManager.showData() || [];
-    const hasScroll = this.sizeManager._hasScrollY();
     const state = {};
-    if (!hasScroll) {
+    if (!this.sizeManager._hasScrollY) {
       state.startIndex = 0;
       state.stopIndex = dataSource.length - 1;
     } else {
@@ -363,8 +362,9 @@ export default class Table extends React.PureComponent<TableParams> {
       flex: `0 1 ${rowHeight}px`,
       textAlign: 'center'
     };
-    if (this.sizeManager._scrollSizeY > 0 && (fixedHeader && showHeader) && this.sizeManager._hasScrollX) {
-      style.marginTop = `${this.sizeManager._scrollSizeY}px`;
+    const scrollSizeX = this.sizeManager.scrollSizeX();
+    if (scrollSizeX > 0 && (fixedHeader && showHeader)) {
+      style.marginTop = `${scrollSizeX}px`;
     }
     return typeof emptyText === 'function' ? (
       <div

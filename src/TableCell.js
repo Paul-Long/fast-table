@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import get from 'lodash/get';
-import {cellAlignStyle} from './Utils';
+import {cellAlignStyle} from './utils';
 
 type Props = {
   key: string,

@@ -50,18 +50,18 @@ function BodyTable(props: Props, {table}) {
   if (showHeader) {
     dataHeight += fixedHeader ? 0 : sizeManager._headerHeight;
   }
-  dataHeight = dataHeight + (sizeManager._hasScrollX ? sizeManager._scrollSizeX : 0);
+  const scrollSize = sizeManager.scrollSizeY();
+  dataHeight = dataHeight + scrollSize;
   height = Math.min(height, dataHeight); 
-  const scrollSize = sizeManager._scrollSizeY;
   const style = {
     height,
-    overflowY: sizeManager._hasScrollY() ? 'scroll' : 'auto',
+    overflowY: sizeManager._hasScrollY ? 'scroll' : 'hidden',
     overflowX: sizeManager._hasScrollX ? 'scroll' : 'hidden'
   };
   if (bodyMaxHeight) {
     style.maxHeight = bodyMaxHeight;
   }
-  if (scrollSize > 0 && fixed && sizeManager._hasScrollX) {
+  if (scrollSize > 0 && fixed) {
     style.marginBottom = `-${scrollSize}px`;
     style.paddingBottom = '0px';
   }
@@ -83,7 +83,7 @@ function BodyTable(props: Props, {table}) {
           ref={saveRef(scrollRef)}
           style={{
             height: '100%',
-            overflowY: sizeManager._hasScrollY() ? 'scroll' : 'hidden',
+            overflowY: sizeManager._hasScrollY ? 'scroll' : 'hidden',
             overflowX: sizeManager._hasScrollX ? 'scroll' : 'hidden'
           }}
           onScroll={handleBodyScroll}

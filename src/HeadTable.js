@@ -23,15 +23,15 @@ function HeadTable(props: Props, {table}) {
   } = table;
   const headStyle = {};
   if (fixedHeader && showHeader) {
-    const scrollbarWidth = sizeManager._scrollSizeX;
-    if (scrollbarWidth > 0 && !fixed && sizeManager._hasScrollX) {
+    const scrollbarWidth = sizeManager.scrollSizeX();
+    if (scrollbarWidth > 0 && !fixed) {
       headStyle.marginBottom = `-${scrollbarWidth}px`;
       headStyle.paddingBottom = '0px';
     }
     if (!sizeManager._hasScrollX) {
       headStyle.overflowX = 'hidden';
     }
-    headStyle.overflowY = sizeManager._hasScrollY() ? 'scroll' : 'hidden';
+    headStyle.overflowY = sizeManager._hasScrollY ? 'scroll' : 'hidden';
     return (
       <div
         key='headTable'

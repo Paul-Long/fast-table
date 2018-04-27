@@ -4,7 +4,7 @@ export default class DataManager {
   _cached = {};
   _bodyHeight = 0;
   _hasExpanded = false;
-
+  
   constructor(props) {
     this.data = props.dataSource || [];
     this.getRowHeight = props.getRowHeight;
@@ -13,39 +13,40 @@ export default class DataManager {
     this.rowKey = props.rowKey;
     this.showData();
   }
-
+  
   getData = () => {
     return this._cache('getData', () => {
       return this._getData(this.data);
     });
   };
-
+  
   showData = () => {
     return this._cache('showData', () =>
       this._showData(this.getData())
     );
   };
-
+  
   isEmpty() {
     return this.getData().length === 0;
   }
-
+  
   isExpanded = () => {
     return this._cache('isExpanded', () => {
       return this.getData().some(d => d.children && d.children.length > 0);
     });
   };
-
+  
   rowIsExpanded = (record) => {
     return this.expandedRowKeys.indexOf(record.key) > -1;
   };
+  
   reset = (data) => {
     this.data = data || [];
     this._bodyHeight = 0;
     this._cached = {};
     this.showData();
   };
-
+  
   expanded = (key) => {
     let keys = this.expandedRowKeys || [];
     if (keys.indexOf(key) < 0) {
@@ -58,7 +59,7 @@ export default class DataManager {
     delete this._cached['showData'];
     return this.expandedRowKeys;
   };
-
+  
   _cache = (name, fn) => {
     if (name in this._cached) {
       return this._cached[name];
@@ -66,7 +67,7 @@ export default class DataManager {
     this._cached[name] = fn();
     return this._cached[name];
   };
-
+  
   _getData = (dataSource, level = 0) => {
     dataSource = dataSource || [];
     for (let index = 0; index < dataSource.length; index++) {
@@ -86,7 +87,7 @@ export default class DataManager {
     }
     return dataSource;
   };
-
+  
   _showData = (dataSource, data) => {
     dataSource = dataSource || [];
     data = data || [];
@@ -107,6 +108,7 @@ export default class DataManager {
     }
     return data;
   };
+  
   _rowKey = (record, index) => {
     const rowKey = this.rowKey;
     if (typeof rowKey === 'function') {
