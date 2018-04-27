@@ -99,11 +99,12 @@ export default class Table extends React.PureComponent<TableParams> {
         _dataHeight: this.dataManager._bodyHeight,
         _dataEmpty: this.dataManager.isEmpty()
       });
-      this.onResize({width: this._width || 0, height: this._height || 0});
+      this.getShowCount();
+      this.resetShowData();
     }
     if (!shallowEqual(nextProps.columns, this.props.columns)) {
       this.sizeManager.update(this.columnManager.reset(nextProps));
-      this.onResize({width: this._width || 0, height: this._height || 0});
+      this.updateColumn();
     }
   }
 
@@ -113,26 +114,26 @@ export default class Table extends React.PureComponent<TableParams> {
     let showCount = 5 + (_height / this.props.rowHeight);
     showCount = showCount > dataSource.length ? dataSource.length : showCount;
     showCount = Math.max(showCount, this.props.defaultShowCount);
-    return ceil(showCount) + 2;
+    this.showCount = ceil(showCount) + 2;
   };
 
   onResize = ({width, height}) => {
-    this.updateColumn({width, height});
-    this.showCount = this.getShowCount();
-    this.resetShowData();
-    this.setScrollPositionClassName();
-    this.setState({width, height});
-  };
-
-  updateColumn = ({width, height}) => {
     this._width = width;
     this._height = height;
     this.sizeManager.update({
       _wrapperWidth: width,
       _wrapperHeight: height
     });
-    if (width > 0) {
-      const cWidth = width - this.sizeManager.scrollSizeY();
+    this.updateColumn();
+    this.getShowCount();
+    this.resetShowData();
+    this.setScrollPositionClassName();
+    this.setState({width, height});
+  };
+
+  updateColumn = () => {
+    if (this.sizeManager._wrapperWidth > 0) {
+      const cWidth = this.sizeManager._wrapperWidth - this.sizeManager.scrollSizeY();
       this.sizeManager.update(this.columnManager.updateWidth(cWidth));
     }
   };

@@ -15,7 +15,7 @@ const percentReg = /^\d+\.?\d{0,2}%$/;
 export default class ColumnManager {
   _cached = {};
   _maxRowSpan = 1;
-  
+
   constructor({columns, minWidth, headerRowHeight}) {
     this.columns = columns;
     this.minWidth = minWidth;
@@ -24,88 +24,88 @@ export default class ColumnManager {
     this.hasOverflowX = false;
     this.init();
   }
-  
-  init() {
+
+  init = () => {
     this.width = 0;
     this.leftWidth = 0;
     this.rightWidth = 0;
     this._maxRowSpan = 1;
-  }
-  
-  isAnyColumnsLeftFixed() {
+  };
+
+  isAnyColumnsLeftFixed = () => {
     return this._cache('isAnyColumnsLeftFixed', () => {
       return this.groupedColumns().some(
         column => column.fixed === 'left' || column.fixed === true
       );
     });
-  }
-  
-  isAnyColumnsRightFixed() {
+  };
+
+  isAnyColumnsRightFixed = () => {
     return this._cache('isAnyColumnsRightFixed', () => {
       return this.groupedColumns().some(
         column => column.fixed === 'right'
       );
     });
-  }
-  
-  headColumns(fixed) {
+  };
+
+  headColumns = (fixed) => {
     if (fixed === 'left') {
       return this.leftColumns();
     } else if (fixed === 'right') {
       return this.rightColumns();
     }
     return this.groupedColumns();
-  }
-  
-  bodyColumns(fixed) {
+  };
+
+  bodyColumns = (fixed) => {
     if (fixed === 'left') {
       return this.leftLeafColumns();
     } else if (fixed === 'right') {
       return this.rightLeafColumns();
     }
     return this.leafColumns();
-  }
-  
-  leftColumns() {
+  };
+
+  leftColumns = () => {
     return this._cache('leftColumns', () => {
       return this.groupedColumns().filter(
         column => column.fixed === 'left' || column.fixed === true
       );
     });
-  }
-  
-  rightColumns() {
+  };
+
+  rightColumns = () => {
     return this._cache('rightColumns', () => {
       return this.groupedColumns().filter(
         column => column.fixed === 'right'
       );
     });
-  }
-  
-  leafColumns() {
+  };
+
+  leafColumns = () => {
     return this._cache('leafColumns', () =>
       this._leafColumns(this.groupedColumns())
     );
-  }
-  
-  leftLeafColumns() {
+  };
+
+  leftLeafColumns = () => {
     return this._cache('leftLeafColumns', () =>
       this._leafColumns(this.leftColumns())
     );
-  }
-  
-  rightLeafColumns() {
+  };
+
+  rightLeafColumns = () => {
     return this._cache('rightLeafColumns', () =>
       this._leafColumns(this.rightColumns())
     );
-  }
-  
-  groupedColumns() {
+  };
+
+  groupedColumns = () => {
     return this._cache('groupedColumns', () =>
       this._updateWidth(this._groupColumns(this.columns))
     );
-  }
-  
+  };
+
   headerSize = () => {
     return {
       _leftWidth: this.leftWidth,
@@ -115,8 +115,8 @@ export default class ColumnManager {
       _headerHeight: this._maxRowSpan * this.headerRowHeight
     };
   };
-  
-  updateWidth(wrapperWidth) {
+
+  updateWidth = (wrapperWidth) => {
     if (this.wrapperWidth !== wrapperWidth) {
       this.wrapperWidth = wrapperWidth;
       this._cached = {};
@@ -124,26 +124,28 @@ export default class ColumnManager {
       this.groupedColumns();
     }
     return this.headerSize();
-  }
-  
-  getWidth(fixed) {
+  };
+
+  getWidth = (fixed) => {
     if (fixed === 'left' || fixed === true) {
       return this.leftWidth;
     } else if (fixed === 'right') {
       return this.rightWidth;
     }
     return this.width;
-  }
-  
-  reset(columns, elements) {
-    this.columns = columns || this.normalize(elements);
+  };
+
+  reset = ({columns, minWidth, headerRowHeight}) => {
+    this.columns = columns;
+    this.minWidth = minWidth;
+    this.headerRowHeight = headerRowHeight;
     this._cached = {};
     this.init();
     this.groupedColumns();
     return this.headerSize();
-  }
-  
-  _calcWidth(widths, wrapperWidth) {
+  };
+
+  _calcWidth = (widths, wrapperWidth) => {
     widths = widths.map(w => {
       if (typeof w === 'string' && percentReg.test(w)) {
         const i = w.replace('%', '');
@@ -159,21 +161,21 @@ export default class ColumnManager {
       return floor(this._minWidth(w));
     });
     return widths.filter(w => !!w);
-  }
-  
-  _minWidth(width) {
+  };
+
+  _minWidth = (width) => {
     return !width ? width : max([this.minWidth, width]);
-  }
-  
-  _cache(name, fn) {
+  };
+
+  _cache = (name, fn) => {
     if (name in this._cached) {
       return this._cached[name];
     }
     this._cached[name] = fn();
     return this._cached[name];
-  }
-  
-  _leafColumns(columns) {
+  };
+
+  _leafColumns = (columns) => {
     const leafColumns = [];
     for (let i = 0; i < columns.length; i++) {
       const column = columns[i];
@@ -184,8 +186,8 @@ export default class ColumnManager {
       }
     }
     return leafColumns;
-  }
-  
+  };
+
   _groupColumns = (columns, currentRow = 0, parentColumn = {}, rows = []) => {
     rows[currentRow] = rows[currentRow] || [];
     const grouped = [];
@@ -217,7 +219,7 @@ export default class ColumnManager {
         newColumn.widths = [newColumn.width];
       }
       newColumn.widths = flattenDeep(newColumn.widths);
-      
+
       let widths = newColumn.widths || [];
       widths = this._calcWidth(widths, this.wrapperWidth);
       let width = newColumn.width;
@@ -243,8 +245,8 @@ export default class ColumnManager {
     this.hasOverflowX = this.width > this.wrapperWidth && this.wrapperWidth !== 0;
     return grouped;
   };
-  
-  _updateWidth(columns) {
+
+  _updateWidth = (columns) => {
     const wrapperWidth = this.wrapperWidth || 0;
     const leafColumns = this._leafColumns(columns);
     const len = leafColumns.length;
@@ -285,5 +287,5 @@ export default class ColumnManager {
     const result = update(columns);
     this.hasOverflowX = this.width > wrapperWidth;
     return result;
-  }
+  };
 }

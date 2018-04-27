@@ -39,7 +39,7 @@ class SizeManager {
         this[key] = size[key];
       }
     }
-    this._emptyTextHeight = this._dataEmpty ? 0 : this.rowHeight;
+    this._emptyTextHeight = this._dataEmpty ? this.rowHeight : 0;
     this._hasScrollY = this._wrapperHeight > 0 && this._wrapperHeight < this._totalHeight();
   };
   
