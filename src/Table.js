@@ -106,6 +106,19 @@ export default class Table extends React.PureComponent<TableParams> {
       this.sizeManager.update(this.columnManager.reset(nextProps));
       this.updateColumn();
     }
+    if (!shallowEqual(nextProps.expandedRowKeys, this.props.expandedRowKeys)) {
+      this.dataManager.resetExpandedRowKeys(nextProps.expandedRowKeys);
+      this.sizeManager.update({
+        _dataHeight: this.dataManager._bodyHeight,
+        _dataEmpty: this.dataManager.isEmpty()
+      });
+      this.getShowCount();
+      this.resetShowData();
+    }
+  }
+
+  componentDidUpdate() {
+    this.setScrollPositionClassName();
   }
 
   getShowCount = () => {
@@ -127,7 +140,6 @@ export default class Table extends React.PureComponent<TableParams> {
     this.updateColumn();
     this.getShowCount();
     this.resetShowData();
-    this.setScrollPositionClassName();
     this.setState({width, height});
   };
 

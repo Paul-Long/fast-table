@@ -7,7 +7,7 @@
   position: relative;
   display: block;
   box-sizing: border-box;
-  line-height: 1.5;
+  line-height: 1.2;
   color: @textColor;
   cursor: default;
   table {
@@ -38,7 +38,6 @@
     background: @tableHeaderBg;
     color: @tableHeaderText;
     overflow: scroll;
-    flex: 1 0 auto;
     .row-group {
       display: flex;
       flex-direction: column;
@@ -174,12 +173,13 @@
 .@{tablePrefixCls} {
   &.@{tablePrefixCls}-scroll-position-left, &.@{tablePrefixCls}-scroll-position-middle {
     .@{tablePrefixCls}-fixed-right {
-      box-shadow: -3px 0 3px rgba(0, 0, 0, 0.4);
+      box-shadow: -6px 0 6px -4px rgba(0, 0, 0, .4);
+
     }
   }
   &.@{tablePrefixCls}-scroll-position-right, &.@{tablePrefixCls}-scroll-position-middle {
     .@{tablePrefixCls}-fixed-left {
-      box-shadow: 3px 0 3px rgba(0, 0, 0, 0.4);
+      box-shadow: 6px 0 6px -4px rgba(0, 0, 0, .4);
     }
   }
 }

@@ -46,6 +46,14 @@ export default class DataManager {
     this._cached = {};
     this.showData();
   };
+
+  resetExpandedRowKeys = (keys) => {
+    this.expandedRowKeys = Array.from(new Set(keys));
+    delete this._cached['getRowsHeight'];
+    delete this._cached['showData'];
+    this.showData();
+    return this.expandedRowKeys;
+  };
   
   expanded = (key) => {
     let keys = this.expandedRowKeys || [];

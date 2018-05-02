@@ -37,7 +37,7 @@
   position: relative;
   display: block;
   box-sizing: border-box;
-  line-height: 1.5;
+  line-height: 1.2;
   color: #ffebc8;
   cursor: default;
 }
@@ -53,22 +53,21 @@
   padding: 0;
 }
 .vt-content {
-  background: #172422;
+  background: #1E2B29;
 }
 .vt-empty-text {
   color: #9ab9b9;
   box-sizing: border-box;
-  background: #172422;
+  background: #1E2B29;
 }
 .vt-footer {
-  background: #172422;
+  background: #1E2B29;
   box-sizing: border-box;
 }
 .vt-header {
   background: #121a19;
   color: #7b8082;
   overflow: scroll;
-  flex: 1 0 auto;
 }
 .vt-header .row-group {
   display: flex;
@@ -80,10 +79,10 @@
 }
 .vt-body {
   overflow-y: scroll;
-  background: #172422;
+  background: #1E2B29;
 }
 .vt-row-0 {
-  background: #172422;
+  background: #1E2B29;
 }
 .vt-row-1 {
   background: #121A19;
@@ -152,7 +151,7 @@
   top: 0;
   overflow: hidden;
   z-index: 2;
-  background: #172422;
+  background: #1E2B29;
 }
 .vt-fixed-left .table,
 .vt-fixed-right .table {
@@ -272,9 +271,9 @@
 }
 .vt.vt-scroll-position-left .vt-fixed-right,
 .vt.vt-scroll-position-middle .vt-fixed-right {
-  box-shadow: -3px 0 3px rgba(0, 0, 0, 0.4);
+  box-shadow: -6px 0 6px -4px rgba(0, 0, 0, 0.4);
 }
 .vt.vt-scroll-position-right .vt-fixed-left,
 .vt.vt-scroll-position-middle .vt-fixed-left {
-  box-shadow: 3px 0 3px rgba(0, 0, 0, 0.4);
+  box-shadow: 6px 0 6px -4px rgba(0, 0, 0, 0.4);
 }

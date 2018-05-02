@@ -50,8 +50,9 @@ export default function renderExpandedIcon(props: ExpandedIconProps) {
   if (columnIndex !== 0 || fixed === 'right') {
     return null;
   }
+  let icon;
   if (record._expandedEnable && columnIndex === 0 && fixed !== 'right') {
-    return ExpandedIcon({
+    icon = ExpandedIcon({
       prefixCls,
       record,
       rowKey: record.key,
@@ -59,5 +60,11 @@ export default function renderExpandedIcon(props: ExpandedIconProps) {
       onClick: handleExpanded
     });
   }
-  return (<span style={{width: record._expandedLevel * indentSize}} />);
+
+  return (
+    <div style={{display: 'inline-flex', flexDirection: 'row', justifyContent: 'flex-start'}}>
+      <span style={{width: record._expandedLevel * indentSize, display: 'inline-block'}} />
+      {icon || <span style={{width: indentSize, display: 'inline-block'}} />}
+    </div>
+  );
 }

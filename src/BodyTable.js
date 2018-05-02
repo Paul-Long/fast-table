@@ -50,7 +50,7 @@ function BodyTable(props: Props, {table}) {
   if (showHeader) {
     dataHeight += fixedHeader ? 0 : sizeManager._headerHeight;
   }
-  const scrollSize = sizeManager.scrollSizeY();
+  const scrollSize = sizeManager.scrollSizeX();
   dataHeight = dataHeight + scrollSize;
   height = Math.min(height, dataHeight); 
   const style = {

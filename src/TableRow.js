@@ -52,15 +52,12 @@ function Row(props: Props) {
       height: record._height
     },
     onMouseEnter: function (event) {
-      event.stopPropagation();
       onHover && onHover(true, record.key);
     },
     onMouseLeave: function (event) {
-      event.stopPropagation();
       onHover && onHover(false, record.key);
     },
     onClick: function (event) {
-      event.stopPropagation();
       onClick && onClick(record, record.key, event);
       expandedRowByClick && handleExpanded && handleExpanded(record, record.key, event);
     }
