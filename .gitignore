@@ -63,3 +63,4 @@ package-lock.json
 /lib
 /package-lock.json
 .vscode/settings.json
+/.vscode/
