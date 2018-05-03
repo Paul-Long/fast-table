@@ -9,22 +9,10 @@
 }
 
 .@{tablePrefixCls}.bordered {
-  .tr {
+  .td, .th {
     position: relative;
+    .borderRight();
     .borderBottom();
-  }
-  .td {
-    position: relative;
-    .borderRight();
-  }
-  .th.has-child {
-    position: relative;
-    .borderRight();
-    .borderBottom()
-  }
-  .th:not(.has-child) {
-    position: relative;
-    .borderRight();
   }
   .@{tablePrefixCls}-footer {
     position: relative;

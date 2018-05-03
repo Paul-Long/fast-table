@@ -13,7 +13,6 @@ import ColumnManager from './managers/ColumnManager';
 import DataManager from './managers/DataManager';
 import SortManager from './managers/SortManager';
 import SizeManager from './managers/SizeManager';
-import {measureScrollbar} from './utils';
 import AutoSizer from './AutoSizer';
 import {create, Provider} from './mini-store';
 import {TableDefaultParams, TableParams} from './types';
@@ -83,7 +82,8 @@ export default class Table extends React.PureComponent<TableParams> {
   }
 
   componentWillMount() {
-    const scrollSize = measureScrollbar();
+    const {getScrollSize} = this.props;
+    const scrollSize = getScrollSize();
     if (scrollSize) {
       this.sizeManager.update({
         _scrollSizeX: scrollSize.x,

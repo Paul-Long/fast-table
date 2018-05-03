@@ -7,22 +7,11 @@
   top: 50%;
   transform: translate(-50%, -50%);
 }
-.vt.bordered .tr {
-  position: relative;
-  border-bottom: 1px solid #000000;
-}
-.vt.bordered .td {
-  position: relative;
-  border-right: 1px solid #000000;
-}
-.vt.bordered .th.has-child {
+.vt.bordered .td,
+.vt.bordered .th {
   position: relative;
   border-right: 1px solid #000000;
   border-bottom: 1px solid #000000;
-}
-.vt.bordered .th:not(.has-child) {
-  position: relative;
-  border-right: 1px solid #000000;
 }
 .vt.bordered .vt-footer {
   position: relative;

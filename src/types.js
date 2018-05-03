@@ -1,4 +1,5 @@
 import React from 'react';
+import {measureScrollbar} from './utils';
 
 export type TableParams = {
   prefixCls: string,
@@ -23,6 +24,7 @@ export type TableParams = {
   onSort: Function,
   onScrollEnd: Function,
   onExpandedRowsChange: Function,
+  getScrollSize: Function,
 
   rowHeight: number,
   headerRowHeight: number,
@@ -53,6 +55,7 @@ export const TableDefaultParams = {
   emptyText: () => '暂无数据',
   onScrollEnd: () => null,
   onExpandedRowsChange: () => null,
+  getScrollSize: measureScrollbar,
 
   rowHeight: 30,
   headerRowHeight: 35,
