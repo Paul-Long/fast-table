@@ -36,7 +36,7 @@ export default class Table extends React.PureComponent<TableParams> {
     this.showCount = props.defaultShowCount || 30;
     this.columnManager = new ColumnManager(props);
     this.dataManager = new DataManager(props);
-    this.sortManager = new SortManager(this.columnManager.groupedColumns(), props.sortMulti);
+    this.sortManager = new SortManager({columns: this.columnManager.groupedColumns(), sortMulti: props.sortMulti});
     this.sizeManager = new SizeManager(props);
 
     this.sizeManager.update({
@@ -104,6 +104,8 @@ export default class Table extends React.PureComponent<TableParams> {
     }
     if (!shallowEqual(nextProps.columns, this.props.columns)) {
       this.sizeManager.update(this.columnManager.reset(nextProps));
+      this.sortManager.update({columns: this.columnManager.groupedColumns(), sortMulti: nextProps.sortMulti});
+      this.store.setState({orders: this.sortManager.enable});
       this.updateColumn();
     }
     if (!shallowEqual(nextProps.expandedRowKeys, this.props.expandedRowKeys)) {

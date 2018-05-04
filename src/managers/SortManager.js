@@ -3,7 +3,7 @@ import React from 'react';
 export default class SortManager {
   _cached = {};
   
-  constructor(columns, sortMulti) {
+  constructor({columns, sortMulti}) {
     this.columns = columns;
     this.sortMulti = sortMulti;
     this.enable = this._enable(columns);
@@ -12,6 +12,13 @@ export default class SortManager {
   enabled() {
     return this._cache('enabled', () => this.enable);
   }
+
+  update = ({columns, sortMulti}) => {
+    this.columns = columns;
+    this.sortMulti = sortMulti;
+    this.enable = {};
+    this.enable = this._enable(columns);
+  };
   
   setOrder(key, order, fn) {
     if (!this.sortMulti) {
