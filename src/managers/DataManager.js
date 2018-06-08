@@ -4,44 +4,76 @@ export default class DataManager {
   _cached = {};
   _bodyHeight = 0;
   _hasExpanded = false;
-  
+  _data = [];
+
   constructor(props) {
-    this.data = props.dataSource || [];
     this.getRowHeight = props.getRowHeight;
+    this.fixedHeader = props.fixedHeader;
     this.rowHeight = props.rowHeight;
     this.expandedRowKeys = props.expandedRowKeys || [];
     this.rowKey = props.rowKey;
-    this.showData();
+    this.reset(props.dataSource);
   }
-  
+
   getData = () => {
-    return this._cache('getData', () => {
-      return this._getData(this.data);
-    });
+    return this._cache('getData', () =>
+      this._getData(this._data)
+    );
   };
-  
+
+  getFixedData = () => {
+    return this._cache('getFixedData', () =>
+      this._getFixedData(this.showData())
+    );
+  };
+
   showData = () => {
     return this._cache('showData', () =>
       this._showData(this.getData())
     );
   };
-  
+
+  fixedData = () => {
+    return this._cache('fixedData', () =>
+      this._getFixedData(this.showData())
+    );
+  };
+
+  fixedDataLength = () => {
+    return this._cache('fixedDataLength', () => {
+      return this.fixedData().length;
+    });
+  };
+
   isEmpty() {
     return this.getData().length === 0;
   }
-  
+
   isExpanded = () => {
     return this._cache('isExpanded', () => {
       return this.getData().some(d => d.children && d.children.length > 0);
     });
   };
-  
+
   rowIsExpanded = (record) => {
     return this.expandedRowKeys.indexOf(record.key) > -1;
   };
-  
+
   reset = (data) => {
-    this.data = data || [];
+    const _data = (data || []);
+    if (!this.fixedHeader) {
+      this._data = _data;
+    } else {
+      const dataBase = _data.filter(d => {
+        const children = d.children || [];
+        return children.length > 0 || !d.isFixed;
+      });
+      const dataFixed = _data.filter(d => {
+        const children = d.children || [];
+        return d.isFixed && children.length === 0;
+      });
+      this._data = [...dataFixed, ...dataBase];
+    }
     this._bodyHeight = 0;
     this._cached = {};
     this.showData();
@@ -54,7 +86,7 @@ export default class DataManager {
     this.showData();
     return this.expandedRowKeys;
   };
-  
+
   expanded = (key) => {
     let keys = this.expandedRowKeys || [];
     if (keys.indexOf(key) < 0) {
@@ -67,7 +99,7 @@ export default class DataManager {
     delete this._cached['showData'];
     return this.expandedRowKeys;
   };
-  
+
   _cache = (name, fn) => {
     if (name in this._cached) {
       return this._cached[name];
@@ -75,7 +107,7 @@ export default class DataManager {
     this._cached[name] = fn();
     return this._cached[name];
   };
-  
+
   _getData = (dataSource, level = 0) => {
     dataSource = dataSource || [];
     for (let index = 0; index < dataSource.length; index++) {
@@ -89,13 +121,20 @@ export default class DataManager {
       const children = dataSource[index]['children'] || [];
       dataSource[index]['_expandedEnable'] = children.length > 0;
       this._hasExpanded = this._hasExpanded || children.length > 0;
+      dataSource[index]['_isFixed'] = !!dataSource[index].isFixed && children.length === 0;
       if (children.length > 0) {
         dataSource[index]['children'] = this._getData(children, level + 1);
       }
     }
     return dataSource;
   };
-  
+
+  _getFixedData = (data) => {
+    return data.filter(d => {
+      return d.isFixed && ((d.children || []).length === 0);
+    });
+  };
+
   _showData = (dataSource, data) => {
     dataSource = dataSource || [];
     data = data || [];
@@ -116,7 +155,7 @@ export default class DataManager {
     }
     return data;
   };
-  
+
   _rowKey = (record, index) => {
     const rowKey = this.rowKey;
     if (typeof rowKey === 'function') {
@@ -127,5 +166,5 @@ export default class DataManager {
       return record['key'];
     }
     return index;
-  }
+  };
 }

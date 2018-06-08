@@ -16,6 +16,7 @@ export type TableParams = {
   refreshEnable: boolean,
   expandedRowByClick: boolean,
   useScrollY: boolean,
+  hoverEnable: boolean,
 
   getRowHeight: Function,
   rowClassName: Function,
@@ -49,6 +50,7 @@ export const TableDefaultParams = {
   refreshEnable: true,
   expandedRowByClick: true,
   useScrollY: true,
+  hoverEnable: true,
 
   getRowHeight: () => 1,
   rowClassName: () => '',

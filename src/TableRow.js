@@ -16,7 +16,9 @@ type Props = {
   components: Object,
   renderExpandedIcon: Function,
   expandedRowByClick: boolean,
-  handleExpanded: Function
+  hoverEnable: boolean,
+  handleExpanded: Function,
+  scrollTop: number,
 }
 
 function Row(props: Props) {
@@ -34,7 +36,9 @@ function Row(props: Props) {
     components,
     renderExpandedIcon,
     expandedRowByClick,
-    handleExpanded
+    hoverEnable,
+    handleExpanded,
+    scrollTop,
   } = props;
   const Tr = components.body.row;
   const rowClass = classNames(
@@ -48,20 +52,25 @@ function Row(props: Props) {
     className: rowClass,
     style: {
       position: 'absolute',
-      top: record._top,
+      top: record._top + (record._isFixed ? scrollTop : 0),
       height: record._height
-    },
-    onMouseEnter: function (event) {
-      onHover && onHover(true, record.key);
-    },
-    onMouseLeave: function (event) {
-      onHover && onHover(false, record.key);
     },
     onClick: function (event) {
       onClick && onClick(record, record.key, event);
       expandedRowByClick && handleExpanded && handleExpanded(record, record.key, event);
     }
   };
+  if (record._isFixed) {
+    newProps.style.zIndex = 1;
+  }
+  if (hoverEnable) {
+    newProps.onMouseEnter = function () {
+      onHover && onHover(true, record.key);
+    };
+    newProps.onMouseLeave = function () {
+      onHover && onHover(false, record.key);
+    };
+  }
   const cells = [];
   for (let i = 0; i < columns.length; i++) {
     const cellProps = {
@@ -79,7 +88,7 @@ function Row(props: Props) {
         expanded,
         indentSize,
         handleExpanded
-      })
+      });
     }
     cells.push(Cell(cellProps));
   }
@@ -87,7 +96,7 @@ function Row(props: Props) {
     <Tr {...newProps} >
       {cells}
     </Tr>
-  )
+  );
 }
 
 export default Row;

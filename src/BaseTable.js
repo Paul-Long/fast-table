@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import TableHeader from './TableHeader';
 import Row from './TableRow';
-import {connect} from './mini-store';
+import { connect } from './mini-store';
 import renderExpandedIcon from './ExpandedIcon';
 
 type Props = {
@@ -31,7 +31,7 @@ class BaseTable extends React.PureComponent<Props> {
   };
 
   componentDidMount() {
-    const {registerForce, fixed} = this.props;
+    const { registerForce, fixed } = this.props;
     if (registerForce) {
       registerForce(fixed, this.recomputeBody);
     }
@@ -48,17 +48,17 @@ class BaseTable extends React.PureComponent<Props> {
     });
   };
   handleSort = (key, order) => {
-    const {sortManager, props} = this.context.table;
+    const { sortManager, props } = this.context.table;
     const onSort = props.onSort;
     sortManager.setOrder(key, order, (orders) => {
-      this.props.store.setState({orders});
+      this.props.store.setState({ orders });
       if (typeof onSort === 'function') {
         onSort(orders);
       }
     });
   };
 
-  recomputeBody = ({startIndex, stopIndex}) => {
+  recomputeBody = ({ startIndex, stopIndex }) => {
     this._startIndex = startIndex;
     this._stopIndex = stopIndex;
     this.forceUpdate();
@@ -70,20 +70,22 @@ class BaseTable extends React.PureComponent<Props> {
       fixed,
       currentHoverKey,
       indentSize,
-      handleExpandChange
+      handleExpandChange,
     } = props;
     const table = this.context.table;
     const {
       prefixCls,
       rowClassName,
-      expandedRowByClick
+      expandedRowByClick,
+      hoverEnable,
     } = table.props;
     const dataManager = table.dataManager;
+    const sizeManager = table.sizeManager;
     const columns = table.columnManager.bodyColumns(fixed);
     const hasExpanded = dataManager._hasExpanded;
     const showData = dataManager.showData();
-    for (let index = this._startIndex; index <= this._stopIndex; index++) {
-      const record = showData[index];
+    const dataSource = showData.filter((d, index) => (index >= this._startIndex && index <= this._stopIndex) || d._isFixed);
+    for (let record of dataSource) {
       const className = typeof rowClassName === 'function'
         ? rowClassName(record, record._index)
         : rowClassName;
@@ -91,7 +93,8 @@ class BaseTable extends React.PureComponent<Props> {
         key: `Row${record._showIndex}`,
         className: classNames(className, {
           [`${prefixCls}-hover`]: currentHoverKey === record.key,
-          [`${prefixCls}-expanded-row-${record._expandedLevel}`]: hasExpanded
+          [`${prefixCls}-expanded-row-${record._expandedLevel}`]: hasExpanded,
+          [`${prefixCls}-row-fixed`]: record._isFixed,
         }),
         record,
         prefixCls,
@@ -102,7 +105,9 @@ class BaseTable extends React.PureComponent<Props> {
         onHover: this.handleRowHover,
         components: table.components,
         handleExpanded: handleExpandChange,
-        indentSize
+        hoverEnable,
+        indentSize,
+        scrollTop: sizeManager._scrollTop,
       };
       hasExpanded && (props.renderExpandedIcon = renderExpandedIcon);
       rows.push(Row(props));
@@ -129,21 +134,21 @@ class BaseTable extends React.PureComponent<Props> {
     const {
       prefixCls,
       headerRowHeight,
-      rowHeight
+      rowHeight,
     } = props;
     let body;
     const Table = components.table;
     const BodyWrapper = components.body.wrapper;
     if (hasBody) {
       body = (
-        <BodyWrapper className='tbody' style={{height: sizeManager._dataHeight, minHeight: rowHeight}}>
+        <BodyWrapper className='tbody' style={{ height: sizeManager._dataHeight, minHeight: rowHeight }}>
           {this._children}
         </BodyWrapper>
       );
     }
 
     const width = columnManager.getWidth(fixed) || '100%';
-    const style = {width};
+    const style = { width };
     if (!fixed) {
       style.minWidth = '100%';
     }
@@ -169,11 +174,11 @@ class BaseTable extends React.PureComponent<Props> {
 export default connect((state) => {
   const {
     currentHoverKey,
-    orders
+    orders,
   } = state;
   return {
     currentHoverKey,
-    orders
+    orders,
   };
 })(BaseTable);
 
