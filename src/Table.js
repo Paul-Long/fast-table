@@ -268,6 +268,12 @@ export default class Table extends React.PureComponent<TableParams> {
       state.stopIndex = dataSource.length - 1;
     } else {
       let startIndex = floor(scrollTop / rowHeight) - 1;
+      for (let i = 0; i < dataSource.length; i++) {
+        if (scrollTop > dataSource[i]._top) {
+          startIndex = i - 1;
+          break;
+        }
+      }
       let stopIndex = startIndex + this.showCount;
       if (this.lastScrollTop > scrollTop) {
         startIndex -= 5;
