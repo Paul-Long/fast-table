@@ -246,31 +246,29 @@ export default class ColumnManager {
     const rightLeafColumns = this._leafColumns(rightColumns);
     const len = leafColumns.length - leftLeafColumns.length - rightLeafColumns.length;
     const last = findLast(leafColumns, c => (!c.fixed && c.fixed !== 'left' && c.fixed !== 'right'));
-    const baseWidth = sumBy(columns, column => column._width);
+    const baseWidth = sumBy(columns, '_width');
     this.width = 0;
-    this.leftWidth = 0;
-    this.rightWidth = 0;
+    let centerWidth = 0;
+    this.leftWidth = sumBy(leftColumns, '_width');
+    this.rightWidth = sumBy(rightColumns, '_width');
     const average = floor((wrapperWidth - baseWidth) / len);
     const update = (columns) => {
       return columns.map(column => {
         const width = column._width;
-        if (column._pathKey === last._pathKey) {
-          column._width = wrapperWidth - this.width;
-        } else {
-          if (
-            !leftColumns.some(c => (c._pathKey === column._pathKey)) &&
-            !rightColumns.some(c => (c._pathKey === column._pathKey))
-          ) {
-            column._width = width + average;
-          }
-        }
         const children = column.children || [];
         if (children.length > 0) {
           column.children = update(children);
           column._width = sumBy(column.children, '_width');
         } else {
-          if (column._width < column._minWidth) {
-            column._width = column._minWidth;
+          if (column._pathKey === last._pathKey) {
+            column._width = wrapperWidth - this.leftWidth - this.rightWidth - centerWidth;
+          } else {
+            if (
+              !leftColumns.some(c => (c._pathKey === column._pathKey)) &&
+              !rightColumns.some(c => (c._pathKey === column._pathKey))
+            ) {
+              column._width = width + average;
+            }
           }
           if (isNumber(column.maxWidth) && !isNaN(column.maxWidth)) {
             column._width = min([column.maxWidth, column._width]);
@@ -279,9 +277,9 @@ export default class ColumnManager {
         if (column._currentRow === 0) {
           this.width += column._width;
           if (column.fixed === 'left' || column.fixed === true) {
-            this.leftWidth += column._width;
           } else if (column.fixed === 'right') {
-            this.rightWidth += column._width;
+          } else {
+            centerWidth += column._width;
           }
         }
         return column;
