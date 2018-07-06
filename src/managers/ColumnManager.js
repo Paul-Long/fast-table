@@ -251,7 +251,7 @@ export default class ColumnManager {
     let centerWidth = 0;
     this.leftWidth = sumBy(leftColumns, '_width');
     this.rightWidth = sumBy(rightColumns, '_width');
-    const average = floor((wrapperWidth - baseWidth) / len);
+    const average = max([floor((wrapperWidth - baseWidth) / len), 0]);
     const update = (columns) => {
       return columns.map(column => {
         const width = column._width;
@@ -261,7 +261,7 @@ export default class ColumnManager {
           column._width = sumBy(column.children, '_width');
         } else {
           if (column._pathKey === last._pathKey) {
-            column._width = wrapperWidth - this.leftWidth - this.rightWidth - centerWidth;
+            column._width = max([wrapperWidth - this.leftWidth - this.rightWidth - centerWidth, 0]);
           } else {
             if (
               !leftColumns.some(c => (c._pathKey === column._pathKey)) &&
