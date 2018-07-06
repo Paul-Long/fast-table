@@ -29,7 +29,10 @@ function Cell(props: Props) {
   const {render, dataIndex, onCell, _width, align = 'left'} = column;
 
   let style = {...cellAlignStyle(align)};
-  _width && (style.width = _width);
+  if (_width) {
+    style.width = _width;
+    style.minWidth = _width;
+  }
   if (onCell) {
     style = {...style, ...onCell(column, record, record._showIndex)};
   }

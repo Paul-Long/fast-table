@@ -38,7 +38,12 @@ function renderCell(props: CellProps) {
   } = column;
   const order = orders[dataIndex];
   let style = cellAlignStyle(align);
-  _width ? (style.width = _width) : (style.flex = 1);
+  if (_width) {
+    style.width = _width;
+    style.minWidth = _width;
+  } else {
+    style.flex = 1;
+  }
   style.height = (rowSpan || 1) * headerRowHeight;
   if (onHeaderCell) {
     style = {...style, ...onHeaderCell(column)};
