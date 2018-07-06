@@ -1,7 +1,5 @@
 import React from 'react';
-import flattenDeep from 'lodash/flattenDeep';
 import max from 'lodash/max';
-import sum from 'lodash/sum';
 import multiply from 'lodash/multiply';
 import isNumber from 'lodash/isNumber';
 import toNumber from 'lodash/toNumber';
@@ -9,6 +7,8 @@ import divide from 'lodash/divide';
 import floor from 'lodash/floor';
 import sumBy from 'lodash/sumBy';
 import isNaN from 'lodash/isNaN';
+import min from 'lodash/min';
+import findLast from 'lodash/findLast';
 
 const percentReg = /^\d+\.?\d{0,2}%$/;
 
@@ -145,22 +145,19 @@ export default class ColumnManager {
     return this.headerSize();
   };
 
-  _calcWidth = (widths, wrapperWidth) => {
-    widths = widths.map(w => {
-      if (typeof w === 'string' && percentReg.test(w)) {
-        const i = w.replace('%', '');
-        return floor(this._minWidth(multiply(wrapperWidth, divide(i, 100))));
-      }
-      if (w && typeof w === 'string') {
-        w = w.replace(/[^\d]/g, '');
-      }
-      let ww = toNumber(w);
-      if (!isNaN(ww) && isNumber(ww)) {
-        return floor(this._minWidth(ww));
-      }
-      return floor(this._minWidth(w));
-    });
-    return widths.filter(w => !!w);
+  _calcWidth = (width, wrapperWidth) => {
+    if (typeof width === 'string' && percentReg.test(width)) {
+      const i = width.replace('%', '');
+      return floor(this._minWidth(multiply(wrapperWidth, divide(i, 100))));
+    }
+    if (width && typeof width === 'string') {
+      width = width.replace(/[^\d]/g, '');
+    }
+    let ww = toNumber(width);
+    if (!isNaN(ww) && isNumber(ww)) {
+      return floor(this._minWidth(ww));
+    }
+    return floor(this._minWidth(width));
   };
 
   _minWidth = (width) => {
@@ -213,22 +210,16 @@ export default class ColumnManager {
       if (newColumn.children && newColumn.children.length > 0) {
         newColumn.children = this._groupColumns(newColumn.children, currentRow + 1, newColumn, rows);
         parentColumn.colSpan = parentColumn.colSpan + newColumn.colSpan;
-        newColumn.widths = newColumn.children.map(c => c.widths);
+        newColumn._width = sumBy(newColumn.children, '_width');
       } else {
         parentColumn.colSpan++;
-        newColumn.widths = [newColumn.width];
-      }
-      newColumn.widths = flattenDeep(newColumn.widths);
-
-      let widths = newColumn.widths || [];
-      widths = this._calcWidth(widths, this.wrapperWidth);
-      let width = newColumn.width;
-      if (widths.length > 0) {
-        width = sum(widths);
-      }
-      newColumn._width = width;
-      if (isNaN(width) || width < this.minWidth) {
-        column._width = this.minWidth;
+        newColumn._width = this._calcWidth(newColumn.width, this.wrapperWidth);
+        if (isNumber(newColumn.minWidth) && !isNaN(newColumn.minWidth)) {
+          newColumn._width = max([newColumn._width, newColumn.minWidth]);
+        }
+        if (isNumber(newColumn.maxWidth) && !isNaN(newColumn.maxWidth)) {
+          newColumn._width = min([newColumn._width, newColumn.maxWidth]);
+        }
       }
       newColumn._minWidth = newColumn._width;
       for (let i = 0; i < rows[currentRow].length - 1; ++i) {
@@ -248,9 +239,13 @@ export default class ColumnManager {
 
   _updateWidth = (columns) => {
     const wrapperWidth = this.wrapperWidth || 0;
+    const leftColumns = columns.filter(c => (c.fixed === true || c.fixed === 'left'));
+    const rightColumns = columns.filter(c => (c.fixed === 'right'));
     const leafColumns = this._leafColumns(columns);
-    const len = leafColumns.length;
-    const last = leafColumns[len - 1];
+    const leftLeafColumns = this._leafColumns(leftColumns);
+    const rightLeafColumns = this._leafColumns(rightColumns);
+    const len = leafColumns.length - leftLeafColumns.length - rightLeafColumns.length;
+    const last = findLast(leafColumns, c => (!c.fixed && c.fixed !== 'left' && c.fixed !== 'right'));
     const baseWidth = sumBy(columns, column => column._width);
     this.width = 0;
     this.leftWidth = 0;
@@ -262,7 +257,12 @@ export default class ColumnManager {
         if (column._pathKey === last._pathKey) {
           column._width = wrapperWidth - this.width;
         } else {
-          column._width = width + average;
+          if (
+            !leftColumns.some(c => (c._pathKey === column._pathKey)) &&
+            !rightColumns.some(c => (c._pathKey === column._pathKey))
+          ) {
+            column._width = width + average;
+          }
         }
         const children = column.children || [];
         if (children.length > 0) {
@@ -271,6 +271,9 @@ export default class ColumnManager {
         } else {
           if (column._width < column._minWidth) {
             column._width = column._minWidth;
+          }
+          if (isNumber(column.maxWidth) && !isNaN(column.maxWidth)) {
+            column._width = min([column.maxWidth, column._width]);
           }
         }
         if (column._currentRow === 0) {
