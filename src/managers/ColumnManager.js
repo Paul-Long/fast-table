@@ -261,7 +261,7 @@ export default class ColumnManager {
           column._width = sumBy(column.children, '_width');
         } else {
           if (column._pathKey === last._pathKey) {
-            column._width = max([wrapperWidth - this.leftWidth - this.rightWidth - centerWidth, 0]);
+            column._width = max([wrapperWidth - this.leftWidth - this.rightWidth - centerWidth, column._width]);
           } else {
             if (
               !leftColumns.some(c => (c._pathKey === column._pathKey)) &&

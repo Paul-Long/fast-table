@@ -14,8 +14,8 @@ import DataManager from './managers/DataManager';
 import SortManager from './managers/SortManager';
 import SizeManager from './managers/SizeManager';
 import AutoSizer from './AutoSizer';
-import { create, Provider } from './mini-store';
-import { TableDefaultParams, TableParams } from './types';
+import {create, Provider} from './mini-store';
+import {TableDefaultParams, TableParams} from './types';
 
 import '../theme/table.css';
 
@@ -32,11 +32,12 @@ export default class Table extends React.PureComponent<TableParams> {
     super(props);
     this.lastScrollTop = 0;
     this.lastScrollLeft = 0;
+    this.lastIndex = undefined;
     this.refreshAble = true;
     this.showCount = props.defaultShowCount || 30;
     this.columnManager = new ColumnManager(props);
     this.dataManager = new DataManager(props);
-    this.sortManager = new SortManager({ columns: this.columnManager.groupedColumns(), sortMulti: props.sortMulti });
+    this.sortManager = new SortManager({columns: this.columnManager.groupedColumns(), sortMulti: props.sortMulti});
     this.sizeManager = new SizeManager(props);
 
     this.sizeManager.update({
@@ -82,7 +83,7 @@ export default class Table extends React.PureComponent<TableParams> {
   }
 
   componentWillMount() {
-    const { getScrollSize } = this.props;
+    const {getScrollSize} = this.props;
     const scrollSize = getScrollSize();
     if (scrollSize) {
       this.sizeManager.update({
@@ -104,8 +105,8 @@ export default class Table extends React.PureComponent<TableParams> {
     }
     if (!shallowEqual(nextProps.columns, this.props.columns)) {
       this.sizeManager.update(this.columnManager.reset(nextProps));
-      this.sortManager.update({ columns: this.columnManager.groupedColumns(), sortMulti: nextProps.sortMulti });
-      this.store.setState({ orders: this.sortManager.enable });
+      this.sortManager.update({columns: this.columnManager.groupedColumns(), sortMulti: nextProps.sortMulti});
+      this.store.setState({orders: this.sortManager.enable});
       this.updateColumn();
     }
     if (!shallowEqual(nextProps.expandedRowKeys, this.props.expandedRowKeys)) {
@@ -132,7 +133,7 @@ export default class Table extends React.PureComponent<TableParams> {
     this.showCount = ceil(showCount) + 2;
   };
 
-  onResize = ({ width, height }) => {
+  onResize = ({width, height}) => {
     this._width = width;
     this._height = height;
     this.sizeManager.update({
@@ -142,7 +143,7 @@ export default class Table extends React.PureComponent<TableParams> {
     this.updateColumn();
     this.getShowCount();
     this.resetShowData();
-    this.setState({ width, height });
+    this.setState({width, height});
   };
 
   updateColumn = () => {
@@ -154,9 +155,9 @@ export default class Table extends React.PureComponent<TableParams> {
 
   setScrollPosition(position) {
     this.scrollPosition = position;
-    const { tableNode } = this;
+    const {tableNode} = this;
     if (tableNode) {
-      const { prefixCls } = this.props;
+      const {prefixCls} = this.props;
       if (position === 'clear') {
         classes(tableNode)
           .remove(new RegExp(`^${prefixCls}-scroll-position-.+$`));
@@ -202,7 +203,7 @@ export default class Table extends React.PureComponent<TableParams> {
       return;
     }
     const target = e.target;
-    const { headTable, bodyTable } = this;
+    const {headTable, bodyTable} = this;
     if (target.scrollLeft !== this.lastScrollLeft) {
       if (target === bodyTable && headTable) {
         headTable.scrollLeft = target.scrollLeft;
@@ -210,7 +211,7 @@ export default class Table extends React.PureComponent<TableParams> {
       this.setScrollPositionClassName();
     }
     this.lastScrollLeft = target.scrollLeft;
-    this.sizeManager.update({ _scrollLeft: this.lastScrollLeft });
+    this.sizeManager.update({_scrollLeft: this.lastScrollLeft});
   };
 
   handleBodyScrollTop = (e) => {
@@ -218,7 +219,7 @@ export default class Table extends React.PureComponent<TableParams> {
     if (target !== e.currentTarget) {
       return;
     }
-    const { headTable, bodyTable, fixedColumnsBodyLeft, fixedColumnsBodyRight } = this;
+    const {headTable, bodyTable, fixedColumnsBodyLeft, fixedColumnsBodyRight} = this;
     if (this.lastScrollTop !== target.scrollTop && target !== headTable) {
       if (fixedColumnsBodyLeft && target !== fixedColumnsBodyLeft) {
         fixedColumnsBodyLeft.scrollTop = target.scrollTop;
@@ -229,8 +230,8 @@ export default class Table extends React.PureComponent<TableParams> {
       if (bodyTable && target !== bodyTable) {
         bodyTable.scrollTop = target.scrollTop;
       }
-      this.sizeManager.update({ _scrollTop: target.scrollTop });
-      this.resetShowData(target);
+      this.sizeManager.update({_scrollTop: target.scrollTop});
+      this.resetShowData(target, true);
       if (this.props.refreshEnable) {
         this.scrollRefresh(target);
       }
@@ -239,7 +240,7 @@ export default class Table extends React.PureComponent<TableParams> {
   };
 
   scrollRefresh = (target) => {
-    const { scrollEndPosition, onScrollEnd } = this.props;
+    const {scrollEndPosition, onScrollEnd} = this.props;
     if (target.scrollTop + target.clientHeight + scrollEndPosition > target.scrollHeight && this.refreshAble) {
       if (typeof onScrollEnd === 'function') {
         onScrollEnd();
@@ -250,7 +251,7 @@ export default class Table extends React.PureComponent<TableParams> {
     }
   };
 
-  resetShowData = (target) => {
+  resetShowData = (target, isScroll = false) => {
     let scrollTop = 0;
     if (!target) {
       target = this['bodyTable'];
@@ -260,40 +261,56 @@ export default class Table extends React.PureComponent<TableParams> {
     } else {
       return;
     }
-    const { rowHeight } = this.props;
+    const {rowHeight} = this.props;
     const dataSource = this.dataManager.showData() || [];
     const state = {};
+    let needUpdate = true;
     if (!this.sizeManager._hasScrollY) {
       state.startIndex = 0;
       state.stopIndex = dataSource.length - 1;
     } else {
-      let startIndex = floor(scrollTop / rowHeight) - 1;
-      for (let i = 0; i < dataSource.length; i++) {
-        if (scrollTop < dataSource[i]._top) {
-          startIndex = i - 1;
-          break;
+      if (this.lastIndex && isScroll) {
+        const {startIndex, stopIndex} = this.lastIndex;
+        const start = dataSource[startIndex];
+        const end = dataSource[stopIndex];
+        if (!(scrollTop + target.clientHeight > end._top - 60 ||
+            scrollTop < start._top + 60)
+        ) {
+          needUpdate = false;
         }
       }
-      let stopIndex = startIndex + this.showCount;
-      if (this.lastScrollTop > scrollTop) {
-        startIndex -= 5;
-      } else {
-        stopIndex += 5;
+      if (needUpdate) {
+        let startIndex = floor(scrollTop / rowHeight) - 1;
+        for (let i = 0; i < dataSource.length; i++) {
+          if (scrollTop < dataSource[i]._top) {
+            startIndex = i - 1;
+            break;
+          }
+        }
+        let stopIndex = startIndex + this.showCount;
+        if (this.lastScrollTop > scrollTop) {
+          startIndex -= 5;
+        } else {
+          stopIndex += 5;
+        }
+        startIndex = Math.max(0, startIndex);
+        stopIndex = Math.min(stopIndex, dataSource.length - 1);
+        state.startIndex = startIndex;
+        state.stopIndex = stopIndex;
+        this.lastIndex = state;
       }
-      startIndex = Math.max(0, startIndex);
-      stopIndex = Math.min(stopIndex, dataSource.length - 1);
-      state.startIndex = startIndex;
-      state.stopIndex = stopIndex;
     }
-    for (let key in this._forceTable) {
-      if (this._forceTable.hasOwnProperty(key) && this._forceTable[key]) {
-        this._forceTable[key](state);
+    if (needUpdate) {
+      for (let key in this._forceTable) {
+        if (this._forceTable.hasOwnProperty(key) && this._forceTable[key]) {
+          this._forceTable[key](state);
+        }
       }
     }
   };
 
   handleExpandChange = (record) => {
-    const { onExpandedRowsChange } = this.props;
+    const {onExpandedRowsChange} = this.props;
     const dataManager = this.dataManager;
     const result = dataManager.expanded(record.key);
     if (typeof onExpandedRowsChange === 'function') {
@@ -311,7 +328,7 @@ export default class Table extends React.PureComponent<TableParams> {
   };
 
   getClassName = () => {
-    const { prefixCls, className, fixedHeader, bordered } = this.props;
+    const {prefixCls, className, fixedHeader, bordered} = this.props;
     return classNames(
       prefixCls,
       className,
@@ -324,7 +341,7 @@ export default class Table extends React.PureComponent<TableParams> {
   };
 
   renderTable = (options) => {
-    const { fixed } = options;
+    const {fixed} = options;
     const headTable = (
       <HeadTable
         key='head'
@@ -353,29 +370,29 @@ export default class Table extends React.PureComponent<TableParams> {
   };
 
   renderLeftFixedTable = () => {
-    const table = this.renderTable({ fixed: 'left' });
+    const table = this.renderTable({fixed: 'left'});
     return (<div className={this.fixedClassName('left')}>{table}</div>);
   };
 
   renderRightFixedTable = () => {
-    const table = this.renderTable({ fixed: 'right' });
+    const table = this.renderTable({fixed: 'right'});
     return (<div className={this.fixedClassName('right')}>{table}</div>);
   };
 
   renderFooter = () => {
-    const { footer, footerHeight, prefixCls } = this.props;
+    const {footer, footerHeight, prefixCls} = this.props;
     return footer ? (
       <div
         key='table-footer'
         className={`${prefixCls}-footer`}
-        style={{ flex: `0 1 ${footerHeight}px`, height: footerHeight, color: 'inherit' }}>
+        style={{flex: `0 1 ${footerHeight}px`, height: footerHeight, color: 'inherit'}}>
         {footer(this.props.dataSource)}
       </div>
     ) : null;
   };
 
   renderEmptyText = () => {
-    const { emptyText, dataSource, rowHeight, prefixCls, fixedHeader, showHeader } = this.props;
+    const {emptyText, dataSource, rowHeight, prefixCls, fixedHeader, showHeader} = this.props;
     if (dataSource && dataSource.length > 0) {
       return null;
     }
@@ -400,7 +417,7 @@ export default class Table extends React.PureComponent<TableParams> {
   };
 
   render() {
-    const { style, prefixCls } = this.props;
+    const {style, prefixCls} = this.props;
     const hasLeftFixed = this.columnManager.isAnyColumnsLeftFixed();
     const hasRightFixed = this.columnManager.isAnyColumnsRightFixed();
     return (
@@ -410,7 +427,7 @@ export default class Table extends React.PureComponent<TableParams> {
             <div
               className={this.getClassName()}
               ref={this.saveRef('tableNode')}
-              style={{ ...style, width: this.sizeManager._wrapperWidth, height: this.sizeManager._wrapperHeight }}
+              style={{...style, width: this.sizeManager._wrapperWidth, height: this.sizeManager._wrapperHeight}}
             >
               <div className={`${prefixCls}-content`}>
                 {this.renderMainTable()}
