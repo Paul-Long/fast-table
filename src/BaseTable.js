@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import TableHeader from './TableHeader';
 import Row from './TableRow';
-import { connect } from './mini-store';
+import {connect} from './mini-store';
 import renderExpandedIcon from './ExpandedIcon';
+import Cell from './TableCell';
 
 type Props = {
   currentHoverKey: string,
@@ -31,7 +31,7 @@ class BaseTable extends React.PureComponent<Props> {
   };
 
   componentDidMount() {
-    const { registerForce, fixed } = this.props;
+    const {registerForce, fixed} = this.props;
     if (registerForce) {
       registerForce(fixed, this.recomputeBody);
     }
@@ -48,17 +48,17 @@ class BaseTable extends React.PureComponent<Props> {
     });
   };
   handleSort = (key, order) => {
-    const { sortManager, props } = this.context.table;
+    const {sortManager, props} = this.context.table;
     const onSort = props.onSort;
     sortManager.setOrder(key, order, (orders) => {
-      this.props.store.setState({ orders });
+      this.props.store.setState({orders});
       if (typeof onSort === 'function') {
         onSort(orders);
       }
     });
   };
 
-  recomputeBody = ({ startIndex, stopIndex }) => {
+  recomputeBody = ({startIndex, stopIndex}) => {
     this._startIndex = startIndex;
     this._stopIndex = stopIndex;
     this.forceUpdate();
@@ -79,37 +79,64 @@ class BaseTable extends React.PureComponent<Props> {
       expandedRowByClick,
       hoverEnable,
     } = table.props;
-    const dataManager = table.dataManager;
-    const sizeManager = table.sizeManager;
-    const columns = table.columnManager.bodyColumns(fixed);
+    const {
+      dataManager,
+      sizeManager,
+      cacheManager,
+      columnManager,
+    } = table;
+    const columns = columnManager.bodyColumns(fixed);
     const hasExpanded = dataManager._hasExpanded;
     const showData = dataManager.showData();
     const dataSource = showData.filter((d, index) => (index >= this._startIndex && index <= this._stopIndex) || d._isFixed);
     for (let record of dataSource) {
+      const key = `Row${record._path}`;
+      const cells = [];
+      for (let i = 0; i < columns.length; i++) {
+        const cellKey = `Row${record._path}-Col${i}_${fixed}`;
+        let cell = cacheManager.getCell(cellKey);
+        if (!cell || record._isFixed) {
+          const cellProps = {
+            key: cellKey,
+            column: columns[i],
+            record,
+            components: table.components,
+          };
+          if (hasExpanded) {
+            cellProps.ExpandedIcon = renderExpandedIcon({
+              columnIndex: i,
+              record,
+              prefixCls,
+              fixed,
+              indentSize,
+              handleExpanded: handleExpandChange,
+            });
+          }
+          cacheManager.setCell(cellKey, Cell(cellProps));
+          cell = cacheManager.getCell(cellKey);
+        }
+        cells.push(cell);
+      }
+
+
       const className = typeof rowClassName === 'function'
         ? rowClassName(record, record._index)
         : rowClassName;
       const props = {
-        key: `Row${record._showIndex}`,
-        className: classNames(className, {
-          [`${prefixCls}-hover`]: currentHoverKey === record.key,
-          [`${prefixCls}-expanded-row-${record._expandedLevel}`]: hasExpanded,
-          [`${prefixCls}-row-fixed`]: record._isFixed,
-        }),
+        key,
+        className,
+        hasExpanded,
         record,
         prefixCls,
-        columns,
-        fixed,
         expandedRowByClick,
-        expanded: dataManager.rowIsExpanded(record),
         onHover: this.handleRowHover,
         components: table.components,
         handleExpanded: handleExpandChange,
         hoverEnable,
-        indentSize,
         scrollTop: sizeManager._scrollTop,
+        hovered: currentHoverKey === record.key,
+        cells,
       };
-      hasExpanded && (props.renderExpandedIcon = renderExpandedIcon);
       rows.push(Row(props));
     }
     this._children = rows;
@@ -141,14 +168,14 @@ class BaseTable extends React.PureComponent<Props> {
     const BodyWrapper = components.body.wrapper;
     if (hasBody) {
       body = (
-        <BodyWrapper className='tbody' style={{ height: sizeManager._dataHeight, minHeight: rowHeight }}>
+        <BodyWrapper className='tbody' style={{height: sizeManager._dataHeight, minHeight: rowHeight}}>
           {this._children}
         </BodyWrapper>
       );
     }
 
     const width = columnManager.getWidth(fixed) || '100%';
-    const style = { width };
+    const style = {width};
     if (!fixed) {
       style.minWidth = '100%';
     }

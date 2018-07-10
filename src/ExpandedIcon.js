@@ -3,20 +3,18 @@ import classNames from 'classnames';
 
 type Props = {
   prefixCls: string,
-  expanded: boolean,
   record: Object,
   onClick: Function
 }
 
 function ExpandedIcon(props: Props) {
   const {
-    expanded,
     prefixCls,
     record,
     onClick
   } = props;
   const newProps = {
-    className: classNames(`${prefixCls}-expanded-icon`, {expanded}),
+    className: classNames(`${prefixCls}-expanded-icon`, {expanded: record._expanded}),
     onClick: event => {
       event.stopPropagation();
       onClick && onClick(record, record.key, event);
@@ -32,7 +30,6 @@ type ExpandedIconProps = {
   columnIndex: number,
   prefixCls: string,
   fixed: string,
-  expanded: boolean,
   indentSize: number,
   handleExpanded: Function
 }
@@ -43,7 +40,6 @@ export default function renderExpandedIcon(props: ExpandedIconProps) {
     columnIndex,
     prefixCls,
     fixed,
-    expanded,
     indentSize,
     handleExpanded
   } = props;
@@ -56,7 +52,6 @@ export default function renderExpandedIcon(props: ExpandedIconProps) {
       prefixCls,
       record,
       rowKey: record.key,
-      expanded,
       onClick: handleExpanded
     });
   }

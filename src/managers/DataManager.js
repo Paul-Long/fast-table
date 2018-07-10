@@ -108,11 +108,13 @@ export default class DataManager {
     return this._cached[name];
   };
 
-  _getData = (dataSource, level = 0) => {
+  _getData = (dataSource, level = 0, parentPath) => {
     dataSource = dataSource || [];
     for (let index = 0; index < dataSource.length; index++) {
       const height = this.getRowHeight(dataSource[index], index) * this.rowHeight;
+      const path = `${parentPath === undefined ? index : `${parentPath}-${index}`}`;
       dataSource[index]['_index'] = index;
+      dataSource[index]['_path'] = path;
       dataSource[index]['_expandedLevel'] = level;
       dataSource[index]['_height'] = height;
       if (!dataSource[index]['key']) {
@@ -123,7 +125,7 @@ export default class DataManager {
       this._hasExpanded = this._hasExpanded || children.length > 0;
       dataSource[index]['_isFixed'] = !!dataSource[index].isFixed && children.length === 0;
       if (children.length > 0) {
-        dataSource[index]['children'] = this._getData(children, level + 1);
+        dataSource[index]['children'] = this._getData(children, level + 1, path);
       }
     }
     return dataSource;
@@ -148,8 +150,10 @@ export default class DataManager {
       record._top = this._bodyHeight;
       this._bodyHeight += record._height;
       const children = record.children || [];
+      const _expanded = expandedKeys.length > 0 && expandedKeys.indexOf(record.key) > -1 && children.length > 0;
+      record._expanded = _expanded;
       data.push(record);
-      if (expandedKeys.length > 0 && expandedKeys.indexOf(record.key) > -1 && children.length > 0) {
+      if (_expanded) {
         data = this._showData(children, data);
       }
     }

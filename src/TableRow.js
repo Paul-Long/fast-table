@@ -1,24 +1,21 @@
 import React from 'react';
 import classNames from 'classnames';
-import Cell from './TableCell';
 
 type Props = {
   key: string,
   className: string,
   record: Object,
   prefixCls: string,
-  columns: Array,
   onHover: Function,
   onClick: Function,
-  expanded: boolean,
-  fixed: string,
-  indentSize: number,
   components: Object,
-  renderExpandedIcon: Function,
   expandedRowByClick: boolean,
   hoverEnable: boolean,
   handleExpanded: Function,
   scrollTop: number,
+  hovered: boolean,
+  hasExpanded: boolean,
+  cells: [React.Element<*>],
 }
 
 function Row(props: Props) {
@@ -27,25 +24,28 @@ function Row(props: Props) {
     className,
     record,
     prefixCls,
-    columns,
     onHover,
     onClick,
-    expanded,
-    fixed,
-    indentSize,
     components,
-    renderExpandedIcon,
     expandedRowByClick,
     hoverEnable,
     handleExpanded,
     scrollTop,
+    hovered,
+    hasExpanded,
+    cells,
   } = props;
   const Tr = components.body.row;
   const rowClass = classNames(
     'tr',
     `${prefixCls}-row`,
     `${prefixCls}-row-${record._showIndex % 2}`,
-    className
+    className,
+    {
+      [`${prefixCls}-hover`]: hovered,
+      [`${prefixCls}-expanded-row-${record._expandedLevel}`]: hasExpanded,
+      [`${prefixCls}-row-fixed`]: record._isFixed,
+    }
   );
   const newProps = {
     key,
@@ -70,27 +70,6 @@ function Row(props: Props) {
     newProps.onMouseLeave = function () {
       onHover && onHover(false, record.key);
     };
-  }
-  const cells = [];
-  for (let i = 0; i < columns.length; i++) {
-    const cellProps = {
-      key: `Row${record._showIndex}-Col${i}`,
-      column: columns[i],
-      record,
-      components
-    };
-    if (renderExpandedIcon) {
-      cellProps.ExpandedIcon = renderExpandedIcon({
-        columnIndex: i,
-        record,
-        prefixCls,
-        fixed,
-        expanded,
-        indentSize,
-        handleExpanded
-      });
-    }
-    cells.push(Cell(cellProps));
   }
   return (
     <Tr {...newProps} >
