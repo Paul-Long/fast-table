@@ -15,8 +15,8 @@ import SortManager from './managers/SortManager';
 import SizeManager from './managers/SizeManager';
 import CacheManager from './managers/CacheManager';
 import AutoSizer from './AutoSizer';
-import {create, Provider} from './mini-store';
-import {TableDefaultParams, TableParams} from './types';
+import { create, Provider } from './mini-store';
+import { TableDefaultParams, TableParams, DS } from './types';
 
 import '../theme/table.css';
 
@@ -33,9 +33,8 @@ export default class Table extends React.PureComponent<TableParams> {
     super(props);
     this.lastScrollTop = 0;
     this.lastScrollLeft = 0;
-    this.lastIndex = undefined;
     this.refreshAble = true;
-    this.showCount = props.defaultShowCount || 30;
+    this.showCount = props.defaultShowCount || 20;
     this.columnManager = new ColumnManager(props);
     this.dataManager = new DataManager(props);
     this.sortManager = new SortManager({columns: this.columnManager.groupedColumns(), sortMulti: props.sortMulti});
@@ -103,7 +102,7 @@ export default class Table extends React.PureComponent<TableParams> {
         _dataHeight: this.dataManager._bodyHeight,
         _dataEmpty: this.dataManager.isEmpty()
       });
-      this.cacheManager.resetCell();
+      this.cacheManager.reset();
       this.getShowCount();
       this.resetShowData();
     }
@@ -111,7 +110,7 @@ export default class Table extends React.PureComponent<TableParams> {
       this.sizeManager.update(this.columnManager.reset(nextProps));
       this.sortManager.update({columns: this.columnManager.groupedColumns(), sortMulti: nextProps.sortMulti});
       this.store.setState({orders: this.sortManager.enable});
-      this.cacheManager.resetCell();
+      this.cacheManager.reset();
       this.updateColumn();
     }
     if (!shallowEqual(nextProps.expandedRowKeys, this.props.expandedRowKeys)) {
@@ -120,7 +119,7 @@ export default class Table extends React.PureComponent<TableParams> {
         _dataHeight: this.dataManager._bodyHeight,
         _dataEmpty: this.dataManager.isEmpty()
       });
-      this.cacheManager.resetCell();
+      this.cacheManager.reset();
       this.getShowCount();
       this.resetShowData();
     }
@@ -131,12 +130,16 @@ export default class Table extends React.PureComponent<TableParams> {
   }
 
   getShowCount = () => {
+    const {showHeader} = this.props;
     const dataSource = this.dataManager.showData();
-    const _height = this._height || 0;
-    let showCount = 5 + (_height / this.props.rowHeight);
+    let _height = this._height || 0;
+    if (showHeader) {
+      _height -= this.sizeManager._headerHeight;
+      _height = Math.max(_height, 0);
+    }
+    let showCount = 1 + (_height / this.props.rowHeight);
     showCount = showCount > dataSource.length ? dataSource.length : showCount;
-    showCount = Math.max(showCount, this.props.defaultShowCount);
-    this.showCount = ceil(showCount) + 2;
+    this.showCount = ceil(showCount);
   };
 
   onResize = ({width, height}) => {
@@ -276,22 +279,13 @@ export default class Table extends React.PureComponent<TableParams> {
     } else {
       let startIndex = floor(scrollTop / rowHeight) - 1;
       for (let i = 0; i < dataSource.length; i++) {
-        if (scrollTop < dataSource[i]._top) {
+        if (scrollTop < dataSource[i][DS._top]) {
           startIndex = i - 1;
           break;
         }
       }
-      let stopIndex = startIndex + this.showCount;
-      if (this.lastScrollTop > scrollTop) {
-        startIndex -= 5;
-      } else {
-        stopIndex += 5;
-      }
-      startIndex = Math.max(0, startIndex);
-      stopIndex = Math.min(stopIndex, dataSource.length - 1);
-      state.startIndex = startIndex;
-      state.stopIndex = stopIndex;
-      this.lastIndex = state;
+      state.startIndex = Math.max(0, startIndex - 2);
+      state.stopIndex = Math.min(startIndex + this.showCount + 2, dataSource.length - 1);
     }
     for (let key in this._forceTable) {
       if (this._forceTable.hasOwnProperty(key) && this._forceTable[key]) {
@@ -303,12 +297,17 @@ export default class Table extends React.PureComponent<TableParams> {
   handleExpandChange = (record) => {
     const {onExpandedRowsChange} = this.props;
     const dataManager = this.dataManager;
-    this.cacheManager.resetCell();
-    const result = dataManager.expanded(record.key);
+    this.cacheManager.reset();
+    const result = dataManager.expanded(record[DS._key]);
     if (typeof onExpandedRowsChange === 'function') {
       onExpandedRowsChange(result);
     }
+    this.getShowCount();
+    this.sizeManager.update({
+      _dataHeight: this.dataManager._bodyHeight,
+    });
     this.resetShowData();
+    this.forceUpdate();
   };
 
   saveRef = (name) => (node) => {

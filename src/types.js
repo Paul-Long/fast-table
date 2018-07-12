@@ -1,5 +1,5 @@
 import React from 'react';
-import {measureScrollbar} from './utils';
+import { measureScrollbar } from './utils';
 
 export type TableParams = {
   prefixCls: string,
@@ -62,10 +62,36 @@ export const TableDefaultParams = {
   rowHeight: 30,
   headerRowHeight: 35,
   footerHeight: 30,
-  defaultShowCount: 30,
+  defaultShowCount: 20,
   colMinWidth: 100,
   scrollEndPosition: 60,
   indentSize: 17,
 
   style: {}
+};
+
+export const CS = {
+  _path: Symbol('_path'),
+  _pathKey: Symbol('_pathKey'),
+  _currentRow: Symbol('_currentRow'),
+  _width: Symbol('_width'),
+  _minWidth: Symbol('_minWidth'),
+  path: Symbol('path'),
+  rowSpan: Symbol('rowSpan'),
+  colSpan: Symbol('colSpan'),
+};
+
+export const DS = {
+  _index: Symbol('_index'),
+  _showIndex: Symbol('_showIndex'),
+  _path: Symbol('_path'),
+  _expandedLevel: Symbol('_expandedLevel'),
+  _height: Symbol('_height'),
+  key: Symbol('key'),
+  _expandedEnable: Symbol('_expandedEnable'),
+  _isFixed: Symbol('_isFixed'),
+  _top: Symbol('_top'),
+  _expanded: Symbol('_expanded'),
+  _key: Symbol('_key'),
+  _rowClassName: Symbol('_rowClassName'),
 };

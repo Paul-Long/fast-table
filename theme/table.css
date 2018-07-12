@@ -76,6 +76,9 @@
 .vt-row-1 {
   background: #121A19;
 }
+.vt-row-fixed {
+  background-color: #1E2B29;
+}
 .vt-hover > .td {
   background: #193D37 !important;
 }

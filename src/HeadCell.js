@@ -1,7 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
-import {cellAlignStyle} from './utils';
+import { cellAlignStyle } from './utils';
 import Sorter from './Sorter';
+import { CS } from './types';
 
 type CellProps = {
   key: string,
@@ -28,19 +29,19 @@ function renderCell(props: CellProps) {
   const children = column.children || [];
   const Th = components.header.cell;
   const {
-    rowSpan,
     dataIndex,
     align,
-    _width,
     title,
     sortEnable,
     onHeaderCell
   } = column;
+  const rowSpan = column[CS.rowSpan];
+  const width = column[CS._width];
   const order = orders[dataIndex];
   let style = cellAlignStyle(align);
-  if (_width) {
-    style.width = _width;
-    style.minWidth = _width;
+  if (width) {
+    style.width = width;
+    style.minWidth = width;
   } else {
     style.flex = 1;
   }

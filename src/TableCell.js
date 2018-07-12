@@ -1,61 +1,40 @@
 import React from 'react';
 import classNames from 'classnames';
 import get from 'lodash/get';
-import {cellAlignStyle} from './utils';
+import { cellAlignStyle } from './utils';
+import { CS, DS } from './types';
 
 type Props = {
   key: string,
   className: string,
-  column: Object,
-  record: Object,
   components: Object,
-  ExpandedIcon: React.Element<*>
+  ExpandedIcon: React.Element<*>,
+  style: Object,
+  children: any,
 };
-
-function isInvalidRenderCellText(text) {
-  return text
-    && !React.isValidElement(text)
-    && Object.prototype.toString.call(text) === '[object Object]';
-}
 
 function Cell(props: Props) {
   const {
     key,
-    column,
-    record,
+    className,
     components,
-    ExpandedIcon
+    ExpandedIcon,
+    style,
+    children,
   } = props;
-  const {render, dataIndex, onCell, _width, align = 'left'} = column;
-
-  let style = {...cellAlignStyle(align)};
-  if (_width) {
-    style.width = _width;
-    style.minWidth = _width;
-  }
-  if (onCell) {
-    style = {...style, ...onCell(column, record, record._showIndex)};
-  }
 
   const newProps = {
     key,
-    className: classNames('td', column.className),
+    className: classNames('td', className),
     style
   };
-  let text = get(record, dataIndex);
-  if (typeof render === 'function') {
-    text = render(text, record, record._index);
-  }
-  if (isInvalidRenderCellText(text)) {
-    text = null;
-  }
   const Td = components.body.cell;
   return (
     <Td {...newProps}>
       {ExpandedIcon}
-      {text}
+      {children}
     </Td>
-  )
+  );
 }
 
 export default Cell;

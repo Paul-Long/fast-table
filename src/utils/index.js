@@ -1,3 +1,5 @@
+import React from 'react';
+
 let scrollbarSize;
 
 const scrollbarMeasure = {
@@ -47,4 +49,10 @@ export function cellAlignStyle(align) {
     }
   }
   return style;
+}
+
+export function isInvalidRenderCellText(text) {
+  return text
+    && !React.isValidElement(text)
+    && Object.prototype.toString.call(text) === '[object Object]';
 }

@@ -1,24 +1,22 @@
 import React from 'react';
 import classNames from 'classnames';
+import { DS } from './types';
 
 type Props = {
   prefixCls: string,
-  record: Object,
-  onClick: Function
+  onClick: Function,
+  expanded: boolean,
 }
 
 function ExpandedIcon(props: Props) {
   const {
     prefixCls,
-    record,
-    onClick
+    onClick,
+    expanded,
   } = props;
   const newProps = {
-    className: classNames(`${prefixCls}-expanded-icon`, {expanded: record._expanded}),
-    onClick: event => {
-      event.stopPropagation();
-      onClick && onClick(record, record.key, event);
-    }
+    className: classNames(`${prefixCls}-expanded-icon`, {expanded}),
+    onClick
   };
   return (
     <span {...newProps} />
@@ -26,39 +24,35 @@ function ExpandedIcon(props: Props) {
 }
 
 type ExpandedIconProps = {
-  record: Object,
-  columnIndex: number,
   prefixCls: string,
-  fixed: string,
   indentSize: number,
-  handleExpanded: Function
+  handleExpanded: Function,
+  expanded: boolean,
+  expandedEnable: boolean,
+  expandedLevel: number,
 }
 
 export default function renderExpandedIcon(props: ExpandedIconProps) {
   const {
-    record,
-    columnIndex,
     prefixCls,
-    fixed,
     indentSize,
-    handleExpanded
+    handleExpanded,
+    expandedEnable,
+    expanded,
+    expandedLevel,
   } = props;
-  if (columnIndex !== 0 || fixed === 'right') {
-    return null;
-  }
   let icon;
-  if (record._expandedEnable && columnIndex === 0 && fixed !== 'right') {
+  if (expandedEnable) {
     icon = ExpandedIcon({
       prefixCls,
-      record,
-      rowKey: record.key,
-      onClick: handleExpanded
+      onClick: handleExpanded,
+      expanded,
     });
   }
 
   return (
     <div style={{display: 'inline-flex', flexDirection: 'row', justifyContent: 'flex-start'}}>
-      <span style={{width: record._expandedLevel * indentSize, display: 'inline-block'}} />
+      <span style={{width: expandedLevel * indentSize, display: 'inline-block'}} />
       {icon || <span style={{width: indentSize, display: 'inline-block'}} />}
     </div>
   );

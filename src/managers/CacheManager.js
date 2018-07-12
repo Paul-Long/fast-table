@@ -4,6 +4,7 @@ class CacheManager {
   _rowCache = {};
   _cellCache = {};
   _styleCache = {};
+  _rowStyleCache = {};
 
   setRow = (key, element) => {
     this._rowCache[key] = element;
@@ -21,8 +22,9 @@ class CacheManager {
     return this._cellCache[key];
   };
 
-  resetCell = () => {
+  reset = () => {
     this._cellCache = {};
+    this._rowStyleCache = {};
   };
 
   setStyle = (key, style) => {
@@ -33,12 +35,12 @@ class CacheManager {
     return this._styleCache[key];
   };
 
-  _cache = (name, fn) => {
-    if (name in this._cached) {
-      return this._cached[name];
-    }
-    this._cached[name] = fn();
-    return this._cached[name];
+  getRowStyle = (key) => {
+    return this._rowStyleCache[key];
+  };
+
+  setRowStyle = (key, style) => {
+    this._rowStyleCache[key] = style;
   };
 }
 

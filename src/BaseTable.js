@@ -1,10 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import get from 'lodash/get';
 import TableHeader from './TableHeader';
 import Row from './TableRow';
-import {connect} from './mini-store';
+import { connect } from './mini-store';
 import renderExpandedIcon from './ExpandedIcon';
 import Cell from './TableCell';
+import { CS, DS } from './types';
+import { cellAlignStyle, isInvalidRenderCellText } from './utils';
 
 type Props = {
   currentHoverKey: string,
@@ -42,11 +45,11 @@ class BaseTable extends React.PureComponent<Props> {
     this.renderRows(nextProps);
   }
 
-  handleRowHover = (isHover, key) => {
-    this.props.store.setState({
-      currentHoverKey: isHover ? key : null
-    });
+  handleExpanded = (record) => {
+    const {handleExpandChange} = this.props;
+    handleExpandChange(record);
   };
+
   handleSort = (key, order) => {
     const {sortManager, props} = this.context.table;
     const onSort = props.onSort;
@@ -58,10 +61,125 @@ class BaseTable extends React.PureComponent<Props> {
     });
   };
 
+  handleRowClick = (record) => {
+    const table = this.context.table;
+    const {expandedRowByClick} = table.props;
+    if (expandedRowByClick) {
+      this.handleExpanded(record);
+    }
+  };
+
+  handleRowMouseEnter = (record) => {
+    this.handleRowHover(true, record[DS._key]);
+  };
+
+  handleRowMouseLeave = (record) => {
+    this.handleRowHover(false, record[DS._key]);
+  };
+
+  handleRowHover = (isHover, key) => {
+    const table = this.context.table;
+    const {hoverEnable} = table.props;
+    if (hoverEnable) {
+      this.props.store.setState({
+        currentHoverKey: isHover ? key : null
+      });
+    }
+  };
+
+  getCellStyle = (column, record) => {
+    const {onCell} = column;
+    const align = column.align || 'left';
+    const width = column[CS._width];
+    let style = {...cellAlignStyle(align)};
+    if (width) {
+      style.width = width;
+      style.minWidth = width;
+    }
+    if (onCell) {
+      style = {...style, ...onCell(column, record)};
+    }
+    return style;
+  };
+
+  getCellText = (column, record) => {
+    const {render, dataIndex} = column;
+    let text = get(record, dataIndex);
+    if (typeof render === 'function') {
+      text = render(text, record);
+    }
+    if (isInvalidRenderCellText(text)) {
+      text = null;
+    }
+    return text;
+  };
+
   recomputeBody = ({startIndex, stopIndex}) => {
     this._startIndex = startIndex;
     this._stopIndex = stopIndex;
     this.forceUpdate();
+  };
+
+  getRowStyle = (record, key) => {
+    const table = this.context.table;
+    const {
+      sizeManager,
+      cacheManager,
+    } = table;
+
+    let rowStyle = cacheManager.getRowStyle(key);
+    if (!rowStyle || record[DS._isFixed]) {
+      rowStyle = {
+        position: 'absolute',
+        top: record[DS._top],
+        height: record[DS._height],
+      };
+      if (record[DS._isFixed]) {
+        rowStyle.top += sizeManager._scrollTop;
+        rowStyle.zIndex = 1;
+      }
+      if (!record[DS._isFixed]) {
+        cacheManager.setRowStyle(key, rowStyle);
+      }
+    }
+    return rowStyle;
+  };
+
+  renderCells = (props, record) => {
+    const {fixed, indentSize} = props;
+    const table = this.context.table;
+    const {prefixCls} = table.props;
+    const {dataManager, cacheManager, columnManager,} = table;
+    const columns = columnManager.bodyColumns(fixed);
+    const hasExpanded = dataManager._hasExpanded;
+    const cells = [];
+    for (let i = 0; i < columns.length; i++) {
+      const cellKey = `Row${record[DS._path]}-Col${i}_${fixed}`;
+      let cell = cacheManager.getCell(cellKey);
+      if (!cell || record[DS._isFixed]) {
+        const cellProps = {
+          key: cellKey,
+          className: columns[i].className,
+          components: table.components,
+          style: this.getCellStyle(columns[i], record),
+          children: this.getCellText(columns[i], record),
+        };
+        if (hasExpanded && fixed !== 'right' && i === 0) {
+          cellProps.ExpandedIcon = renderExpandedIcon({
+            prefixCls,
+            indentSize,
+            handleExpanded: this.handleExpanded.bind(this, record),
+            expanded: record[DS._expanded],
+            expandedEnable: record[DS._expandedEnable],
+            expandedLevel: record[DS._expandedLevel],
+          });
+        }
+        cacheManager.setCell(cellKey, Cell(cellProps));
+        cell = cacheManager.getCell(cellKey);
+      }
+      cells.push(cell);
+    }
+    return cells;
   };
 
   renderRows = (props) => {
@@ -69,75 +187,29 @@ class BaseTable extends React.PureComponent<Props> {
     const {
       fixed,
       currentHoverKey,
-      indentSize,
-      handleExpandChange,
     } = props;
     const table = this.context.table;
-    const {
-      prefixCls,
-      rowClassName,
-      expandedRowByClick,
-      hoverEnable,
-    } = table.props;
-    const {
-      dataManager,
-      sizeManager,
-      cacheManager,
-      columnManager,
-    } = table;
-    const columns = columnManager.bodyColumns(fixed);
-    const hasExpanded = dataManager._hasExpanded;
+    const {prefixCls} = table.props;
+    const {dataManager} = table;
     const showData = dataManager.showData();
-    const dataSource = showData.filter((d, index) => (index >= this._startIndex && index <= this._stopIndex) || d._isFixed);
-    for (let record of dataSource) {
-      const key = `Row${record._path}`;
-      const cells = [];
-      for (let i = 0; i < columns.length; i++) {
-        const cellKey = `Row${record._path}-Col${i}_${fixed}`;
-        let cell = cacheManager.getCell(cellKey);
-        if (!cell || record._isFixed) {
-          const cellProps = {
-            key: cellKey,
-            column: columns[i],
-            record,
-            components: table.components,
-          };
-          if (hasExpanded) {
-            cellProps.ExpandedIcon = renderExpandedIcon({
-              columnIndex: i,
-              record,
-              prefixCls,
-              fixed,
-              indentSize,
-              handleExpanded: handleExpandChange,
-            });
-          }
-          cacheManager.setCell(cellKey, Cell(cellProps));
-          cell = cacheManager.getCell(cellKey);
-        }
-        cells.push(cell);
-      }
-
-
-      const className = typeof rowClassName === 'function'
-        ? rowClassName(record, record._index)
-        : rowClassName;
-      const props = {
+    const dataSource = showData.filter((d, index) => (index >= this._startIndex && index <= this._stopIndex) || d[DS._isFixed]);
+    for (let index = 0; index < dataSource.length; index++) {
+      const record = dataSource[index];
+      const cells = this.renderCells(props, record);
+      const key = `Row_${fixed}_${record[DS._top]}`;
+      const rowProps = {
         key,
-        className,
-        hasExpanded,
-        record,
         prefixCls,
-        expandedRowByClick,
-        onHover: this.handleRowHover,
-        components: table.components,
-        handleExpanded: handleExpandChange,
-        hoverEnable,
-        scrollTop: sizeManager._scrollTop,
-        hovered: currentHoverKey === record.key,
         cells,
+        className: record[DS._rowClassName],
+        components: table.components,
+        hovered: currentHoverKey === record[DS._key],
+        style: this.getRowStyle(record, key),
+        onClick: this.handleRowClick.bind(this, record),
+        onMouseEnter: this.handleRowMouseEnter.bind(this, record),
+        onMouseLeave: this.handleRowMouseLeave.bind(this, record),
       };
-      rows.push(Row(props));
+      rows.push(Row(rowProps));
     }
     this._children = rows;
     return this._children;
@@ -199,10 +271,7 @@ class BaseTable extends React.PureComponent<Props> {
 }
 
 export default connect((state) => {
-  const {
-    currentHoverKey,
-    orders,
-  } = state;
+  const {currentHoverKey, orders} = state;
   return {
     currentHoverKey,
     orders,

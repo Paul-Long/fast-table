@@ -9,6 +9,18 @@ import sumBy from 'lodash/sumBy';
 import isNaN from 'lodash/isNaN';
 import min from 'lodash/min';
 import findLast from 'lodash/findLast';
+import { CS } from '../types';
+
+const {
+  _path,
+  _pathKey,
+  _currentRow,
+  _width,
+  _minWidth,
+  path,
+  rowSpan,
+  colSpan,
+} = CS;
 
 const percentReg = /^\d+\.?\d{0,2}%$/;
 
@@ -189,39 +201,38 @@ export default class ColumnManager {
     rows[currentRow] = rows[currentRow] || [];
     const grouped = [];
     const setRowSpan = column => {
-      const rowSpan = rows.length - currentRow;
+      const rs = rows.length - currentRow;
       if (column &&
         !column.children &&
-        rowSpan > 1 &&
-        (!column.rowSpan || column.rowSpan < rowSpan)
+        rs > 1 &&
+        (!column[rowSpan] || column[rowSpan] < rs)
       ) {
-        column.rowSpan = rowSpan;
+        column[rowSpan] = rs;
       }
     };
     for (let index = 0; index < columns.length; index++) {
       const column = columns[index];
       const newColumn = {...column};
       rows[currentRow].push(newColumn);
-      const path = parentColumn.path || [currentRow];
-      newColumn.path = [...path, index];
-      newColumn._pathKey = newColumn.path.join('-');
-      newColumn._currentRow = currentRow;
-      parentColumn.colSpan = parentColumn.colSpan || 0;
+      newColumn[path] = [...(parentColumn[path] || [currentRow]), index];
+      newColumn[_pathKey] = newColumn[path].join('-');
+      newColumn[_currentRow] = currentRow;
+      parentColumn[colSpan] = parentColumn[colSpan] || 0;
       if (newColumn.children && newColumn.children.length > 0) {
         newColumn.children = this._groupColumns(newColumn.children, currentRow + 1, newColumn, rows);
-        parentColumn.colSpan = parentColumn.colSpan + newColumn.colSpan;
-        newColumn._width = sumBy(newColumn.children, '_width');
+        parentColumn[colSpan] = parentColumn[colSpan] + newColumn[colSpan];
+        newColumn[_width] = sumBy(newColumn.children, _width);
       } else {
-        parentColumn.colSpan++;
-        newColumn._width = this._calcWidth(newColumn.width, this.wrapperWidth);
+        parentColumn[colSpan]++;
+        newColumn[_width] = this._calcWidth(newColumn.width, this.wrapperWidth);
         if (isNumber(newColumn.minWidth) && !isNaN(newColumn.minWidth)) {
-          newColumn._width = max([newColumn._width, newColumn.minWidth]);
+          newColumn[_width] = max([newColumn[_width], newColumn.minWidth]);
         }
         if (isNumber(newColumn.maxWidth) && !isNaN(newColumn.maxWidth)) {
-          newColumn._width = min([newColumn._width, newColumn.maxWidth]);
+          newColumn[_width] = min([newColumn[_width], newColumn.maxWidth]);
         }
       }
-      newColumn._minWidth = newColumn._width;
+      newColumn[_minWidth] = newColumn[_width];
       for (let i = 0; i < rows[currentRow].length - 1; ++i) {
         setRowSpan(rows[currentRow][i]);
       }
@@ -246,40 +257,40 @@ export default class ColumnManager {
     const rightLeafColumns = this._leafColumns(rightColumns);
     const len = leafColumns.length - leftLeafColumns.length - rightLeafColumns.length;
     const last = findLast(leafColumns, c => (!c.fixed && c.fixed !== 'left' && c.fixed !== 'right'));
-    const baseWidth = sumBy(columns, '_width');
+    const baseWidth = sumBy(columns, _width);
     this.width = 0;
     let centerWidth = 0;
-    this.leftWidth = sumBy(leftColumns, '_width');
-    this.rightWidth = sumBy(rightColumns, '_width');
+    this.leftWidth = sumBy(leftColumns, _width);
+    this.rightWidth = sumBy(rightColumns, _width);
     const average = max([floor((wrapperWidth - baseWidth) / len), 0]);
     const update = (columns) => {
       return columns.map(column => {
-        const width = column._width;
+        const width = column[_width];
         const children = column.children || [];
         if (children.length > 0) {
           column.children = update(children);
-          column._width = sumBy(column.children, '_width');
+          column[_width] = sumBy(column.children, _width);
         } else {
-          if (column._pathKey === last._pathKey) {
-            column._width = max([wrapperWidth - this.leftWidth - this.rightWidth - centerWidth, column._width]);
+          if (column[_pathKey] === last[_pathKey]) {
+            column[_width] = max([wrapperWidth - this.leftWidth - this.rightWidth - centerWidth, column[_width]]);
           } else {
             if (
-              !leftColumns.some(c => (c._pathKey === column._pathKey)) &&
-              !rightColumns.some(c => (c._pathKey === column._pathKey))
+              !leftColumns.some(c => (c[_pathKey] === column[_pathKey])) &&
+              !rightColumns.some(c => (c[_pathKey] === column[_pathKey]))
             ) {
-              column._width = width + average;
+              column[_width] = width + average;
             }
           }
           if (isNumber(column.maxWidth) && !isNaN(column.maxWidth)) {
-            column._width = min([column.maxWidth, column._width]);
+            column[_width] = min([column.maxWidth, column[_width]]);
           }
         }
-        if (column._currentRow === 0) {
-          this.width += column._width;
+        if (column[_currentRow] === 0) {
+          this.width += column[_width];
           if (column.fixed === 'left' || column.fixed === true) {
           } else if (column.fixed === 'right') {
           } else {
-            centerWidth += column._width;
+            centerWidth += column[_width];
           }
         }
         return column;
