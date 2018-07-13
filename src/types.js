@@ -95,3 +95,17 @@ export const DS = {
   _key: Symbol('_key'),
   _rowClassName: Symbol('_rowClassName'),
 };
+
+export const components = {
+  table: 'div',
+  header: {
+    wrapper: 'div',
+    row: 'div',
+    cell: 'div'
+  },
+  body: {
+    wrapper: 'div',
+    row: 'div',
+    cell: 'div'
+  }
+};

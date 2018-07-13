@@ -16,7 +16,7 @@ import SizeManager from './managers/SizeManager';
 import CacheManager from './managers/CacheManager';
 import AutoSizer from './AutoSizer';
 import { create, Provider } from './mini-store';
-import { TableDefaultParams, TableParams, DS } from './types';
+import { TableDefaultParams, TableParams, DS, components } from './types';
 
 import '../theme/table.css';
 
@@ -67,19 +67,7 @@ export default class Table extends React.PureComponent<TableParams> {
         sortManager: this.sortManager,
         sizeManager: this.sizeManager,
         cacheManager: this.cacheManager,
-        components: merge({
-          table: 'div',
-          header: {
-            wrapper: 'div',
-            row: 'div',
-            cell: 'div'
-          },
-          body: {
-            wrapper: 'div',
-            row: 'div',
-            cell: 'div'
-          }
-        }, this.props.components)
+        components: merge(components, this.props.components)
       }
     };
   }
