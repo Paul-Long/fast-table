@@ -125,17 +125,21 @@ class BaseTable extends React.PureComponent<Props> {
     const {
       sizeManager,
       cacheManager,
+      dataManager,
     } = table;
 
     let rowStyle = cacheManager.getRowStyle(key);
-    if (!rowStyle || record[DS._isFixed]) {
+    if (!rowStyle || dataManager.isFixed(record)) {
       rowStyle = {
         position: 'absolute',
         top: record[DS._top],
         height: record[DS._height],
       };
-      if (record[DS._isFixed]) {
+      if (record[DS._isFixed] === true || record[DS._isFixed] === 'top') {
         rowStyle.top += sizeManager._scrollTop;
+        rowStyle.zIndex = 1;
+      } else if (record[DS._isFixed] === 'bottom') {
+        rowStyle.top -= ((sizeManager._dataHeight + sizeManager.scrollSizeX()) - sizeManager._scrollTop - sizeManager._clientBodyHeight);
         rowStyle.zIndex = 1;
       }
       if (!record[DS._isFixed]) {
@@ -192,11 +196,13 @@ class BaseTable extends React.PureComponent<Props> {
     const {prefixCls} = table.props;
     const {dataManager} = table;
     const showData = dataManager.showData();
-    const dataSource = showData.filter((d, index) => (index >= this._startIndex && index <= this._stopIndex) || d[DS._isFixed]);
+    const dataSource = showData.filter((d, index) =>
+      (index >= this._startIndex && index <= this._stopIndex) || dataManager.isFixed(d)
+    );
     for (let index = 0; index < dataSource.length; index++) {
       const record = dataSource[index];
       const cells = this.renderCells(props, record);
-      const key = `Row_${fixed}_${record[DS._top]}`;
+      const key = `Row_${fixed}_${record[DS._path]}`;
       const rowProps = {
         key,
         prefixCls,

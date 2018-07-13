@@ -63,21 +63,35 @@ export default class DataManager {
     return this.expandedRowKeys.indexOf(record[DS._key]) > -1;
   };
 
+  isFixed = (record) => {
+    if ((record.children || []).length > 0) {
+      return false;
+    }
+    return record['isFixed'] === true ||
+      record['isFixed'] === 'top' ||
+      record['isFixed'] === 'bottom';
+
+  };
+
   reset = (data) => {
     const _data = (data || []);
-    this._hasExpanded = _data.some(d => (!d['isFixed'] && (d.children || []).length > 0));
+    this._hasExpanded = _data.some(d => (!this.isFixed(d) && (d.children || []).length > 0));
     if (!this.fixedHeader) {
       this._data = _data;
     } else {
       const dataBase = _data.filter(d => {
         const children = d.children || [];
-        return children.length > 0 || !d['isFixed'];
+        return children.length > 0 || !this.isFixed(d);
       });
-      const dataFixed = _data.filter(d => {
+      const topData = _data.filter(d => {
         const children = d.children || [];
-        return d['isFixed'] && children.length === 0;
+        return (d['isFixed'] === true || d['isFixed'] === 'top') && (children.length === 0);
       });
-      this._data = [...dataFixed, ...dataBase];
+      const bottomData = _data.filter(d => {
+        const children = d.children || [];
+        return (d['isFixed'] === 'bottom') && (children.length === 0);
+      });
+      this._data = [...topData, ...dataBase, ...bottomData];
     }
     this._bodyHeight = 0;
     this._cached = {};
@@ -127,7 +141,9 @@ export default class DataManager {
       record[DS._height] = height;
       record[DS._key] = this._rowKey(record, index);
       record[DS._expandedEnable] = children.length > 0;
-      record[DS._isFixed] = !!record['isFixed'] && children.length === 0;
+      if (this.isFixed(record)) {
+        record[DS._isFixed] = record['isFixed'];
+      }
       record[DS._rowClassName] = this._rowClassName(record, index, level);
       if (children.length > 0) {
         record['children'] = this._getData(children, level + 1, path);

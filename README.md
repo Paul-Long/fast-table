@@ -18,6 +18,7 @@ npm install fast-table
 - 表头排序
 - 表头分组
 - 树形数据展示
+- 固定行至顶部或者底部
 
 # API
 
@@ -67,6 +68,12 @@ npm install fast-table
 | sortEnable | 是否可排序 | Boolean |  |
 | title | 列头显示文字 | String or ReactNode |  |
 | width | 列宽度| String `or` Number | - |
+
+**DataSource Props:**
+
+| 参数 | 说明 | 类型 | 默认值 |
+|---|---|---|---|
+| isFixed | 数据行固定， 可以固定至顶部或固定至底部 | `true` or String(`top` or `bottom` ) | - |
 
 
 # 示例
