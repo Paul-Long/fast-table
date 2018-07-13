@@ -1,6 +1,6 @@
 # fast-table
 
-**一个支持大数据渲染的table表格react组件**
+**React表格组件，支持多数据首次快速渲染。**
 
 # 在线Demo
 https://paul-long.github.io/react-components/
