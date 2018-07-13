@@ -256,7 +256,7 @@ export default class ColumnManager {
     const leftLeafColumns = this._leafColumns(leftColumns);
     const rightLeafColumns = this._leafColumns(rightColumns);
     const len = leafColumns.length - leftLeafColumns.length - rightLeafColumns.length;
-    const last = findLast(leafColumns, c => (!c.fixed && c.fixed !== 'left' && c.fixed !== 'right'));
+    const last = findLast(leafColumns, c => (!c.fixed && c.fixed !== 'left' && c.fixed !== 'right')) || findLast(leafColumns);
     const baseWidth = sumBy(columns, _width);
     this.width = 0;
     let centerWidth = 0;

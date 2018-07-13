@@ -26,6 +26,7 @@ export type TableParams = {
   onScrollEnd: Function,
   onExpandedRowsChange: Function,
   getScrollSize: Function,
+  onRow: Function,
 
   rowHeight: number,
   headerRowHeight: number,
@@ -58,6 +59,7 @@ export const TableDefaultParams = {
   onScrollEnd: () => null,
   onExpandedRowsChange: () => null,
   getScrollSize: measureScrollbar,
+  onRow: () => ({}),
 
   rowHeight: 30,
   headerRowHeight: 35,
@@ -109,3 +111,11 @@ export const components = {
     cell: 'div'
   }
 };
+
+export const rowEvents = [
+  'onMouseEnter', 'onMouseLeave',
+  'onClick', 'onDoubleClick',
+  'onBlur', 'onFocus',
+  'onAnimationStart', 'onAnimationEnd',
+  'onTransitionEnd',
+];

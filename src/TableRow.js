@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
+import {rowEvents} from './types';
 
 type Props = {
   key: string,
@@ -34,7 +35,7 @@ function Row(props: Props) {
     className: rowClass,
     style,
   };
-  ['onClick', 'onMouseEnter', 'onMouseLeave'].forEach(event => {
+  rowEvents.forEach(event => {
     if (typeof props[event] === 'function') {
       newProps[event] = props[event];
     }

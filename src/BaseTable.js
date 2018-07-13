@@ -61,20 +61,29 @@ class BaseTable extends React.PureComponent<Props> {
     });
   };
 
-  handleRowClick = (record) => {
+  handleRowClick = (record, onClick, event) => {
     const table = this.context.table;
     const {expandedRowByClick} = table.props;
     if (expandedRowByClick) {
       this.handleExpanded(record);
     }
+    if (typeof onClick === 'function') {
+      onClick(event);
+    }
   };
 
-  handleRowMouseEnter = (record) => {
+  handleRowMouseEnter = (record, onMouseEnter, event) => {
     this.handleRowHover(true, record[DS._key]);
+    if (typeof onMouseEnter === 'function') {
+      onMouseEnter(event);
+    }
   };
 
-  handleRowMouseLeave = (record) => {
+  handleRowMouseLeave = (record, onMouseLeave, event) => {
     this.handleRowHover(false, record[DS._key]);
+    if (typeof onMouseLeave === 'function') {
+      onMouseLeave(event);
+    }
   };
 
   handleRowHover = (isHover, key) => {
@@ -193,7 +202,7 @@ class BaseTable extends React.PureComponent<Props> {
       currentHoverKey,
     } = props;
     const table = this.context.table;
-    const {prefixCls} = table.props;
+    const {prefixCls, onRow} = table.props;
     const {dataManager} = table;
     const showData = dataManager.showData();
     const dataSource = showData.filter((d, index) =>
@@ -203,6 +212,7 @@ class BaseTable extends React.PureComponent<Props> {
       const record = dataSource[index];
       const cells = this.renderCells(props, record);
       const key = `Row_${fixed}_${record[DS._path]}`;
+      const {onMouseEnter, onMouseLeave, onClick, ...other} = onRow(record) || {};
       const rowProps = {
         key,
         prefixCls,
@@ -211,9 +221,10 @@ class BaseTable extends React.PureComponent<Props> {
         components: table.components,
         hovered: currentHoverKey === record[DS._key],
         style: this.getRowStyle(record, key),
-        onClick: this.handleRowClick.bind(this, record),
-        onMouseEnter: this.handleRowMouseEnter.bind(this, record),
-        onMouseLeave: this.handleRowMouseLeave.bind(this, record),
+        onClick: event => this.handleRowClick(record, onClick, event),
+        onMouseEnter: event => this.handleRowMouseEnter( record, onMouseEnter, event),
+        onMouseLeave: event => this.handleRowMouseLeave(record, onMouseLeave, event),
+        ...other,
       };
       rows.push(Row(rowProps));
     }
