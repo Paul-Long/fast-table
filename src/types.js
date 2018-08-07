@@ -27,6 +27,7 @@ export type TableParams = {
   onExpandedRowsChange: Function,
   getScrollSize: Function,
   onRow: Function,
+  onHeaderRow: Function,
 
   rowHeight: number,
   headerRowHeight: number,
@@ -60,6 +61,7 @@ export const TableDefaultParams = {
   onExpandedRowsChange: () => null,
   getScrollSize: measureScrollbar,
   onRow: () => ({}),
+  onHeaderRow: () => ({}),
 
   rowHeight: 30,
   headerRowHeight: 35,

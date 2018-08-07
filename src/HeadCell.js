@@ -24,7 +24,8 @@ function renderCell(props: CellProps) {
     current = 0,
     orders,
     prefixCls,
-    onSort
+    onSort,
+    onHeaderRow,
   } = props;
   const children = column.children || [];
   const Th = components.header.cell;
@@ -47,12 +48,15 @@ function renderCell(props: CellProps) {
   }
   style.height = (rowSpan || 1) * headerRowHeight;
   if (onHeaderCell) {
-    style = {...style, ...onHeaderCell(column)};
+    style = { ...style, ...onHeaderCell(column) };
   }
-  const cellProps = {
-    className: classNames('th', {'has-child': children.length > 0}),
+  let cellProps = {
+    className: classNames('th', { 'has-child': children.length > 0 }),
     style
   };
+  if (onHeaderRow) {
+    cellProps = { ...cellProps, ...onHeaderRow(column) };
+  }
   if (children.length === 0) {
     cellProps.key = key;
   }
@@ -114,7 +118,8 @@ type HeadCellProps = {
   fixed: string,
   headerRowHeight: number,
   orders: Object,
-  onSort: Function
+  onSort: Function,
+  onHeaderRow: Function,
 }
 
 function HeadCell(props: HeadCellProps) {
@@ -125,7 +130,8 @@ function HeadCell(props: HeadCellProps) {
     prefixCls,
     headerRowHeight,
     orders,
-    onSort
+    onSort,
+    onHeaderRow,
   } = props;
   return renderCell({
     key,
@@ -134,7 +140,8 @@ function HeadCell(props: HeadCellProps) {
     headerRowHeight,
     orders,
     prefixCls,
-    onSort
+    onSort,
+    onHeaderRow,
   });
 }
 

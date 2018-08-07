@@ -251,6 +251,7 @@ class BaseTable extends React.PureComponent<Props> {
       prefixCls,
       headerRowHeight,
       rowHeight,
+      onHeaderRow,
     } = props;
     let body;
     const Table = components.table;
@@ -276,7 +277,8 @@ class BaseTable extends React.PureComponent<Props> {
         orders,
         prefixCls,
         headerRowHeight,
-        components
+        components,
+        onHeaderRow,
       });
     return (
       <Table className='table' style={style}>

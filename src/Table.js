@@ -16,7 +16,7 @@ import SizeManager from './managers/SizeManager';
 import CacheManager from './managers/CacheManager';
 import AutoSizer from './AutoSizer';
 import { create, Provider } from './mini-store';
-import { TableDefaultParams, TableParams, DS, components } from './types';
+import { components, DS, TableDefaultParams, TableParams } from './types';
 
 import '../theme/table.css';
 
@@ -133,6 +133,7 @@ export default class Table extends React.PureComponent<TableParams> {
   onResize = ({width, height}) => {
     this._width = width;
     this._height = height;
+    this.cacheManager.reset();
     this.sizeManager.update({
       _wrapperWidth: width,
       _wrapperHeight: height

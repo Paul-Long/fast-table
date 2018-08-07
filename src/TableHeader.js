@@ -7,7 +7,8 @@ type Props = {
   onSort: Function,
   components: Object,
   prefixCls: string,
-  headerRowHeight: number
+  headerRowHeight: number,
+  onHeaderRow: Function,
 };
 
 function TableHeader(props: Props) {
@@ -17,7 +18,8 @@ function TableHeader(props: Props) {
     onSort,
     headerRowHeight,
     prefixCls,
-    components
+    components,
+    onHeaderRow,
   } = props;
   const HeaderWrapper = components.header.wrapper;
   const HeaderRow = components.header.row;
@@ -31,7 +33,8 @@ function TableHeader(props: Props) {
           prefixCls,
           headerRowHeight,
           orders,
-          onSort
+          onSort,
+          onHeaderRow,
         }))}
       </HeaderRow>
     </HeaderWrapper>
