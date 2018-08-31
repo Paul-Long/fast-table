@@ -35,6 +35,7 @@ npm install fast-table
 | emptyText | 空数据展示文字 | Function | () => '暂无数据' |
 | expandedRowByClick | 是否可以点击行展开 | Boolean | true |
 | expandedRowKeys | 展开行集合 | String[] | |
+| expandedRowRender | 展开行渲染函数 | Function | |
 | fixedHeader | 是否固定表头 | Boolean | true |
 | footerHeight | Footer高度 | Number | 30 |
 | getRowHeight | 设置当前行占几行, 默认占1行 | Function(record, index):Number | () => 1 |
@@ -52,7 +53,7 @@ npm install fast-table
 | useScrollY | 使用Y轴 Scroll | Boolean | true |
 
 
-**Column Props:**
+## Column Props
 
 | 参数 | 说明 | 类型 | 默认值 |
 |---|---|---|---|
@@ -128,8 +129,9 @@ const columns = [
 
 const dataSource = [
   {key: 0, key0: 'a', key1: 'b', key2: 'c', key3: 'd', key4: 'e'}
-]
+];
 const otherProps = {};
 ReactDOM.render(<Table columns={columns} dataSource={dataSource} {...otherProps} />, mountNode);
 ```
 
+[查看更多实例](https://paul-long.github.io/react-components/)
