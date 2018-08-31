@@ -26,31 +26,31 @@ npm install fast-table
 
 | 参数 | 说明 | 类型 | 默认值 |
 |---|---|---|---|
-| bordered | 是否显示边框 | Boolean | false |
-| className | 自定义class | String | 
-| colMinWidth | 列最小宽度 | Number | 100 |
-| columns | 表格列的配置描述，具体项见下表 | Array[] | - ||
-| dataSource | 数据数组 | Array[] | |
-| defaultShowCount | 默认显示行数 | Number | 30 |
-| emptyText | 空数据展示文字 | Function | () => '暂无数据' |
-| expandedRowByClick | 是否可以点击行展开 | Boolean | true |
-| expandedRowKeys | 展开行集合 | String[] | |
-| expandedRowRender | 展开行渲染函数 | Function | |
-| fixedHeader | 是否固定表头 | Boolean | true |
-| footerHeight | Footer高度 | Number | 30 |
-| getRowHeight | 设置当前行占几行, 默认占1行 | Function(record, index):Number | () => 1 |
-| headerRowHeight | 表头默认行高 | Number | 35 |
-| indentSize | 展开行首个但单元格缩进 | Number | 17 |
-| onExpandedRowsChange | 展开行行为触发 | Function | |
-| onScrollEnd | 滚动至页面底部触发 | Function | |
-| refreshEnable | 是否可滚动最底部刷新 | Boolean | true |
-| rowClassName | 获取行class | Function |  () => '' |
-| rowHeight | 默认行高 | Number | 30 |
-| scrollEndPosition | 滚动至底部多少px触发onScrollEnd | Number | 60 |
-| showHeader | 是否显示表头 | Boolean | true |
-| sortMulti | 是否多表头排序 | Boolean | false |
-| style | table自定义样式 | Object | {} |
-| useScrollY | 使用Y轴 Scroll | Boolean | true |
+| bordered              | show bordered         | Boolean   | false |
+| className             | custom class          | String    | 
+| colMinWidth           | min column width      | Number    | 100 |
+| columns               | set table header      | Array[]   | - ||
+| dataSource            | data                  | Array[]   | |
+| defaultShowCount      | default show rows     | Number    | 30 |
+| emptyText             | empty show            | Function  | () => '暂无数据' |
+| expandedRowByClick    | on click row expanded | Boolean   | true |
+| expandedRowKeys       | expanded rows         | String[]  | |
+| expandedRowRender     | expanded render       | Function  | |
+| fixedHeader           | fixed header          | Boolean   | true |
+| footerHeight          | Footer height         | Number    | 30 |
+| getRowHeight          | span row              | Function(record, index):Number | () => 1 |
+| headerRowHeight       | header row height     | Number    | 35 |
+| indentSize            | expanded indent size  | Number    | 17 |
+| onExpandedRowsChange  | on expanded change    | Function  | |
+| onScrollEnd           | scroll to bottom      | Function  | |
+| refreshEnable         | use scroll end        | Boolean   | true |
+| rowClassName          | row className         | Function  |  () => '' |
+| rowHeight             | default row height    | Number    | 30 |
+| scrollEndPosition     | scroll to bottom px to refresh    | Number | 60 |
+| showHeader            | show header           | Boolean   | true |
+| sortMulti             | multi sort enable     | Boolean   | false |
+| style                 | table style           | Object    | {} |
+| useScrollY            | use y Scroll          | Boolean   | true |
 
 
 ## Column Props
