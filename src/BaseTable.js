@@ -195,6 +195,16 @@ class BaseTable extends React.PureComponent<Props> {
     return cells;
   };
 
+  renderRowChildren = (props, record) => {
+    const table = this.context.table;
+    const {expandedRowRender} = table.props;
+    if (expandedRowRender && record[DS._expandedLevel] > 0) {
+      return expandedRowRender(record, props.fixed, record[DS._expandedLevel]);
+    } else {
+      return this.renderCells(props, record);
+    }
+  };
+
   renderRows = (props) => {
     const rows = [];
     const {
@@ -210,7 +220,7 @@ class BaseTable extends React.PureComponent<Props> {
     );
     for (let index = 0; index < dataSource.length; index++) {
       const record = dataSource[index];
-      const cells = this.renderCells(props, record);
+      const cells = this.renderRowChildren(props, record);
       const key = `Row_${fixed}_${record[DS._path]}`;
       const {onMouseEnter, onMouseLeave, onClick, ...other} = onRow(record) || {};
       const rowProps = {
@@ -222,7 +232,7 @@ class BaseTable extends React.PureComponent<Props> {
         hovered: currentHoverKey === record[DS._key],
         style: this.getRowStyle(record, key),
         onClick: event => this.handleRowClick(record, onClick, event),
-        onMouseEnter: event => this.handleRowMouseEnter( record, onMouseEnter, event),
+        onMouseEnter: event => this.handleRowMouseEnter(record, onMouseEnter, event),
         onMouseLeave: event => this.handleRowMouseLeave(record, onMouseLeave, event),
         ...other,
       };

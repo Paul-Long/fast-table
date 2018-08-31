@@ -1,6 +1,5 @@
 import React from 'react';
 import classNames from 'classnames';
-import { DS } from './types';
 
 type Props = {
   prefixCls: string,
@@ -15,12 +14,13 @@ function ExpandedIcon(props: Props) {
     expanded,
   } = props;
   const newProps = {
-    className: classNames(`${prefixCls}-expanded-icon`, {expanded}),
-    onClick
+    className: classNames(`${prefixCls}-expanded-icon`, { expanded }),
+    onClick: event => {
+      event.stopPropagation();
+      onClick();
+    }
   };
-  return (
-    <span {...newProps} />
-  );
+  return (<span {...newProps} />);
 }
 
 type ExpandedIconProps = {
@@ -51,9 +51,9 @@ export default function renderExpandedIcon(props: ExpandedIconProps) {
   }
 
   return (
-    <div style={{display: 'inline-flex', flexDirection: 'row', justifyContent: 'flex-start'}}>
-      <span style={{width: expandedLevel * indentSize, display: 'inline-block'}} />
-      {icon || <span style={{width: indentSize, display: 'inline-block'}} />}
+    <div style={{ display: 'inline-flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
+      <span style={{ width: expandedLevel * indentSize, display: 'inline-block' }} />
+      {icon || <span style={{ width: indentSize, display: 'inline-block' }} />}
     </div>
   );
 }
