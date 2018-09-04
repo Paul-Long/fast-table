@@ -64,7 +64,7 @@ class BaseTable extends React.PureComponent<Props> {
   handleRowClick = (record, onClick, event) => {
     const table = this.context.table;
     const {expandedRowByClick} = table.props;
-    if (expandedRowByClick) {
+    if (expandedRowByClick && record[DS._expandedEnable]) {
       this.handleExpanded(record);
     }
     if (typeof onClick === 'function') {
