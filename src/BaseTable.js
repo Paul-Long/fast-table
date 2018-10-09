@@ -26,14 +26,20 @@ type Props = {
 class BaseTable extends React.PureComponent<Props> {
 
   _children = [];
-  _startIndex;
-  _stopIndex;
+  _startIndex = 0;
+  _stopIndex = 0;
 
   static contextTypes = {
     table: PropTypes.any
   };
 
-  componentDidMount() {
+  componentWillMount() {
+    const table = this.context.table;
+    const {dataManager} = table;
+    const showData = dataManager.showData() || [];
+    if (showData.length > 0) {
+      this._stopIndex = showData.length - 1;
+    }
     const {registerForce, fixed} = this.props;
     if (registerForce) {
       registerForce(fixed, this.recomputeBody);

@@ -44,7 +44,9 @@ export default class Table extends React.PureComponent<TableParams> {
     this.sizeManager.update({
       _dataHeight: this.dataManager._bodyHeight,
       _dataEmpty: this.dataManager.isEmpty(),
-      ...this.columnManager.headerSize()
+      _scrollSizeX: props.scrollSize.x,
+      _scrollSizeY: props.scrollSize.y,
+      ...this.columnManager.headerSize(),
     });
 
     this.store = create({
@@ -70,17 +72,6 @@ export default class Table extends React.PureComponent<TableParams> {
         components: merge(components, this.props.components)
       }
     };
-  }
-
-  componentWillMount() {
-    const {getScrollSize} = this.props;
-    const scrollSize = getScrollSize();
-    if (scrollSize) {
-      this.sizeManager.update({
-        _scrollSizeX: scrollSize.x,
-        _scrollSizeY: scrollSize.y
-      });
-    }
   }
 
   componentWillReceiveProps(nextProps) {

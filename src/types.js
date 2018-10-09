@@ -1,5 +1,5 @@
 import React from 'react';
-import { measureScrollbar } from './utils';
+// import { measureScrollbar } from './utils';
 
 export type TableParams = {
   prefixCls: string,
@@ -39,6 +39,7 @@ export type TableParams = {
   indentSize: number,
   bodyMaxHeight: string | number,
 
+  scrollSize: Object,
   style: Object
 }
 export const TableDefaultParams = {
@@ -60,7 +61,7 @@ export const TableDefaultParams = {
   emptyText: () => '暂无数据',
   onScrollEnd: () => null,
   onExpandedRowsChange: () => null,
-  getScrollSize: measureScrollbar,
+  getScrollSize: () => ({x: 8, y: 8}),
   onRow: () => ({}),
   onHeaderRow: () => ({}),
 
@@ -72,6 +73,7 @@ export const TableDefaultParams = {
   scrollEndPosition: 60,
   indentSize: 17,
 
+  scrollSize: {x: 8, y: 8},
   style: {}
 };
 
