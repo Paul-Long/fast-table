@@ -287,7 +287,6 @@ class BaseTable extends React.PureComponent<Props> {
         headerRowHeight,
         onHeaderRow
       });
-    console.log(`render base table ${fixed} has header ${hasHead}`);
     return (
       <div className='table' style={style}>
         {header}

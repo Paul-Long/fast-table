@@ -45,8 +45,6 @@ export default class Table extends React.PureComponent<TableParams> {
     });
     this.sizeManager = new SizeManager(props);
     this.cacheManager = new CacheManager();
-    this.timer = new Date().getTime();
-    console.log('table constructor ');
 
     this.sizeManager.update({
       _dataHeight: this.dataManager._bodyHeight,
@@ -83,8 +81,6 @@ export default class Table extends React.PureComponent<TableParams> {
 
   componentWillReceiveProps(nextProps) {
     if (!shallowEqual(nextProps.dataSource, this.props.dataSource)) {
-      this.timer = new Date().getTime();
-      console.log('will receive props dataSource -> ');
       this.dataManager.reset(nextProps.dataSource);
       this.sizeManager.update({
         _dataHeight: this.dataManager._bodyHeight,
@@ -95,8 +91,6 @@ export default class Table extends React.PureComponent<TableParams> {
       this.resetShowData();
     }
     if (!shallowEqual(nextProps.columns, this.props.columns)) {
-      this.timer = new Date().getTime();
-      console.log('will receive props columns -> ');
       this.sizeManager.update(this.columnManager.reset(nextProps));
       this.sortManager.update({
         columns: this.columnManager.groupedColumns(),
@@ -107,8 +101,6 @@ export default class Table extends React.PureComponent<TableParams> {
       this.updateColumn();
     }
     if (!shallowEqual(nextProps.expandedRowKeys, this.props.expandedRowKeys)) {
-      this.timer = new Date().getTime();
-      console.log('will receive props expandedRowKeys -> ');
       this.dataManager.resetExpandedRowKeys(nextProps.expandedRowKeys);
       this.sizeManager.update({
         _dataHeight: this.dataManager._bodyHeight,
@@ -122,7 +114,6 @@ export default class Table extends React.PureComponent<TableParams> {
 
   componentDidUpdate() {
     this.setScrollPositionClassName();
-    console.log('table update did', new Date().getTime() - this.timer);
   }
 
   getShowCount = () => {
@@ -140,7 +131,6 @@ export default class Table extends React.PureComponent<TableParams> {
   };
 
   onResize = ({width, height}) => {
-    console.log('table onResize ->', width, height);
     this._renderEnable = true;
     this._width = width;
     this._height = height;
@@ -323,7 +313,6 @@ export default class Table extends React.PureComponent<TableParams> {
   };
 
   registerForce = (name, fn) => {
-    console.log('register force ', name);
     this._forceTable[name || 'body'] = fn;
   };
 
