@@ -1,26 +1,20 @@
 import React from 'react';
 import classNames from 'classnames';
+import {DS} from './types';
 
 type Props = {
   prefixCls: string,
-  onClick: Function,
-  expanded: boolean,
-}
+  record: Object,
+  expanded: boolean
+};
 
 function ExpandedIcon(props: Props) {
-  const {
-    prefixCls,
-    onClick,
-    expanded,
-  } = props;
+  const {prefixCls, record, expanded, ...other} = props;
   const newProps = {
-    className: classNames(`${prefixCls}-expanded-icon`, { expanded }),
-    onClick: event => {
-      event.stopPropagation();
-      onClick();
-    }
+    className: classNames(`${prefixCls}-expanded-icon`, {expanded}),
+    ...other
   };
-  return (<span {...newProps} />);
+  return <span {...newProps} data-key={record[DS._key]} />;
 }
 
 type ExpandedIconProps = {
@@ -29,31 +23,37 @@ type ExpandedIconProps = {
   handleExpanded: Function,
   expanded: boolean,
   expandedEnable: boolean,
-  expandedLevel: number,
-}
+  expandedLevel: number
+};
 
 export default function renderExpandedIcon(props: ExpandedIconProps) {
-  const {
-    prefixCls,
-    indentSize,
-    handleExpanded,
-    expandedEnable,
-    expanded,
-    expandedLevel,
-  } = props;
+  const {prefixCls, indentSize, record, handleExpanded} = props;
+  const {} = record || [];
+  const expanded = record[DS._expanded];
+  const expandedEnable = record[DS._expandedEnable];
+  const expandedLevel = record[DS._expandedLevel];
   let icon;
   if (expandedEnable) {
     icon = ExpandedIcon({
       prefixCls,
       onClick: handleExpanded,
       expanded,
+      record
     });
   }
 
   return (
-    <div style={{ display: 'inline-flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
-      <span style={{ width: expandedLevel * indentSize, display: 'inline-block' }} />
-      {icon || <span style={{ width: indentSize, display: 'inline-block' }} />}
+    <div
+      style={{
+        display: 'inline-flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start'
+      }}
+    >
+      <span
+        style={{width: expandedLevel * indentSize, display: 'inline-block'}}
+      />
+      {icon || <span style={{width: indentSize, display: 'inline-block'}} />}
     </div>
   );
 }

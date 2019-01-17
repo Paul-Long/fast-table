@@ -41,7 +41,7 @@ export type TableParams = {
 
   scrollSize: Object,
   style: Object
-}
+};
 export const TableDefaultParams = {
   prefixCls: 'vt',
   columns: [],
@@ -85,7 +85,7 @@ export const CS = {
   _minWidth: Symbol('_minWidth'),
   path: Symbol('path'),
   rowSpan: Symbol('rowSpan'),
-  colSpan: Symbol('colSpan'),
+  colSpan: Symbol('colSpan')
 };
 
 export const DS = {
@@ -100,27 +100,17 @@ export const DS = {
   _top: Symbol('_top'),
   _expanded: Symbol('_expanded'),
   _key: Symbol('_key'),
-  _rowClassName: Symbol('_rowClassName'),
-};
-
-export const components = {
-  table: 'div',
-  header: {
-    wrapper: 'div',
-    row: 'div',
-    cell: 'div'
-  },
-  body: {
-    wrapper: 'div',
-    row: 'div',
-    cell: 'div'
-  }
+  _rowClassName: Symbol('_rowClassName')
 };
 
 export const rowEvents = [
-  'onMouseEnter', 'onMouseLeave',
-  'onClick', 'onDoubleClick',
-  'onBlur', 'onFocus',
-  'onAnimationStart', 'onAnimationEnd',
-  'onTransitionEnd',
+  'onMouseEnter',
+  'onMouseLeave',
+  'onClick',
+  'onDoubleClick',
+  'onBlur',
+  'onFocus',
+  'onAnimationStart',
+  'onAnimationEnd',
+  'onTransitionEnd'
 ];

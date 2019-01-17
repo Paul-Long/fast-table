@@ -1,6 +1,6 @@
 {
   "name": "fast-table",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "description": "react table fast",
   "main": "./lib/index.js",
   "files": [
@@ -29,13 +29,8 @@
   "homepage": "https://github.com/Paul-Long/fast-table#readme",
   "dependencies": {
     "add-dom-event-listener": "^1.0.2",
-    "classnames": "^2.2.5",
     "component-classes": "^1.2.6",
     "hoist-non-react-statics": "^2.5.0",
-    "lodash": "^4.17.5",
-    "prop-types": "^15.6.1",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
     "shallowequal": "^1.0.2"
   },
   "devDependencies": {
@@ -46,7 +41,13 @@
     "babel-preset-flow": "^6.23.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
+    "classnames": "^2.2.5",
     "cssnano": "^3.10.0",
-    "less": "^3.0.1"
+    "less": "^3.0.1",
+    "lodash": "^4.17.5",
+    "prettier": "^1.15.3",
+    "prop-types": "^15.6.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0"
   }
 }

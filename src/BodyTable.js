@@ -6,45 +6,33 @@ type Props = {
   saveRef: Function,
   fixed: string,
   handleBodyScroll: Function,
-  handleExpandChange: Function,
   registerForce: Function
-}
+};
 
 function BodyTable(props: Props, {table}) {
-  const {
-    columnManager,
-    sizeManager
-  } = table;
+  const {columnManager, sizeManager} = table;
   const {
     prefixCls,
     fixedHeader,
     showHeader,
     dataSource,
-    bodyMaxHeight,
-    indentSize
+    bodyMaxHeight
   } = table.props;
-  const {
-    saveRef,
-    fixed,
-    handleBodyScroll,
-    registerForce,
-    handleExpandChange
-  } = props;
+  const {saveRef, fixed, handleBodyScroll, registerForce} = props;
   const baseTable = (
     <BaseTable
       hasHead={!fixedHeader}
       hasBody
       fixed={fixed}
-      indentSize={indentSize}
       registerForce={registerForce}
       columns={columnManager.headColumns(fixed)}
-      handleExpandChange={handleExpandChange}
     />
   );
   let height = 0;
   if (dataSource && dataSource.length > 0) {
     height = sizeManager._wrapperHeight - sizeManager.footerHeight;
-    height = height - (showHeader && fixedHeader ? sizeManager._headerHeight : 0);
+    height =
+      height - (showHeader && fixedHeader ? sizeManager._headerHeight : 0);
   }
   let dataHeight = sizeManager._dataHeight;
   if (showHeader) {
@@ -52,7 +40,7 @@ function BodyTable(props: Props, {table}) {
   }
   const scrollSize = sizeManager.scrollSizeX();
   dataHeight = dataHeight + scrollSize;
-  height = Math.min(height, dataHeight); 
+  height = Math.min(height, dataHeight);
   const style = {
     height,
     overflowY: sizeManager._hasScrollY ? 'scroll' : 'hidden',
@@ -75,9 +63,13 @@ function BodyTable(props: Props, {table}) {
   if (fixed) {
     delete style.overflowX;
     delete style.overflowY;
-    (fixed === 'left') && (style.width = columnManager.getWidth(fixed));
+    fixed === 'left' && (style.width = columnManager.getWidth(fixed));
     return (
-      <div key='bodyTable' className={`${prefixCls}-body-outer`} style={{...style}}>
+      <div
+        key='bodyTable'
+        className={`${prefixCls}-body-outer`}
+        style={{...style}}
+      >
         <div
           className={`${prefixCls}-body-inner`}
           ref={saveRef(scrollRef)}

@@ -5,10 +5,9 @@ type Props = {
   columns: Array,
   orders: Object,
   onSort: Function,
-  components: Object,
   prefixCls: string,
   headerRowHeight: number,
-  onHeaderRow: Function,
+  onHeaderRow: Function
 };
 
 function TableHeader(props: Props) {
@@ -18,26 +17,24 @@ function TableHeader(props: Props) {
     onSort,
     headerRowHeight,
     prefixCls,
-    components,
-    onHeaderRow,
+    onHeaderRow
   } = props;
-  const HeaderWrapper = components.header.wrapper;
-  const HeaderRow = components.header.row;
   return (
-    <HeaderWrapper className='thead'>
-      <HeaderRow className='tr'>
-        {columns.map((column, index) => HeadCell({
-          key: `HeadCol${index}`,
-          column,
-          components,
-          prefixCls,
-          headerRowHeight,
-          orders,
-          onSort,
-          onHeaderRow,
-        }))}
-      </HeaderRow>
-    </HeaderWrapper>
+    <div className='thead'>
+      <div className='tr'>
+        {columns.map((column, index) =>
+          HeadCell({
+            key: `HeadCol${index}`,
+            column,
+            prefixCls,
+            headerRowHeight,
+            orders,
+            onSort,
+            onHeaderRow
+          })
+        )}
+      </div>
+    </div>
   );
 }
 export default TableHeader;

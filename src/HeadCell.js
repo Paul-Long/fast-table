@@ -1,41 +1,34 @@
 import React from 'react';
 import classNames from 'classnames';
-import { cellAlignStyle } from './utils';
+import {cellAlignStyle} from './utils';
 import Sorter from './Sorter';
-import { CS } from './types';
+import {CS} from './types';
 
-type CellProps = {
+type HeadCellProps = {
   key: string,
   column: Object,
-  components: Object,
-  headerRowHeight: number,
-  current: number,
-  orders: Object,
+  index: number,
   prefixCls: string,
-  onSort: Function
-}
+  fixed: string,
+  headerRowHeight: number,
+  orders: Object,
+  onSort: Function,
+  onHeaderRow: Function
+};
 
-function renderCell(props: CellProps) {
+function HeadCell(props: HeadCellProps) {
   const {
     key,
     column,
-    components,
-    headerRowHeight,
     current = 0,
-    orders,
     prefixCls,
+    headerRowHeight,
+    orders,
     onSort,
-    onHeaderRow,
+    onHeaderRow
   } = props;
   const children = column.children || [];
-  const Th = components.header.cell;
-  const {
-    dataIndex,
-    align,
-    title,
-    sortEnable,
-    onHeaderCell
-  } = column;
+  const {dataIndex, align, title, sortEnable, onHeaderCell} = column;
   const rowSpan = column[CS.rowSpan];
   const width = column[CS._width];
   const order = orders[dataIndex];
@@ -48,14 +41,14 @@ function renderCell(props: CellProps) {
   }
   style.height = (rowSpan || 1) * headerRowHeight;
   if (onHeaderCell) {
-    style = { ...style, ...onHeaderCell(column) };
+    style = {...style, ...onHeaderCell(column)};
   }
   let cellProps = {
-    className: classNames('th', { 'has-child': children.length > 0 }),
+    className: classNames('th', {'has-child': children.length > 0}),
     style
   };
   if (onHeaderRow) {
-    cellProps = { ...cellProps, ...onHeaderRow(column) };
+    cellProps = {...cellProps, ...onHeaderRow(column)};
   }
   if (children.length === 0) {
     cellProps.key = key;
@@ -74,17 +67,18 @@ function renderCell(props: CellProps) {
     });
   }
   if (sortEnable && children.length === 0) {
-    cellProps.onClick = () => onSort(
-      column.dataIndex,
-      order === 'desc' || order === true ? 'asc' : 'desc'
-    );
+    cellProps.onClick = () =>
+      onSort(
+        column.dataIndex,
+        order === 'desc' || order === true ? 'asc' : 'desc'
+      );
   }
 
   const cell = (
-    <Th {...cellProps}>
+    <div {...cellProps}>
       {text}
       {sorter}
-    </Th>
+    </div>
   );
 
   if (children.length > 0) {
@@ -92,57 +86,22 @@ function renderCell(props: CellProps) {
       <div className={current === 0 ? 'row-group' : ''} key={key}>
         {cell}
         <div className='col-group'>
-          {children.map((child, i) => renderCell({
-            key: `${key}-${current}-${i}`,
-            column: child,
-            components,
-            headerRowHeight,
-            current: current + 1,
-            orders,
-            prefixCls,
-            onSort
-          }))}
+          {children.map((child, i) =>
+            HeadCell({
+              key: `${key}-${current}-${i}`,
+              column: child,
+              headerRowHeight,
+              current: current + 1,
+              orders,
+              prefixCls,
+              onSort
+            })
+          )}
         </div>
       </div>
     );
   }
   return cell;
-}
-
-type HeadCellProps = {
-  key: string,
-  column: Object,
-  index: number,
-  components: Object,
-  prefixCls: string,
-  fixed: string,
-  headerRowHeight: number,
-  orders: Object,
-  onSort: Function,
-  onHeaderRow: Function,
-}
-
-function HeadCell(props: HeadCellProps) {
-  const {
-    key,
-    column,
-    components,
-    prefixCls,
-    headerRowHeight,
-    orders,
-    onSort,
-    onHeaderRow,
-  } = props;
-  return renderCell({
-    key,
-    column,
-    components,
-    headerRowHeight,
-    orders,
-    prefixCls,
-    onSort,
-    onHeaderRow,
-  });
 }
 
 export default HeadCell;
