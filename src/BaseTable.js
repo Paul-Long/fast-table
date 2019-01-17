@@ -1,13 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import get from 'lodash/get';
 import TableHeader from './TableHeader';
 import Row from './TableRow';
-import { connect } from './mini-store';
+import {connect} from './mini-store';
 import renderExpandedIcon from './ExpandedIcon';
 import Cell from './TableCell';
-import { CS, DS } from './types';
-import { cellAlignStyle, isInvalidRenderCellText } from './utils';
+import {CS, DS} from './types';
+import {cellAlignStyle, isInvalidRenderCellText} from './utils';
 
 type Props = {
   currentHoverKey: string,
@@ -17,33 +16,28 @@ type Props = {
   fixed: string,
   hasHead: boolean,
   hasBody: boolean,
-  indentSize: number,
   registerForce: Function,
-  columns: Array,
-  handleExpandChange: Function
-}
+  columns: Array
+};
 
 class BaseTable extends React.PureComponent<Props> {
-
   _children = [];
   _startIndex = 0;
   _stopIndex = 0;
 
   static contextTypes = {
-    table: PropTypes.any
+    table: PropTypes.any,
+    expandChange: PropTypes.func
   };
 
   componentWillMount() {
-    const table = this.context.table;
-    const {dataManager} = table;
-    const showData = dataManager.showData() || [];
-    if (showData.length > 0) {
-      this._stopIndex = showData.length - 1;
-    }
     const {registerForce, fixed} = this.props;
+    const {sizeManager} = this.context.table;
     if (registerForce) {
       registerForce(fixed, this.recomputeBody);
     }
+    this._startIndex = sizeManager._startIndex;
+    this._stopIndex = sizeManager._stopIndex;
     this.renderRows(this.props);
   }
 
@@ -51,9 +45,10 @@ class BaseTable extends React.PureComponent<Props> {
     this.renderRows(nextProps);
   }
 
-  handleExpanded = (record) => {
-    const {handleExpandChange} = this.props;
-    handleExpandChange(record);
+  handleExpanded = (event) => {
+    event.stopPropagation();
+    const {expandChange} = this.context;
+    expandChange(event.currentTarget.getAttribute('data-key'));
   };
 
   handleSort = (key, order) => {
@@ -67,25 +62,39 @@ class BaseTable extends React.PureComponent<Props> {
     });
   };
 
-  handleRowClick = (record, onClick, event) => {
-    const table = this.context.table;
-    const {expandedRowByClick} = table.props;
+  getRowData = (event) => {
+    const key = event.currentTarget.getAttribute('data-key');
+    const {dataManager} = this.context.table;
+    return dataManager.getByKey(key);
+  };
+
+  handleRowClick = (event) => {
+    const {table, expandChange} = this.context;
+    const record = this.getRowData(event);
+    const {expandedRowByClick, onRow} = table.props;
+    const {onClick} = onRow(record);
     if (expandedRowByClick && record[DS._expandedEnable]) {
-      this.handleExpanded(record);
+      expandChange(record[DS._key]);
     }
     if (typeof onClick === 'function') {
       onClick(event);
     }
   };
 
-  handleRowMouseEnter = (record, onMouseEnter, event) => {
+  handleRowMouseEnter = (event) => {
+    const record = this.getRowData(event);
+    const {onRow} = this.context.table.props;
+    const {onMouseEnter} = onRow(record);
     this.handleRowHover(true, record[DS._key]);
     if (typeof onMouseEnter === 'function') {
       onMouseEnter(event);
     }
   };
 
-  handleRowMouseLeave = (record, onMouseLeave, event) => {
+  handleRowMouseLeave = (event) => {
+    const record = this.getRowData(event);
+    const {onRow} = this.context.table.props;
+    const {onMouseLeave} = onRow(record);
     this.handleRowHover(false, record[DS._key]);
     if (typeof onMouseLeave === 'function') {
       onMouseLeave(event);
@@ -119,7 +128,7 @@ class BaseTable extends React.PureComponent<Props> {
 
   getCellText = (column, record) => {
     const {render, dataIndex} = column;
-    let text = get(record, dataIndex);
+    let text = (record || {})[dataIndex];
     if (typeof render === 'function') {
       text = render(text, record);
     }
@@ -137,24 +146,24 @@ class BaseTable extends React.PureComponent<Props> {
 
   getRowStyle = (record, key) => {
     const table = this.context.table;
-    const {
-      sizeManager,
-      cacheManager,
-      dataManager,
-    } = table;
+    const {sizeManager, cacheManager, dataManager} = table;
 
     let rowStyle = cacheManager.getRowStyle(key);
     if (!rowStyle || dataManager.isFixed(record)) {
       rowStyle = {
         position: 'absolute',
         top: record[DS._top],
-        height: record[DS._height],
+        height: record[DS._height]
       };
       if (record[DS._isFixed] === true || record[DS._isFixed] === 'top') {
         rowStyle.top += sizeManager._scrollTop;
         rowStyle.zIndex = 1;
       } else if (record[DS._isFixed] === 'bottom') {
-        rowStyle.top -= ((sizeManager._dataHeight + sizeManager.scrollSizeX()) - sizeManager._scrollTop - sizeManager._clientBodyHeight);
+        rowStyle.top -=
+          sizeManager._dataHeight +
+          sizeManager.scrollSizeX() -
+          sizeManager._scrollTop -
+          sizeManager._clientBodyHeight;
         rowStyle.zIndex = 1;
       }
       if (!record[DS._isFixed]) {
@@ -165,10 +174,10 @@ class BaseTable extends React.PureComponent<Props> {
   };
 
   renderCells = (props, record) => {
-    const {fixed, indentSize} = props;
+    const {fixed} = props;
     const table = this.context.table;
-    const {prefixCls} = table.props;
-    const {dataManager, cacheManager, columnManager,} = table;
+    const {prefixCls, indentSize} = table.props;
+    const {dataManager, cacheManager, columnManager} = table;
     const columns = columnManager.bodyColumns(fixed);
     const hasExpanded = dataManager._hasExpanded;
     const cells = [];
@@ -179,18 +188,15 @@ class BaseTable extends React.PureComponent<Props> {
         const cellProps = {
           key: cellKey,
           className: columns[i].className,
-          components: table.components,
           style: this.getCellStyle(columns[i], record),
-          children: this.getCellText(columns[i], record),
+          children: this.getCellText(columns[i], record)
         };
         if (hasExpanded && fixed !== 'right' && i === 0) {
           cellProps.ExpandedIcon = renderExpandedIcon({
             prefixCls,
             indentSize,
-            handleExpanded: this.handleExpanded.bind(this, record),
-            expanded: record[DS._expanded],
-            expandedEnable: record[DS._expandedEnable],
-            expandedLevel: record[DS._expandedLevel],
+            record,
+            handleExpanded: this.handleExpanded
           });
         }
         cacheManager.setCell(cellKey, Cell(cellProps));
@@ -213,34 +219,34 @@ class BaseTable extends React.PureComponent<Props> {
 
   renderRows = (props) => {
     const rows = [];
-    const {
-      fixed,
-      currentHoverKey,
-    } = props;
+    const {fixed, currentHoverKey} = props;
     const table = this.context.table;
     const {prefixCls, onRow} = table.props;
     const {dataManager} = table;
     const showData = dataManager.showData();
-    const dataSource = showData.filter((d, index) =>
-      (index >= this._startIndex && index <= this._stopIndex) || dataManager.isFixed(d)
+    const dataSource = showData.filter(
+      (d, index) =>
+        (index >= this._startIndex && index <= this._stopIndex) ||
+        dataManager.isFixed(d)
     );
     for (let index = 0; index < dataSource.length; index++) {
       const record = dataSource[index];
       const cells = this.renderRowChildren(props, record);
       const key = `Row_${fixed}_${record[DS._path]}`;
-      const {onMouseEnter, onMouseLeave, onClick, ...other} = onRow(record) || {};
+      const {onMouseEnter, onMouseLeave, onClick, ...other} =
+        onRow(record) || {};
       const rowProps = {
         key,
         prefixCls,
         cells,
+        record,
         className: record[DS._rowClassName],
-        components: table.components,
         hovered: currentHoverKey === record[DS._key],
         style: this.getRowStyle(record, key),
-        onClick: event => this.handleRowClick(record, onClick, event),
-        onMouseEnter: event => this.handleRowMouseEnter(record, onMouseEnter, event),
-        onMouseLeave: event => this.handleRowMouseLeave(record, onMouseLeave, event),
-        ...other,
+        onClick: this.handleRowClick,
+        onMouseEnter: this.handleRowMouseEnter,
+        onMouseLeave: this.handleRowMouseLeave,
+        ...other
       };
       rows.push(Row(rowProps));
     }
@@ -249,34 +255,19 @@ class BaseTable extends React.PureComponent<Props> {
   };
 
   render() {
-    const {
-      hasHead,
-      hasBody,
-      fixed,
-      orders,
-      columns
-    } = this.props;
+    const {hasHead, hasBody, fixed, orders, columns} = this.props;
     const table = this.context.table;
-    const {
-      props,
-      components,
-      columnManager,
-      sizeManager
-    } = table;
-    const {
-      prefixCls,
-      headerRowHeight,
-      rowHeight,
-      onHeaderRow,
-    } = props;
+    const {props, columnManager, sizeManager} = table;
+    const {prefixCls, headerRowHeight, rowHeight, onHeaderRow} = props;
     let body;
-    const Table = components.table;
-    const BodyWrapper = components.body.wrapper;
     if (hasBody) {
       body = (
-        <BodyWrapper className='tbody' style={{height: sizeManager._dataHeight, minHeight: rowHeight}}>
+        <div
+          className='tbody'
+          style={{height: sizeManager._dataHeight, minHeight: rowHeight}}
+        >
           {this._children}
-        </BodyWrapper>
+        </div>
       );
     }
 
@@ -285,22 +276,23 @@ class BaseTable extends React.PureComponent<Props> {
     if (!fixed) {
       style.minWidth = '100%';
     }
-    const header = hasHead
-      && TableHeader({
+    const header =
+      hasHead &&
+      TableHeader({
         columns,
         fixed,
         onSort: this.handleSort,
         orders,
         prefixCls,
         headerRowHeight,
-        components,
-        onHeaderRow,
+        onHeaderRow
       });
+    console.log(`render base table ${fixed} has header ${hasHead}`);
     return (
-      <Table className='table' style={style}>
+      <div className='table' style={style}>
         {header}
         {body}
-      </Table>
+      </div>
     );
   }
 }
@@ -309,7 +301,6 @@ export default connect((state) => {
   const {currentHoverKey, orders} = state;
   return {
     currentHoverKey,
-    orders,
+    orders
   };
 })(BaseTable);
-
