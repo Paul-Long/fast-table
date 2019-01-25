@@ -111,6 +111,39 @@ class BaseTable extends React.PureComponent<Props> {
     }
   };
 
+  handleDrag = (parent, columns) => {
+    const {fixed} = this.props;
+    const table = this.context.table;
+    const {columnManager} = table;
+    columnManager.updateGroupedColumns(
+      this.updateColumn(columnManager.bodyColumns(fixed), parent, columns)
+    );
+    this.recomputeBody({
+      startIndex: this._startIndex,
+      stopIndex: this._stopIndex
+    });
+  };
+
+  updateColumn = (columns, parent, newColumns) => {
+    columns = columns || [];
+    if (!parent) {
+      return newColumns;
+    }
+    return columns.map((column) => {
+      if (column.dataIndex === parent.dataIndex) {
+        column = {...column, children: newColumns};
+      } else {
+        if (column.children && column.children.length > 0) {
+          return {
+            ...column,
+            children: this.updateColumn(column.children, parent, newColumns)
+          };
+        }
+      }
+      return column;
+    });
+  };
+
   getCellStyle = (column, record) => {
     const {onCell} = column;
     const align = column.align || 'left';
@@ -182,7 +215,9 @@ class BaseTable extends React.PureComponent<Props> {
     const hasExpanded = dataManager._hasExpanded;
     const cells = [];
     for (let i = 0; i < columns.length; i++) {
-      const cellKey = `Row${record[DS._path]}-Col${i}_${fixed}`;
+      const cellKey = `Row${record[DS._path]}-Col${
+        columns[i][CS._pathKey]
+      }_${i}_${fixed}`;
       let cell = cacheManager.getCell(cellKey);
       if (!cell || record[DS._isFixed]) {
         const cellProps = {
@@ -199,6 +234,7 @@ class BaseTable extends React.PureComponent<Props> {
             handleExpanded: this.handleExpanded
           });
         }
+        console.log('....cell => ', cellProps.children);
         cacheManager.setCell(cellKey, Cell(cellProps));
         cell = cacheManager.getCell(cellKey);
       }
@@ -285,7 +321,8 @@ class BaseTable extends React.PureComponent<Props> {
         orders,
         prefixCls,
         headerRowHeight,
-        onHeaderRow
+        onHeaderRow,
+        onDrag: this.handleDrag
       });
     return (
       <div className='table' style={style}>

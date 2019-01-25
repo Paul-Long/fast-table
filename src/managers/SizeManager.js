@@ -21,18 +21,25 @@ class SizeManager {
   _dataEmpty = true;
   _clientBodyHeight = 0;
 
-  constructor({showHeader, footerHeight, rowHeight, footer, dataSource, useScrollY, fixedHeader}) {
+  constructor({
+    showHeader,
+    footerHeight,
+    rowHeight,
+    footer,
+    dataSource,
+    useScrollY,
+    fixedHeader
+  }) {
     this.showHeader = showHeader;
     this.fixedHeader = fixedHeader;
-    this.footerHeight = footer
-      ? footerHeight
-      : 0;
+    this.footerHeight = footer ? footerHeight : 0;
     this.rowHeight = rowHeight;
     this.useScrollY = useScrollY;
     dataSource = dataSource || [];
     this._dataEmpty = dataSource.length === 0;
     this._emptyTextHeight = this._dataEmpty ? rowHeight : 0;
-    this._hasScrollY = this._wrapperHeight > 0 && this._wrapperHeight < this._totalHeight();
+    this._hasScrollY =
+      this._wrapperHeight > 0 && this._wrapperHeight < this._totalHeight();
     this.clientBodyHeight();
   }
 
@@ -45,12 +52,14 @@ class SizeManager {
 
     this.clientBodyHeight();
     this._emptyTextHeight = this._dataEmpty ? this.rowHeight : 0;
-    this._hasScrollY = this._wrapperHeight > 0 && this._wrapperHeight < this._totalHeight();
+    this._hasScrollY =
+      this._wrapperHeight > 0 && this._wrapperHeight < this._totalHeight();
   };
 
   clientBodyHeight = () => {
     let height = this._wrapperHeight - this.footerHeight;
-    height = height - (this.showHeader && this.fixedHeader ? this._headerHeight : 0);
+    height =
+      height - (this.showHeader && this.fixedHeader ? this._headerHeight : 0);
     this._clientBodyHeight = height;
   };
 
@@ -63,11 +72,13 @@ class SizeManager {
   };
 
   _totalHeight = () => {
-    return this._dataHeight
-      + (this.showHeader ? this._headerHeight : 0)
-      + this.footerHeight
-      + this._emptyTextHeight
-      + (this._hasScrollX && this._scrollSizeY ? this._scrollSizeY : 0);
+    return (
+      this._dataHeight +
+      (this.showHeader ? this._headerHeight : 0) +
+      this.footerHeight +
+      this._emptyTextHeight +
+      (this._hasScrollX && this._scrollSizeY ? this._scrollSizeY : 0)
+    );
   };
 }
 

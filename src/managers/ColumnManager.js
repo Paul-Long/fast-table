@@ -152,6 +152,11 @@ export default class ColumnManager {
     return this.headerSize();
   };
 
+  updateGroupedColumns = (columns) => {
+    this._cached = {};
+    this._cached['groupedColumns'] = columns;
+  };
+
   _calcWidth = (width, wrapperWidth) => {
     if (typeof width === 'string' && percentReg.test(width)) {
       const i = width.replace('%', '');

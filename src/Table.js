@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import merge from 'lodash/merge';
 import floor from 'lodash/floor';
 import ceil from 'lodash/ceil';
 import shallowEqual from 'shallowequal';
@@ -25,7 +24,8 @@ export default class Table extends React.PureComponent<TableParams> {
 
   static childContextTypes = {
     table: PropTypes.any,
-    expandChange: PropTypes.func
+    expandChange: PropTypes.func,
+    updateScrollLeft: PropTypes.func
   };
 
   _forceTable = {};
@@ -75,7 +75,8 @@ export default class Table extends React.PureComponent<TableParams> {
         sizeManager: this.sizeManager,
         cacheManager: this.cacheManager
       },
-      expandChange: this.handleExpandChange
+      expandChange: this.handleExpandChange,
+      updateScrollLeft: this.updateScrollLeft
     };
   }
 
@@ -196,8 +197,12 @@ export default class Table extends React.PureComponent<TableParams> {
   }
 
   handleBodyScroll = (e) => {
+    const {onScroll} = this.props;
     this.handleBodyScrollLeft(e);
     this.handleBodyScrollTop(e);
+    if (typeof onScroll === 'function') {
+      onScroll(e);
+    }
   };
 
   handleBodyScrollLeft = (e) => {
@@ -213,6 +218,24 @@ export default class Table extends React.PureComponent<TableParams> {
       this.setScrollPositionClassName();
     }
     this.lastScrollLeft = target.scrollLeft;
+    this.sizeManager.update({_scrollLeft: this.lastScrollLeft});
+  };
+
+  updateScrollLeft = (scrollLeft) => {
+    const {headTable, bodyTable} = this;
+    if (!bodyTable || bodyTable.scrollHeight === 0) {
+      return;
+    }
+    if (this.lastScrollLeft !== scrollLeft) {
+      if (headTable) {
+        headTable.scrollLeft = scrollLeft;
+      }
+      if (bodyTable) {
+        bodyTable.scrollLeft = scrollLeft;
+      }
+      this.setScrollPositionClassName();
+    }
+    this.lastScrollLeft = scrollLeft;
     this.sizeManager.update({_scrollLeft: this.lastScrollLeft});
   };
 

@@ -15,11 +15,13 @@
     thead, tbody {
       display: block;
       tr {
+        position: relative;
       }
     }
     tr > th {
       margin: 0;
       padding: 0;
+      transition: all 50ms;
     }
   }
   &-content {
@@ -41,9 +43,11 @@
     .row-group {
       display: flex;
       flex-direction: column;
+      transition: all 50ms;
     }
     .col-group {
       display: flex;
+      position: relative;
       flex-direction: row;
     }
   }

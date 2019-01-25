@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import {cellAlignStyle} from './utils';
 import Sorter from './Sorter';
 import {CS} from './types';
+import Sortable from './Sortable';
 
 type HeadCellProps = {
   key: string,
@@ -13,7 +14,8 @@ type HeadCellProps = {
   headerRowHeight: number,
   orders: Object,
   onSort: Function,
-  onHeaderRow: Function
+  onHeaderRow: Function,
+  onDrag: Function
 };
 
 function HeadCell(props: HeadCellProps) {
@@ -25,7 +27,9 @@ function HeadCell(props: HeadCellProps) {
     headerRowHeight,
     orders,
     onSort,
-    onHeaderRow
+    fixed,
+    onHeaderRow,
+    onDrag
   } = props;
   const children = column.children || [];
   const {dataIndex, align, title, sortEnable, onHeaderCell} = column;
@@ -45,7 +49,8 @@ function HeadCell(props: HeadCellProps) {
   }
   let cellProps = {
     className: classNames('th', {'has-child': children.length > 0}),
-    style
+    style,
+    fixed
   };
   if (onHeaderRow) {
     cellProps = {...cellProps, ...onHeaderRow(column)};
@@ -83,20 +88,24 @@ function HeadCell(props: HeadCellProps) {
 
   if (children.length > 0) {
     return (
-      <div className={current === 0 ? 'row-group' : ''} key={key}>
+      <div className={current === 0 ? 'row-group' : ''} key={key} fixed={fixed}>
         {cell}
         <div className='col-group'>
-          {children.map((child, i) =>
-            HeadCell({
-              key: `${key}-${current}-${i}`,
-              column: child,
-              headerRowHeight,
-              current: current + 1,
-              orders,
-              prefixCls,
-              onSort
-            })
-          )}
+          <Sortable parent={column} columns={children} onDrag={onDrag}>
+            {children.map((child, i) =>
+              HeadCell({
+                key: `${key}-${current}-${i}`,
+                column: child,
+                headerRowHeight,
+                current: current + 1,
+                orders,
+                prefixCls,
+                onSort,
+                fixed,
+                onDrag
+              })
+            )}
+          </Sortable>
         </div>
       </div>
     );

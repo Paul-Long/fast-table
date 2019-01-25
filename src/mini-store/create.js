@@ -25,6 +25,6 @@ export default function create(initialState) {
   return {
     setState,
     getState,
-    subscribe,
+    subscribe
   };
 }

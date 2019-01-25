@@ -27,12 +27,10 @@ function Sorter(props: Props) {
   const wrapperCls = `${prefixCls}-sorter`;
   const sortClass = classNames(`${wrapperCls}-${order}`);
   return (
-    <div className={wrapperCls}
-         onClick={onClick}
-    >
+    <div className={wrapperCls} onClick={onClick}>
       <div className={sortClass} />
     </div>
-  )
+  );
 }
 
 export default Sorter;

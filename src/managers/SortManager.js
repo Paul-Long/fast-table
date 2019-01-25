@@ -2,13 +2,13 @@ import React from 'react';
 
 export default class SortManager {
   _cached = {};
-  
+
   constructor({columns, sortMulti}) {
     this.columns = columns;
     this.sortMulti = sortMulti;
     this.enable = this._enable(columns);
   }
-  
+
   enabled() {
     return this._cache('enabled', () => this.enable);
   }
@@ -19,7 +19,7 @@ export default class SortManager {
     this.enable = {};
     this.enable = this._enable(columns);
   };
-  
+
   setOrder(key, order, fn) {
     if (!this.sortMulti) {
       this.enable = {[`${key}`]: order};
@@ -29,7 +29,7 @@ export default class SortManager {
       fn(this.enable);
     }
   }
-  
+
   _cache(name, fn) {
     if (name in this._cached) {
       return this._cached[name];
@@ -37,7 +37,7 @@ export default class SortManager {
     this._cached[name] = fn();
     return this._cached[name];
   }
-  
+
   _enable = (columns, order = {}) => {
     for (let i = 0; i < columns.length; i++) {
       const column = columns[i] || {};
@@ -51,5 +51,5 @@ export default class SortManager {
       }
     }
     return order;
-  }
+  };
 }

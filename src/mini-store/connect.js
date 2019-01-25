@@ -1,5 +1,5 @@
 import {Component, createElement} from 'react';
-import shallowEqual from 'shallowequal'
+import shallowEqual from 'shallowequal';
 import hoistStatics from 'hoist-non-react-statics';
 import {storeShape} from './PropTypes';
 
@@ -18,14 +18,16 @@ export default function connect(mapStateToProps) {
       static displayName = `Connect(${getDisplayName(WrappedComponent)})`;
 
       static contextTypes = {
-        miniStore: storeShape.isRequired,
+        miniStore: storeShape.isRequired
       };
 
       constructor(props, context) {
         super(props, context);
 
         this.store = context.miniStore;
-        this.state = {subscribed: finnalMapStateToProps(this.store.getState(), props)};
+        this.state = {
+          subscribed: finnalMapStateToProps(this.store.getState(), props)
+        };
       }
 
       componentDidMount() {
@@ -41,7 +43,10 @@ export default function connect(mapStateToProps) {
           return;
         }
 
-        const nextState = finnalMapStateToProps(this.store.getState(), this.props);
+        const nextState = finnalMapStateToProps(
+          this.store.getState(),
+          this.props
+        );
         if (!shallowEqual(this.nextState, nextState)) {
           this.nextState = nextState;
           this.setState({subscribed: nextState});
@@ -66,7 +71,7 @@ export default function connect(mapStateToProps) {
         return createElement(WrappedComponent, {
           ...this.props,
           ...this.state.subscribed,
-          store: this.store,
+          store: this.store
         });
       }
     }

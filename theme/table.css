@@ -37,9 +37,14 @@
 .vt table tbody {
   display: block;
 }
+.vt table thead tr,
+.vt table tbody tr {
+  position: relative;
+}
 .vt table tr > th {
   margin: 0;
   padding: 0;
+  transition: all 50ms;
 }
 .vt-content {
   background: #1E2B29;
@@ -61,9 +66,11 @@
 .vt-header .row-group {
   display: flex;
   flex-direction: column;
+  transition: all 50ms;
 }
 .vt-header .col-group {
   display: flex;
+  position: relative;
   flex-direction: row;
 }
 .vt-body {

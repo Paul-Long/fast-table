@@ -7,7 +7,7 @@ const scrollbarMeasure = {
   top: '-9999px',
   width: '50px',
   height: '50px',
-  overflow: 'scroll',
+  overflow: 'scroll'
 };
 
 export function measureScrollbar() {
@@ -52,7 +52,9 @@ export function cellAlignStyle(align) {
 }
 
 export function isInvalidRenderCellText(text) {
-  return text
-    && !React.isValidElement(text)
-    && Object.prototype.toString.call(text) === '[object Object]';
+  return (
+    text &&
+    !React.isValidElement(text) &&
+    Object.prototype.toString.call(text) === '[object Object]'
+  );
 }
