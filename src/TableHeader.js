@@ -24,7 +24,7 @@ function TableHeader(props: Props) {
     onHeaderRow,
     onDrag
   } = props;
-  const children = columns.map((column, index) =>
+  let children = columns.map((column, index) =>
     HeadCell({
       key: `HeadCol${index}`,
       column,
@@ -37,17 +37,17 @@ function TableHeader(props: Props) {
       onDrag
     })
   );
+  if (!fixed) {
+    children = (
+      <Sortable columns={columns} onDrag={onDrag}>
+        {children}
+      </Sortable>
+    );
+  }
+
   return (
     <div className='thead'>
-      <div className='tr'>
-        {fixed ? (
-          children
-        ) : (
-          <Sortable columns={columns} onDrag={onDrag}>
-            {children}
-          </Sortable>
-        )}
-      </div>
+      <div className='tr'>{children}</div>
     </div>
   );
 }

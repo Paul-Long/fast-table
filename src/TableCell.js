@@ -2,7 +2,6 @@ import React from 'react';
 import classNames from 'classnames';
 
 type Props = {
-  key: string,
   className: string,
   ExpandedIcon: React.Element<*>,
   style: Object,
@@ -10,11 +9,11 @@ type Props = {
 };
 
 function Cell(props: Props) {
-  const {key, className, ExpandedIcon, style, children} = props;
+  const {className, ExpandedIcon, style, children, key} = props;
 
   const newProps = {
     key,
-    className: classNames('td', className),
+    className: classNames('td', key, className),
     style
   };
   return (

@@ -3,19 +3,17 @@ import classNames from 'classnames';
 import {rowEvents, DS} from './types';
 
 type Props = {
-  key: string,
-  className: string,
   prefixCls: string,
   onClick: Function,
   hovered: boolean,
-  cells: [React.Element<*>],
+  children: [React.Element<*>],
   style: Object,
   record: Object
 };
 
 function Row(props: Props) {
-  const {key, className, prefixCls, hovered, cells, style, record} = props;
-  const rowClass = classNames(className, {
+  const {prefixCls, hovered, children, style, record, key} = props;
+  const rowClass = classNames(record[DS._rowClassName], {
     [`${prefixCls}-hover`]: hovered
   });
   const newProps = {
@@ -29,7 +27,7 @@ function Row(props: Props) {
       newProps[event] = props[event];
     }
   });
-  return <div {...newProps}>{cells}</div>;
+  return <div {...newProps}>{children}</div>;
 }
 
 export default Row;

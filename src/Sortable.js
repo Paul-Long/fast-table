@@ -30,6 +30,7 @@ class Sortable extends PureComponent<SortableProps> {
     this.fixedIndex = [];
     this.leftFixedIndex = [];
     this.rightFixedIndex = [];
+    console.log(this.props.parent);
     this.children = Children.map(this.props.children, (child, index) => {
       showIndex.push(index);
       if (child.props.fixed === 'left') {
@@ -192,8 +193,6 @@ class Sortable extends PureComponent<SortableProps> {
       //enable drag next
       this.nextEl = findDOMNode(this[`child-${showIndex[this.nextElIndex]}`]);
     }
-
-    console.log(this.prevEl, this.nextEl);
   };
 
   render() {

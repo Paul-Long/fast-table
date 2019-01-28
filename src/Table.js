@@ -25,7 +25,8 @@ export default class Table extends React.PureComponent<TableParams> {
   static childContextTypes = {
     table: PropTypes.any,
     expandChange: PropTypes.func,
-    updateScrollLeft: PropTypes.func
+    updateScrollLeft: PropTypes.func,
+    update: PropTypes.func
   };
 
   _forceTable = {};
@@ -76,7 +77,8 @@ export default class Table extends React.PureComponent<TableParams> {
         cacheManager: this.cacheManager
       },
       expandChange: this.handleExpandChange,
-      updateScrollLeft: this.updateScrollLeft
+      updateScrollLeft: this.updateScrollLeft,
+      update: this.updateAll
     };
   }
 
@@ -116,6 +118,10 @@ export default class Table extends React.PureComponent<TableParams> {
   componentDidUpdate() {
     this.setScrollPositionClassName();
   }
+
+  updateAll = () => {
+    this.resetShowData();
+  };
 
   getShowCount = () => {
     const {showHeader} = this.props;
