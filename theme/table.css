@@ -44,7 +44,6 @@
 .vt table tr > th {
   margin: 0;
   padding: 0;
-  transition: all 50ms;
 }
 .vt-content {
   background: #1E2B29;

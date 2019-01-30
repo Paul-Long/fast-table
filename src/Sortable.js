@@ -85,6 +85,7 @@ class Sortable extends PureComponent<SortableProps> {
       this.parentEl.removeChild(this.cloneEl);
       this.parentEl = null;
       this.cloneEl = null;
+      this.currentEl.style.opacity = 1;
       this.currentEl.style.background = 'transparent';
       this.currentEl = null;
       this.currentElIndex = null;
@@ -112,6 +113,7 @@ class Sortable extends PureComponent<SortableProps> {
     this.parentEl = event.currentTarget.parentNode;
     this.cloneEl = event.currentTarget.cloneNode(true);
     this.currentEl = event.currentTarget;
+    this.currentEl.style.opacity = 0;
 
     // get current index
     const index = this.currentEl.getAttribute('data-index');
@@ -124,9 +126,10 @@ class Sortable extends PureComponent<SortableProps> {
     this.cloneEl.style.position = 'absolute';
     this.cloneEl.style.zIndex = 9999;
     this.cloneEl.style.background = '#393939';
-    this.cloneEl.style.opacity = 0.4;
+    this.cloneEl.style.opacity = 0.6;
     this.cloneEl.style.left = `${currentRect.left -
       (parentRect.left > 0 ? parentRect.left : 0)}px`;
+    this.cloneEl.style.boxShadow = '0 0 10px rgba(0, 0, 0, .4)';
     this.offsetX =
       event.pageX -
       currentRect.left +
