@@ -20,14 +20,14 @@ function ExpandedIcon(props: Props) {
 type ExpandedIconProps = {
   prefixCls: string,
   indentSize: number,
-  handleExpanded: Function,
+  onClick: Function,
   expanded: boolean,
   expandedEnable: boolean,
   expandedLevel: number
 };
 
 export default function renderExpandedIcon(props: ExpandedIconProps) {
-  const {prefixCls, indentSize, record, handleExpanded} = props;
+  const {prefixCls, indentSize, record, onClick} = props;
   const {} = record || [];
   const expanded = record[DS._expanded];
   const expandedEnable = record[DS._expandedEnable];
@@ -36,7 +36,7 @@ export default function renderExpandedIcon(props: ExpandedIconProps) {
   if (expandedEnable) {
     icon = ExpandedIcon({
       prefixCls,
-      onClick: handleExpanded,
+      onClick,
       expanded,
       record
     });

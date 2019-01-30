@@ -58,3 +58,11 @@ export function isInvalidRenderCellText(text) {
     Object.prototype.toString.call(text) === '[object Object]'
   );
 }
+
+export function has(obj, key) {
+  return Object.prototype.hasOwnProperty.call(obj || {}, key);
+}
+
+export function keys(obj) {
+  return Object.keys(obj || {}) || [];
+}

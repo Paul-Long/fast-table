@@ -26,12 +26,26 @@ class Sortable extends PureComponent<SortableProps> {
 
   constructor(props) {
     super(props);
-    const showIndex = [];
     this.fixedIndex = [];
     this.leftFixedIndex = [];
     this.rightFixedIndex = [];
-    console.log(this.props.parent);
-    this.children = Children.map(this.props.children, (child, index) => {
+    this.state = this.propsToState();
+  }
+
+  componentDidMount() {
+    document.addEventListener('mousemove', this.handleMouseMove);
+    document.addEventListener('mouseup', this.handleMouseUp);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.children !== this.props.children) {
+      this.setState(this.propsToState(nextProps));
+    }
+  }
+
+  propsToState = (props = this.props) => {
+    const showIndex = [];
+    const children = Children.map(props.children, (child, index) => {
       showIndex.push(index);
       if (child.props.fixed === 'left') {
         this.fixedIndex.push(index);
@@ -48,15 +62,8 @@ class Sortable extends PureComponent<SortableProps> {
       });
     });
     this.backIndex = showIndex;
-    this.state = {
-      showIndex
-    };
-  }
-
-  componentDidMount() {
-    document.addEventListener('mousemove', this.handleMouseMove);
-    document.addEventListener('mouseup', this.handleMouseUp);
-  }
+    return {showIndex, children};
+  };
 
   saveRef = (index) => (node) => {
     this[`child-${index}`] = node;
@@ -196,7 +203,8 @@ class Sortable extends PureComponent<SortableProps> {
   };
 
   render() {
-    return this.state.showIndex.map((i) => this.children[i]);
+    const {showIndex, children} = this.state;
+    return showIndex.map((i) => children[i]);
   }
 }
 

@@ -119,3 +119,9 @@ export const rowEvents = [
   'onAnimationEnd',
   'onTransitionEnd'
 ];
+
+export const eventsMap = {
+  mouseenter: 'onMouseEnter',
+  mouseleave: 'onMouseLeave',
+  click: 'onClick'
+};

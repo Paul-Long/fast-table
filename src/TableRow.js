@@ -4,7 +4,6 @@ import {rowEvents, DS} from './types';
 
 type Props = {
   prefixCls: string,
-  onClick: Function,
   hovered: boolean,
   children: [React.Element<*>],
   style: Object,

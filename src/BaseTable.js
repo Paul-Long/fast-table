@@ -5,8 +5,8 @@ import Row from './TableRow';
 import {connect} from './mini-store';
 import renderExpandedIcon from './ExpandedIcon';
 import Cell from './TableCell';
-import {CS, DS} from './types';
-import {cellAlignStyle, isInvalidRenderCellText} from './utils';
+import {CS, DS, eventsMap} from './types';
+import {cellAlignStyle, isInvalidRenderCellText, has, keys} from './utils';
 
 type Props = {
   currentHoverKey: string,
@@ -44,20 +44,20 @@ class BaseTable extends React.PureComponent<Props> {
     this.renderRows(this.props);
   }
 
-  componentWillUpdate(nextProps) {
+  componentWillUpdate(nextProps, nextState, nextContext) {
     const {hasBody} = nextProps;
     if (hasBody) {
       this.renderRows(nextProps);
     }
   }
 
-  handleExpanded = (event) => {
+  fExpanded = (event) => {
     event.stopPropagation();
     const {expandChange} = this.context;
     expandChange(event.currentTarget.getAttribute('data-key'));
   };
 
-  handleSort = (key, order) => {
+  fSort = (key, order) => {
     const {sortManager, props} = this.context.table;
     const onSort = props.onSort;
     sortManager.setOrder(key, order, (orders) => {
@@ -74,40 +74,27 @@ class BaseTable extends React.PureComponent<Props> {
     return dataManager.getByKey(key);
   };
 
-  handleRowClick = (event) => {
+  fEvents = (event) => {
+    const record = this.getRowData(event);
     const {table, expandChange} = this.context;
-    const record = this.getRowData(event);
     const {expandedRowByClick, onRow} = table.props;
-    const {onClick} = onRow(record);
-    if (expandedRowByClick && record[DS._expandedEnable]) {
-      expandChange(record[DS._key]);
+    const events = onRow(record) || {};
+    const func = eventsMap[event.type];
+    if (has(events, func) && typeof events[func] === 'function') {
+      events[func](event);
     }
-    if (typeof onClick === 'function') {
-      onClick(event);
-    }
-  };
-
-  handleRowMouseEnter = (event) => {
-    const record = this.getRowData(event);
-    const {onRow} = this.context.table.props;
-    const {onMouseEnter} = onRow(record);
-    this.handleRowHover(true, record[DS._key]);
-    if (typeof onMouseEnter === 'function') {
-      onMouseEnter(event);
+    if (event.type === 'click') {
+      expandedRowByClick &&
+        record[DS._expandedEnable] &&
+        expandChange(record[DS._key]);
+    } else if (event.type === 'mouseenter') {
+      this.fHover(true, record[DS._key]);
+    } else if (event.type === 'mouseleave') {
+      this.fHover(false, record[DS._key]);
     }
   };
 
-  handleRowMouseLeave = (event) => {
-    const record = this.getRowData(event);
-    const {onRow} = this.context.table.props;
-    const {onMouseLeave} = onRow(record);
-    this.handleRowHover(false, record[DS._key]);
-    if (typeof onMouseLeave === 'function') {
-      onMouseLeave(event);
-    }
-  };
-
-  handleRowHover = (isHover, key) => {
+  fHover = (isHover, key) => {
     const table = this.context.table;
     const {hoverEnable} = table.props;
     if (hoverEnable) {
@@ -117,13 +104,12 @@ class BaseTable extends React.PureComponent<Props> {
     }
   };
 
-  handleDrag = (parent, columns) => {
+  fDrag = (parent, columns) => {
     const {table, update} = this.context;
     const {columnManager} = table;
     columnManager.updateGroupedColumns(
       this.updateColumn(columnManager.groupedColumns(), parent, columns)
     );
-    console.log('drag done -> ');
     this._forceCount += 1;
     if (typeof update === 'function') {
       update();
@@ -238,7 +224,7 @@ class BaseTable extends React.PureComponent<Props> {
             prefixCls,
             indentSize,
             record,
-            handleExpanded: this.handleExpanded
+            onClick: this.fExpanded
           });
         }
         cacheManager.setCell(cellKey, Cell(cellProps));
@@ -275,8 +261,6 @@ class BaseTable extends React.PureComponent<Props> {
       const record = dataSource[index];
       const cells = this.renderRowChildren(props, record);
       const key = `Row_${fixed || ''}_${record[DS._path]}_${this._forceCount}`;
-      const {onMouseEnter, onMouseLeave, onClick, ...other} =
-        onRow(record) || {};
       const rowProps = {
         key,
         prefixCls,
@@ -284,12 +268,11 @@ class BaseTable extends React.PureComponent<Props> {
         record,
         hovered: currentHoverKey === record[DS._key],
         style: this.getRowStyle(record, key),
-        onClick: this.handleRowClick,
-        onMouseEnter: this.handleRowMouseEnter,
-        onMouseLeave: this.handleRowMouseLeave,
-        children: cells,
-        ...other
+        children: cells
       };
+      keys(onRow(record) || {}).forEach(
+        (event) => (rowProps[event] = this.fEvents)
+      );
       rows.push(Row(rowProps));
     }
     this._children = rows;
@@ -323,12 +306,12 @@ class BaseTable extends React.PureComponent<Props> {
       TableHeader({
         columns: columnManager.headColumns(fixed),
         fixed,
-        onSort: this.handleSort,
+        onSort: this.fSort,
         orders,
         prefixCls,
         headerRowHeight,
         onHeaderRow,
-        onDrag: this.handleDrag
+        onDrag: this.fDrag
       });
     return (
       <div className='table' style={style}>
