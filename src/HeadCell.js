@@ -44,8 +44,8 @@ function HeadCell(props: HeadCellProps) {
     style.flex = 1;
   }
   style.height = (rowSpan || 1) * headerRowHeight;
-  if (onHeaderCell) {
-    style = {...style, ...onHeaderCell(column)};
+  if (onCell) {
+    style = {...style, ...onCell(column)};
   }
   let cellProps = {
     className: classNames('th', {'has-child': children.length > 0}),
@@ -54,6 +54,9 @@ function HeadCell(props: HeadCellProps) {
   };
   if (onHeaderRow) {
     cellProps = {...cellProps, ...onHeaderRow(column)};
+  }
+  if (onHeaderCell) {
+    cellProps = {...cellProps, ...onHeaderCell(column)};
   }
   if (children.length === 0) {
     cellProps.key = key;
