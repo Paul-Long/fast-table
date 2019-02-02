@@ -64,9 +64,10 @@ npm install fast-table --save-dev
 | dataIndex     | data key,use `a.b.c`  | String | - |
 | fixed         | fixed column          | String(`left` or `right`)                 |        |
 | key           | unique identifier <br> (can ignore) | String | - |
-| onCell        | cell style            | Function(column, record):Object           |        |
+| onCell        | setting header-cell style | Function(column, record):Object       |        |
+| onHeaderCell  | setting header-cell props | Function(column):Object               |        |
 | order         | default order         | String(`desc` or `asc`)                   |        |
-| render        | render cell           | Function(text, record, index) {}          | -      |
+| render        | render cell as a ReactNode | Function(text, record, index) {}     | -      |
 | sortEnable    | sort enable           | Boolean                                   |        |
 | title         | header cell text      | String or ReactNode                       |        |
 | width         | width                 | String `or` Number                        | -      |
