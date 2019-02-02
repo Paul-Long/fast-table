@@ -32,7 +32,7 @@ function HeadCell(props: HeadCellProps) {
     onDrag
   } = props;
   const children = column.children || [];
-  const {dataIndex, align, title, sortEnable, onHeaderCell} = column;
+  const {dataIndex, align, title, sortEnable, onCell, onHeaderCell} = column;
   const rowSpan = column[CS.rowSpan];
   const width = column[CS._width];
   const order = orders[dataIndex];
