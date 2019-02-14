@@ -27,7 +27,8 @@ class BaseTable extends React.PureComponent<Props> {
   _forceCount = 0;
 
   static contextTypes = {
-    table: PropTypes.any,
+    props: PropTypes.object,
+    manager: PropTypes.object,
     expandChange: PropTypes.func,
     update: PropTypes.func
   };
@@ -35,7 +36,7 @@ class BaseTable extends React.PureComponent<Props> {
   componentWillMount() {
     this._forceCount = 0;
     const {registerForce, fixed} = this.props;
-    const {sizeManager} = this.context.table;
+    const {sizeManager} = this.context.manager;
     if (registerForce) {
       registerForce(fixed, this.recomputeBody);
     }
@@ -58,8 +59,8 @@ class BaseTable extends React.PureComponent<Props> {
   };
 
   fSort = (key, order) => {
-    const {sortManager, props} = this.context.table;
-    const onSort = props.onSort;
+    const {sortManager} = this.context.manager;
+    const onSort = this.context.props.onSort;
     sortManager.setOrder(key, order, (orders) => {
       this.props.store.setState({orders});
       if (typeof onSort === 'function') {
@@ -70,14 +71,14 @@ class BaseTable extends React.PureComponent<Props> {
 
   getRowData = (event) => {
     const key = event.currentTarget.getAttribute('data-key');
-    const {dataManager} = this.context.table;
+    const {dataManager} = this.context.manager;
     return dataManager.getByKey(key);
   };
 
   fEvents = (event) => {
     const record = this.getRowData(event);
-    const {table, expandChange} = this.context;
-    const {expandedRowByClick, onRow} = table.props;
+    const {expandChange} = this.context;
+    const {expandedRowByClick, onRow} = this.context.props;
     const events = onRow(record) || {};
     const func = eventsMap[event.type];
     if (has(events, func) && typeof events[func] === 'function') {
@@ -95,8 +96,7 @@ class BaseTable extends React.PureComponent<Props> {
   };
 
   fHover = (isHover, key) => {
-    const table = this.context.table;
-    const {hoverEnable} = table.props;
+    const {hoverEnable} = this.context.props;
     if (hoverEnable) {
       this.props.store.setState({
         currentHoverKey: isHover ? key : null
@@ -105,14 +105,18 @@ class BaseTable extends React.PureComponent<Props> {
   };
 
   fDrag = (parent, columns) => {
-    const {table, update} = this.context;
-    const {columnManager} = table;
+    const {update} = this.context;
+    const {onHeaderSortable} = this.context.props;
+    const {columnManager} = this.context.manager;
     columnManager.updateGroupedColumns(
       this.updateColumn(columnManager.groupedColumns(), parent, columns)
     );
     this._forceCount += 1;
     if (typeof update === 'function') {
       update();
+    }
+    if (typeof onHeaderSortable === 'function') {
+      onHeaderSortable(columnManager.groupedColumns());
     }
     this.forceUpdate();
   };
@@ -171,8 +175,7 @@ class BaseTable extends React.PureComponent<Props> {
   };
 
   getRowStyle = (record, key) => {
-    const table = this.context.table;
-    const {sizeManager, cacheManager, dataManager} = table;
+    const {sizeManager, cacheManager, dataManager} = this.context.manager;
 
     let rowStyle = cacheManager.getRowStyle(key);
     if (!rowStyle || dataManager.isFixed(record)) {
@@ -201,9 +204,8 @@ class BaseTable extends React.PureComponent<Props> {
 
   renderCells = (props, record) => {
     const {fixed} = props;
-    const table = this.context.table;
-    const {prefixCls, indentSize} = table.props;
-    const {dataManager, cacheManager, columnManager} = table;
+    const {prefixCls, indentSize} = this.context.props;
+    const {dataManager, cacheManager, columnManager} = this.context.manager;
     const columns = columnManager.bodyColumns(fixed);
     const hasExpanded = dataManager._hasExpanded;
     const cells = [];
@@ -236,8 +238,7 @@ class BaseTable extends React.PureComponent<Props> {
   };
 
   renderRowChildren = (props, record) => {
-    const table = this.context.table;
-    const {expandedRowRender} = table.props;
+    const {expandedRowRender} = this.context.props;
     if (expandedRowRender && record[DS._expandedLevel] > 0) {
       return expandedRowRender(record, props.fixed, record[DS._expandedLevel]);
     } else {
@@ -248,9 +249,8 @@ class BaseTable extends React.PureComponent<Props> {
   renderRows = (props) => {
     const rows = [];
     const {fixed, currentHoverKey} = props;
-    const table = this.context.table;
-    const {prefixCls, onRow} = table.props;
-    const {dataManager} = table;
+    const {prefixCls, onRow} = this.context.props;
+    const {dataManager} = this.context.manager;
     const showData = dataManager.showData();
     const dataSource = showData.filter(
       (d, index) =>
@@ -273,6 +273,9 @@ class BaseTable extends React.PureComponent<Props> {
       keys(onRow(record) || {}).forEach(
         (event) => (rowProps[event] = this.fEvents)
       );
+      if (!has(onRow(record), 'onClick')) {
+        rowProps['onClick'] = this.fEvents;
+      }
       rows.push(Row(rowProps));
     }
     this._children = rows;
@@ -281,9 +284,13 @@ class BaseTable extends React.PureComponent<Props> {
 
   render() {
     const {hasHead, hasBody, fixed, orders} = this.props;
-    const table = this.context.table;
-    const {props, columnManager, sizeManager} = table;
-    const {prefixCls, headerRowHeight, rowHeight, onHeaderRow} = props;
+    const {columnManager, sizeManager} = this.context.manager;
+    const {
+      prefixCls,
+      headerRowHeight,
+      rowHeight,
+      onHeaderRow
+    } = this.context.props;
     let body;
     if (hasBody) {
       body = (

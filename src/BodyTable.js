@@ -9,15 +9,15 @@ type Props = {
   registerForce: Function
 };
 
-function BodyTable(props: Props, {table}) {
-  const {columnManager, sizeManager} = table;
+function BodyTable(props: Props, {manager, props: baseProps}) {
+  const {columnManager, sizeManager} = manager;
   const {
     prefixCls,
     fixedHeader,
     showHeader,
     dataSource,
     bodyMaxHeight
-  } = table.props;
+  } = baseProps;
   const {saveRef, fixed, handleBodyScroll, registerForce} = props;
   const baseTable = (
     <BaseTable
@@ -100,5 +100,6 @@ function BodyTable(props: Props, {table}) {
 
 export default BodyTable;
 BodyTable.contextTypes = {
-  table: PropTypes.any
+  props: PropTypes.object,
+  manager: PropTypes.object
 };

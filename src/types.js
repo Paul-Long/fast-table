@@ -1,5 +1,4 @@
 import React from 'react';
-// import { measureScrollbar } from './utils';
 
 function defaultFunction() {
   return {};
@@ -21,6 +20,7 @@ export type TableParams = {
   expandedRowByClick: boolean,
   useScrollY: boolean,
   hoverEnable: boolean,
+  headerSortable: boolean,
 
   rowClassName: Function,
   emptyText: Function | React.Node,
@@ -34,6 +34,7 @@ export type TableParams = {
   onScrollEnd: Function,
   onSort: Function,
   onScroll: Function,
+  onHeaderSortable: Function,
 
   rowHeight: number,
   headerRowHeight: number,
@@ -60,6 +61,7 @@ export const TableDefaultParams = {
   expandedRowByClick: true,
   useScrollY: true,
   hoverEnable: true,
+  headerSortable: false,
 
   getRowHeight: () => 1,
   rowClassName: () => '',
@@ -69,6 +71,7 @@ export const TableDefaultParams = {
   getScrollSize: () => ({x: 8, y: 8}),
   onRow: defaultFunction,
   onHeaderRow: defaultFunction,
+  onHeaderSortable: defaultFunction,
 
   rowHeight: 30,
   headerRowHeight: 35,

@@ -7,10 +7,10 @@ type Props = {
   fixed: string
 };
 
-function HeadTable(props: Props, {table}) {
-  const {fixedHeader, prefixCls, showHeader} = table.props;
+function HeadTable(props: Props, {manager, props: baseProps}) {
+  const {fixedHeader, prefixCls, showHeader} = baseProps;
   const {saveRef, fixed} = props;
-  const {sizeManager, columnManager} = table;
+  const {sizeManager, columnManager} = manager;
   const headStyle = {};
   if (fixedHeader && showHeader) {
     const scrollbarWidth = sizeManager.scrollSizeX();
@@ -44,5 +44,6 @@ function HeadTable(props: Props, {table}) {
 export default HeadTable;
 
 HeadTable.contextTypes = {
-  table: PropTypes.any
+  props: PropTypes.object,
+  manager: PropTypes.object
 };

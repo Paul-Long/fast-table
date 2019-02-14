@@ -21,6 +21,7 @@ class Sortable extends PureComponent<SortableProps> {
   nextEl = null;
 
   static contextTypes = {
+    props: PropTypes.object,
     updateScrollLeft: PropTypes.func
   };
 
@@ -95,7 +96,10 @@ class Sortable extends PureComponent<SortableProps> {
       this.prevElIndex = null;
       this.nextElIndex = null;
     }
-    document.body.style.userSelect = 'text';
+    document.body.style['user-select'] = 'text';
+    document.body.style['-ms-user-select'] = 'text';
+    document.body.style['-moz-user-select'] = 'text';
+    document.body.style['-webkit-user-select'] = 'text';
     const dragChange = this.state.showIndex.some(
       (index, i) => this.backIndex[i] !== index
     );
@@ -105,11 +109,18 @@ class Sortable extends PureComponent<SortableProps> {
   };
 
   handleMouseDown = (event) => {
+    const {headerSortable} = this.context.props;
     if (event.button !== 0) {
       return event;
     }
+    if (!headerSortable) {
+      return;
+    }
     this.backIndex = this.state.showIndex;
-    document.body.style.userSelect = 'none';
+    document.body.style['user-select'] = 'none';
+    document.body.style['-ms-user-select'] = 'none';
+    document.body.style['-moz-user-select'] = 'none';
+    document.body.style['-webkit-user-select'] = 'none';
     this.parentEl = event.currentTarget.parentNode;
     this.cloneEl = event.currentTarget.cloneNode(true);
     this.currentEl = event.currentTarget;

@@ -6,31 +6,44 @@ const scrollbarMeasure = {
   position: 'absolute',
   top: '-9999px',
   width: '50px',
-  height: '50px',
-  overflow: 'scroll'
+  height: '50px'
 };
 
-export function measureScrollbar() {
+let scrollbarVerticalSize;
+let scrollbarHorizontalSize;
+
+export function measureScrollbar(direction = 'vertical') {
   if (typeof document === 'undefined' || typeof window === 'undefined') {
     return 0;
   }
-  if (scrollbarSize) {
-    return scrollbarSize;
+  const isVertical = direction === 'vertical';
+  if (isVertical && scrollbarVerticalSize) {
+    return scrollbarVerticalSize;
+  } else if (!isVertical && scrollbarHorizontalSize) {
+    return scrollbarHorizontalSize;
   }
   const scrollDiv = document.createElement('div');
-  for (const scrollProp in scrollbarMeasure) {
-    if (scrollbarMeasure.hasOwnProperty(scrollProp)) {
-      scrollDiv.style[scrollProp] = scrollbarMeasure[scrollProp];
-    }
+  Object.keys(scrollbarMeasure).forEach((scrollProp) => {
+    scrollDiv.style[scrollProp] = scrollbarMeasure[scrollProp];
+  });
+  // Append related overflow style
+  if (isVertical) {
+    scrollDiv.style.overflowY = 'scroll';
+  } else {
+    scrollDiv.style.overflowX = 'scroll';
   }
   document.body.appendChild(scrollDiv);
-  const size = {
-    y: scrollDiv.offsetWidth - scrollDiv.clientWidth,
-    x: scrollDiv.offsetHeight - scrollDiv.clientHeight
-  };
+  let size = 0;
+  if (isVertical) {
+    size = scrollDiv.offsetWidth - scrollDiv.clientWidth;
+    scrollbarVerticalSize = size;
+  } else {
+    size = scrollDiv.offsetHeight - scrollDiv.clientHeight;
+    scrollbarHorizontalSize = size;
+  }
+
   document.body.removeChild(scrollDiv);
-  scrollbarSize = size;
-  return scrollbarSize;
+  return size;
 }
 
 export function cellAlignStyle(align) {
