@@ -8,14 +8,14 @@
 
 <div align="center">
 
+React表格组件，支持多数据首次快速渲染
+
 [![npm package](https://img.shields.io/npm/v/fast-table.svg?style=flat)](https://www.npmjs.com/package/fast-table)
 [![NPM downloads](http://img.shields.io/npm/dm/fast-table.svg?style=flat-square)](http://npmjs.com/fast-table)
 [![Dependencies](https://img.shields.io/david/paul-long/fast-table.svg?style=flat-square)](https://david-dm.org/paul-long/fast-table)
 [![DevDependencies](https://img.shields.io/david/dev/paul-long/fast-table.svg?style=flat-square)](https://david-dm.org/paul-long/fast-table?type=dev)
 
 </div>
-
-**React表格组件，支持多数据首次快速渲染。**
 
 # 在线Demo
 https://paul-long.github.io/react-components/
