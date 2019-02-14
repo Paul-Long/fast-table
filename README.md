@@ -25,6 +25,8 @@ https://paul-long.github.io/react-components/
 
 # 安装
 
+[![rc-select](https://nodei.co/npm/fast-table.png)](https://npmjs.org/package/fast-table)
+
 ```bash
 npm install fast-table --save-dev
 ```
