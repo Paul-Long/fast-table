@@ -16,7 +16,7 @@ React表格组件，支持多数据首次快速渲染
 [![DevDependencies](https://img.shields.io/david/dev/paul-long/fast-table.svg?style=flat-square)](https://david-dm.org/paul-long/fast-table?type=dev)
 [![Gitter](https://img.shields.io/gitter/room/paul-long/fast-table.svg?style=flat-square)](https://gitter.im/paul-long/paul-long?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Codecov](https://img.shields.io/coveralls/github/paul-long/fast-table.svg?style=flat-square)](https://codecov.io/gh/paul-long/fast-table/branch/master)
-[![Issues need help](https://flat.badgen.net/github/label-issues/paul-long/fast-table/help%20wanted/open)](https://github.com/paul-long/fast-table/issues?utf8=%E2%9C%93&q=)
+[![Issues need help](https://flat.badgen.net/github/label-issues/paul-long/fast-table/help%20wanted/open)](https://github.com/paul-long/fast-table/issues?q=label%3A%22help+wanted%22)
 
 </div>
 
