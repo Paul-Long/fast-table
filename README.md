@@ -1,10 +1,12 @@
-# fast-table
+<p align="center">
+  <a href="http://ant.design">
+    <img width="200" src="http://houym-1254119810.picsh.myqcloud.com/logo-200_150.png">
+  </a>
+</p>
+
+<h1 align="center">Fast Table</h1>
 
 **React表格组件，支持多数据首次快速渲染。**
-
-# future
-
-add drag table header，Immature version can be viewed [demo](https://paul-long.github.io/react-components/)
 
 # 在线Demo
 https://paul-long.github.io/react-components/
