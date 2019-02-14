@@ -27,13 +27,14 @@ npm install fast-table --save-dev
 
 | props | describe | type | default value |
 |-----------------------|-----------------------|-----------|---------------|
-| bordered              | show bordered         | Boolean   | false         |
-| className             | custom class          | String    |               |
-| colMinWidth           | min column width      | Number    | 100           |
-| columns               | set table header      | Array[]   | -             |
-| dataSource            | data                  | Array[]   |               |
-| defaultShowCount      | default show rows     | Number    | 30            |
-| emptyText             | empty show            | Function  | () => '暂无数据' |
+| [bordered](#bordered) | show bordered         | Boolean   | false         |
+| [bodyMaxHeight](#bodymaxheight)         | body max height       | Number or String   |          |
+| [className](#classname)             | custom class          | String    |               |
+| [colMinWidth](#colminwidth)           | min column width      | Number    | 100           |
+| [columns](#columnprops)               | set table header      | Array[]   | -             |
+| [dataSource](#dataSource)            | data                  | Array[]   |               |
+| [defaultShowCount](#defaultshowcount)      | default show rows     | Number    | 30            |
+| [emptyText](#emptytext)             | empty show            | Function  | () => '暂无数据' |
 | expandedRowByClick    | on click row expanded | Boolean   | true          |
 | expandedRowKeys       | expanded rows         | String[]  |               |
 | expandedRowRender     | expanded render       | Function  |               |
@@ -41,13 +42,19 @@ npm install fast-table --save-dev
 | footerHeight          | Footer height         | Number    | 30            |
 | getRowHeight          | span row              | Function(record, index):Number | () => 1 |
 | headerRowHeight       | header row height     | Number    | 35            |
+| headerSortable        | header sortable       | Boolean   | false         |
 | indentSize            | expanded indent size  | Number    | 17            |
 | onExpandedRowsChange  | on expanded change    | Function  |               |
+| onHeaderSortable      | on header sort end    | Function  |               |
+| onHeaderRow           | header row event listener    | Function  |               |
 | onScrollEnd           | scroll to bottom      | Function  |               |
+| onSort                | on sort               | Function  |               |
+| onRow                 | row events listener   | Function  |               |
 | refreshEnable         | use scroll end        | Boolean   | true          |
 | rowClassName          | row className         | Function  |  () => ''     |
 | rowHeight             | default row height    | Number    | 30            |
 | scrollEndPosition     | scroll to bottom px to refresh    | Number | 60   |
+| scrollSize            | set scroll default size    | Object | {x: 8, y: 8}   |
 | showHeader            | show header           | Boolean   | true          |
 | sortMulti             | multi sort enable     | Boolean   | false         |
 | style                 | table style           | Object    | {}            |
@@ -65,18 +72,39 @@ npm install fast-table --save-dev
 | fixed         | fixed column          | String(`left` or `right`)                 |        |
 | key           | unique identifier <br> (can ignore) | String | - |
 | onCell        | cell style            | Function(column, record):Object           |        |
+| onHeaderCell  | header cell style     | Function(column):Object                   |        |
 | order         | default order         | String(`desc` or `asc`)                   |        |
 | render        | render cell           | Function(text, record, index) {}          | -      |
 | sortEnable    | sort enable           | Boolean                                   |        |
 | title         | header cell text      | String or ReactNode                       |        |
 | width         | width                 | String `or` Number                        | -      |
 
-**DataSource Props:**
+# DataSource Props
 
 | props | describe | type | default value |
 |---------|-----------|--------------------------------------|---|
 | isFixed | fixed row | `true` or String(`top` or `bottom` ) | - |
 
+## bordered
+show border , `true` or `false`
+
+## bodyMaxHeight
+set table body max height
+
+## className
+set className
+
+## colMinWidth
+header cell min width
+
+## dataSource
+table data 
+
+## defaultShowCount
+show count, default `30`
+
+## emptyText
+empty show content
 
 # 示例
 
