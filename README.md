@@ -24,6 +24,7 @@ npm install fast-table --save-dev
 - 树形数据展示
 - 固定行至顶部或者底部
 - 子表格订制
+- 表头自由排序
 
 # API
 
