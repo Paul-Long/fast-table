@@ -9,11 +9,8 @@
 <div align="center">
 
 [![npm package](https://img.shields.io/npm/v/fast-table.svg?style=flat)](https://www.npmjs.com/package/fast-table)
-
 [![NPM downloads](http://img.shields.io/npm/dm/fast-table.svg?style=flat-square)](http://npmjs.com/fast-table)
-
 [![Dependencies](https://img.shields.io/david/dev/paul-long/fast-table.svg?style=flat-square)](https://david-dm.org/paul-long/fast-table)
-
 [![DevDependencies](https://img.shields.io/david/dev/paul-long/fast-table.svg?style=flat-square)](https://david-dm.org/paul-long/fast-table?type=dev)
 
 </div>
