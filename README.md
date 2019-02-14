@@ -2,6 +2,10 @@
 
 **React表格组件，支持多数据首次快速渲染。**
 
+# future
+
+add drag table header，Immature version can be viewed [demo](https://paul-long.github.io/react-components/)
+
 # 在线Demo
 https://paul-long.github.io/react-components/
 
