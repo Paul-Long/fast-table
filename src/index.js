@@ -140,20 +140,21 @@ export default class Table extends React.PureComponent<TableParams> {
   };
 
   onResize = ({width, height}) => {
-    this._renderEnable = true;
-    this._width = width;
-    this._height = height;
-    this.cacheManager.reset();
-    this.sizeManager.update({
-      _wrapperWidth: width,
-      _wrapperHeight: height,
-      _scrollSizeX: measureScrollbar('horizontal'),
-      _scrollSizeY: measureScrollbar()
-    });
-    this.getShowCount();
-    this.updateColumn();
-    this.resetShowData();
-    // this.setState({width, height});
+    if (this._width !== width || this._height !== height) {
+      this._renderEnable = true;
+      this._width = width;
+      this._height = height;
+      this.cacheManager.reset();
+      this.sizeManager.update({
+        _wrapperWidth: width,
+        _wrapperHeight: height,
+        _scrollSizeX: measureScrollbar('horizontal'),
+        _scrollSizeY: measureScrollbar()
+      });
+      this.getShowCount();
+      this.updateColumn();
+      this.resetShowData();
+    }
   };
 
   updateColumn = () => {
@@ -444,10 +445,11 @@ export default class Table extends React.PureComponent<TableParams> {
     );
   };
 
-  renderChild = () => {
+  renderChild = (params) => {
     if (!this._renderEnable) {
       return null;
     }
+    this.onResize(params);
     const {style, prefixCls} = this.props;
     const hasLeftFixed = this.columnManager.isAnyColumnsLeftFixed();
     const hasRightFixed = this.columnManager.isAnyColumnsRightFixed();

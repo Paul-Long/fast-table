@@ -154,7 +154,27 @@ export default class ColumnManager {
 
   updateGroupedColumns = (columns) => {
     this._cached = {};
+    this.columns = this._uColumns(columns);
     this._cached['groupedColumns'] = columns;
+  };
+
+  _uColumns = (columns) => {
+    return columns.map((c) => {
+      let column = {};
+      for (let key in c) {
+        if (
+          typeof key !== 'symbol' &&
+          Object.prototype.hasOwnProperty.call(c, key)
+        ) {
+          column[key] = c[key];
+        }
+      }
+      const children = column.children || [];
+      if (children.length > 0) {
+        column.children = this._uColumns(children);
+      }
+      return column;
+    });
   };
 
   _calcWidth = (width, wrapperWidth) => {
