@@ -72,7 +72,7 @@ class BaseTable extends React.PureComponent<Props> {
   getRowData = (event) => {
     const key = event.currentTarget.getAttribute('data-key');
     const {dataManager} = this.context.manager;
-    return dataManager.getByKey(key);
+    return dataManager.getByKey(key) || {};
   };
 
   fEvents = (event) => {

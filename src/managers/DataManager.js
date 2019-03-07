@@ -199,13 +199,13 @@ export default class DataManager {
   _rowKey = (record, index) => {
     const rowKey = this.rowKey;
     if (typeof rowKey === 'function') {
-      return rowKey(record, index);
+      return String(rowKey(record, index));
     } else if (typeof rowKey === 'string') {
-      return record[rowKey];
+      return String(record[rowKey]);
     } else if (record['key']) {
-      return record['key'];
+      return String(record['key']);
     }
-    return index;
+    return String(index);
   };
 
   _rowClassName = (record, index, level) => {
