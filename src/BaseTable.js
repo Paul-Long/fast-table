@@ -188,11 +188,13 @@ class BaseTable extends React.PureComponent<Props> {
         rowStyle.top += sizeManager._scrollTop;
         rowStyle.zIndex = 1;
       } else if (record[DS._isFixed] === 'bottom') {
-        rowStyle.top -=
-          sizeManager._dataHeight +
-          sizeManager.scrollSizeX() -
-          sizeManager._scrollTop -
-          sizeManager._clientBodyHeight;
+        if (sizeManager._hasScrollY) {
+          rowStyle.top -=
+            sizeManager._dataHeight +
+            sizeManager.scrollSizeX() -
+            sizeManager._scrollTop -
+            sizeManager._clientBodyHeight;
+        }
         rowStyle.zIndex = 1;
       }
       if (!record[DS._isFixed]) {
