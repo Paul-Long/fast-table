@@ -22,7 +22,8 @@ class Sortable extends PureComponent<SortableProps> {
 
   static contextTypes = {
     props: PropTypes.object,
-    updateScrollLeft: PropTypes.func
+    updateScrollLeft: PropTypes.func,
+    getProps: PropTypes.func
   };
 
   constructor(props) {
@@ -109,7 +110,7 @@ class Sortable extends PureComponent<SortableProps> {
   };
 
   handleMouseDown = (event) => {
-    const {headerSortable} = this.context.props;
+    const headerSortable = this.context.getProps('headerSortable');
     if (event.button !== 0) {
       return event;
     }

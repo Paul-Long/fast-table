@@ -28,7 +28,8 @@ export default class Table extends React.PureComponent<TableParams> {
     manager: PropTypes.object,
     expandChange: PropTypes.func,
     updateScrollLeft: PropTypes.func,
-    update: PropTypes.func
+    update: PropTypes.func,
+    getProps: PropTypes.func
   };
 
   _forceTable = {};
@@ -80,7 +81,8 @@ export default class Table extends React.PureComponent<TableParams> {
       },
       expandChange: this.handleExpandChange,
       updateScrollLeft: this.updateScrollLeft,
-      update: this.updateAll
+      update: this.updateAll,
+      getProps: this.getProps
     };
   }
 
@@ -123,6 +125,10 @@ export default class Table extends React.PureComponent<TableParams> {
 
   updateAll = () => {
     this.resetShowData();
+  };
+
+  getProps = (prop) => {
+    return this.props[prop];
   };
 
   getShowCount = () => {
