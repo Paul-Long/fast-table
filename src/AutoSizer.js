@@ -104,7 +104,7 @@ export default class AutoSizer extends React.PureComponent<Props, State> {
         style={{
           ...outerStyle,
           ...style,
-          height: '100%'
+          minHeight: '100%'
         }}
       >
         {children(childParams)}

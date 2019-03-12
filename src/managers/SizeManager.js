@@ -38,8 +38,7 @@ class SizeManager {
     dataSource = dataSource || [];
     this._dataEmpty = dataSource.length === 0;
     this._emptyTextHeight = this._dataEmpty ? rowHeight : 0;
-    this._hasScrollY =
-      this._wrapperHeight > 0 && this._wrapperHeight < this._totalHeight();
+    this.setHasScrollY();
     this.clientBodyHeight();
   }
 
@@ -52,8 +51,14 @@ class SizeManager {
 
     this.clientBodyHeight();
     this._emptyTextHeight = this._dataEmpty ? this.rowHeight : 0;
+    this.setHasScrollY();
+  };
+
+  setHasScrollY = () => {
     this._hasScrollY =
-      this._wrapperHeight > 0 && this._wrapperHeight < this._totalHeight();
+      this.useScrollY &&
+      this._wrapperHeight > 0 &&
+      this._wrapperHeight < this._totalHeight();
   };
 
   clientBodyHeight = () => {

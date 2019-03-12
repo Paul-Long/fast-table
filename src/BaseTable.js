@@ -64,7 +64,7 @@ class BaseTable extends React.PureComponent<Props> {
     sortManager.setOrder(key, order, (orders) => {
       this.props.store.setState({orders});
       if (typeof onSort === 'function') {
-        onSort(orders);
+        onSort(orders, order);
       }
     });
   };
@@ -160,7 +160,7 @@ class BaseTable extends React.PureComponent<Props> {
     const {render, dataIndex} = column;
     let text = (record || {})[dataIndex];
     if (typeof render === 'function') {
-      text = render(text, record);
+      text = render(text, record, record[DS._index]);
     }
     if (isInvalidRenderCellText(text)) {
       text = null;

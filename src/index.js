@@ -134,6 +134,10 @@ export default class Table extends React.PureComponent<TableParams> {
   getShowCount = () => {
     const {showHeader} = this.props;
     const dataSource = this.dataManager.showData();
+    if (!this.sizeManager.useScrollY) {
+      this.showCount = (dataSource || []).length;
+      return;
+    }
     let _height = this._height || 0;
     if (showHeader) {
       _height -= this.sizeManager._headerHeight;
@@ -304,7 +308,7 @@ export default class Table extends React.PureComponent<TableParams> {
     const {rowHeight} = this.props;
     const dataSource = this.dataManager.showData() || [];
     const state = {};
-    if (!this.sizeManager._hasScrollY) {
+    if (!this.sizeManager._hasScrollY || !this.sizeManager.useScrollY) {
       state.startIndex = 0;
       state.stopIndex = dataSource.length - 1;
     } else {
@@ -456,18 +460,19 @@ export default class Table extends React.PureComponent<TableParams> {
       return null;
     }
     this.onResize(params);
-    const {style, prefixCls} = this.props;
+    const {prefixCls, useScrollY} = this.props;
     const hasLeftFixed = this.columnManager.isAnyColumnsLeftFixed();
     const hasRightFixed = this.columnManager.isAnyColumnsRightFixed();
+    const style = {...this.props.style};
+    style.width = this.sizeManager._wrapperWidth;
+    if (useScrollY) {
+      style.height = this.sizeManager._wrapperHeight;
+    }
     return (
       <div
         className={this.getClassName()}
         ref={this.saveRef('tableNode')}
-        style={{
-          ...style,
-          width: this.sizeManager._wrapperWidth,
-          height: this.sizeManager._wrapperHeight
-        }}
+        style={style}
       >
         <div className={`${prefixCls}-content`}>
           {this.renderMainTable()}
@@ -480,11 +485,12 @@ export default class Table extends React.PureComponent<TableParams> {
   };
 
   render() {
-    const {prefixCls} = this.props;
+    const {prefixCls, useScrollY} = this.props;
     const autoSizeProps = {
       ...this.props,
       onResize: this.onResize,
-      className: `${prefixCls}-auto-size`
+      className: `${prefixCls}-auto-size`,
+      disableHeight: !useScrollY
     };
     return (
       <Provider store={this.store}>

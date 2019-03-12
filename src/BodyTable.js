@@ -9,7 +9,7 @@ type Props = {
   registerForce: Function
 };
 
-function BodyTable(props: Props, {manager, props: baseProps}) {
+function BodyTable(props: Props, {manager, props: baseProps, getProps}) {
   const {columnManager, sizeManager} = manager;
   const {
     prefixCls,
@@ -40,7 +40,11 @@ function BodyTable(props: Props, {manager, props: baseProps}) {
   }
   const scrollSize = sizeManager.scrollSizeX();
   dataHeight = dataHeight + scrollSize;
-  height = Math.min(height, dataHeight);
+  if (getProps('useScrollY')) {
+    height = Math.min(height, dataHeight);
+  } else {
+    height = dataHeight;
+  }
   const style = {
     height,
     overflowY: sizeManager._hasScrollY ? 'scroll' : 'hidden',
@@ -101,5 +105,6 @@ function BodyTable(props: Props, {manager, props: baseProps}) {
 export default BodyTable;
 BodyTable.contextTypes = {
   props: PropTypes.object,
-  manager: PropTypes.object
+  manager: PropTypes.object,
+  getProps: PropTypes.func
 };
