@@ -77,11 +77,16 @@ class Sortable extends PureComponent<SortableProps> {
       left = left < 0 ? 0 : left;
       this.cloneEl.style.left = `${left}px`;
       this._swap();
+    } else {
+      return event;
     }
   };
 
   handleMouseUp = (event) => {
     const {onDrag, parent, columns} = this.props;
+    if (!this.dragAble) {
+      return event;
+    }
     this.dragAble = false;
     if (this.cloneEl && this.parentEl) {
       this.parentEl.removeChild(this.cloneEl);
@@ -115,7 +120,7 @@ class Sortable extends PureComponent<SortableProps> {
       return event;
     }
     if (!headerSortable) {
-      return;
+      return event;
     }
     this.backIndex = this.state.showIndex;
     document.body.style['user-select'] = 'none';
