@@ -275,6 +275,15 @@ export default class ColumnManager {
     return grouped;
   };
 
+  _getLast = (column) => {
+    const children = column.children || [];
+    if (children.length > 0) {
+      return this._getLast(children[children.length - 1]);
+    } else {
+      return column;
+    }
+  };
+
   _updateWidth = (columns) => {
     const wrapperWidth = this.wrapperWidth || 0;
     const leftColumns = columns.filter(
@@ -293,9 +302,11 @@ export default class ColumnManager {
       ) || [];
     if (leafColumns.length > 0) {
       last = leafColumns[leafColumns.length - 1];
+      last = this._getLast(last);
     }
     if (lcArr.length > 0) {
       last = lcArr[lcArr.length - 1];
+      last = this._getLast(last);
     }
 
     const baseWidth = sumBy(columns, _width);
