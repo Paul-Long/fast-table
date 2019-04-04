@@ -275,15 +275,6 @@ export default class ColumnManager {
     return grouped;
   };
 
-  _getLast = (column) => {
-    const children = column.children || [];
-    if (children.length > 0) {
-      return this._getLast(children[children.length - 1]);
-    } else {
-      return column;
-    }
-  };
-
   _updateWidth = (columns) => {
     const wrapperWidth = this.wrapperWidth || 0;
     const leftColumns = columns.filter(
@@ -302,11 +293,9 @@ export default class ColumnManager {
       ) || [];
     if (leafColumns.length > 0) {
       last = leafColumns[leafColumns.length - 1];
-      last = this._getLast(last);
     }
     if (lcArr.length > 0) {
       last = lcArr[lcArr.length - 1];
-      last = this._getLast(last);
     }
 
     const baseWidth = sumBy(columns, _width);
@@ -315,7 +304,7 @@ export default class ColumnManager {
     this.leftWidth = sumBy(leftColumns, _width);
     this.rightWidth = sumBy(rightColumns, _width);
     const average = max([floor((wrapperWidth - baseWidth) / len), 0]);
-    const update = (columns) => {
+    const update = (columns, fixed = false) => {
       return columns.map((column) => {
         const width = column[_width];
         const children = column.children || [];
@@ -323,18 +312,11 @@ export default class ColumnManager {
           column.children = update(children);
           column[_width] = sumBy(column.children, _width);
         } else {
-          if (column[_pathKey] === last[_pathKey]) {
-            column[_width] = max([
-              wrapperWidth - this.leftWidth - this.rightWidth - centerWidth,
-              column[_width]
-            ]);
-          } else {
-            if (
-              !leftColumns.some((c) => c[_pathKey] === column[_pathKey]) &&
-              !rightColumns.some((c) => c[_pathKey] === column[_pathKey])
-            ) {
-              column[_width] = width + average;
-            }
+          if (
+            !leftColumns.some((c) => c[_pathKey] === column[_pathKey]) &&
+            !rightColumns.some((c) => c[_pathKey] === column[_pathKey])
+          ) {
+            column[_width] = width + average;
           }
           if (isNumber(column.maxWidth) && !isNaN(column.maxWidth)) {
             column[_width] = min([column.maxWidth, column[_width]]);
@@ -352,6 +334,16 @@ export default class ColumnManager {
       });
     };
     const result = update(columns);
+    if (last) {
+      last[_width] = max([
+        wrapperWidth -
+          this.leftWidth -
+          this.rightWidth -
+          centerWidth +
+          last[_width],
+        last[_width]
+      ]);
+    }
     this.hasOverflowX = this.width > wrapperWidth;
     return result;
   };
