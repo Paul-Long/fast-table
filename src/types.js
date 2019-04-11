@@ -126,5 +126,10 @@ export const rowEvents = [
 export const eventsMap = {
   mouseenter: 'onMouseEnter',
   mouseleave: 'onMouseLeave',
-  click: 'onClick'
+  doubleclick: 'onDoubleClick',
+  blur: 'onBlur',
+  focus: 'onFocus',
+  animationstart: 'onAnimationStart',
+  animationend: 'onAnimationEnd',
+  transitionend: 'onTransitionEnd'
 };
