@@ -151,12 +151,10 @@ export default class DataManager {
       record[DS._path] = path;
       record[DS._expandedLevel] = level;
       record[DS._height] = height;
-      record[DS._key] = this._rowKey(record, index);
       record[DS._expandedEnable] = children.length > 0;
       if (this.isFixed(record)) {
         record[DS._isFixed] = record['isFixed'];
       }
-      record[DS._rowClassName] = this._rowClassName(record, index, level);
       if (children.length > 0) {
         record['children'] = this._getData(children, level + 1, path);
       }
@@ -181,6 +179,8 @@ export default class DataManager {
       const record = dataSource[index];
       record[DS._showIndex] = data.length;
       record[DS._top] = this._bodyHeight;
+      record[DS._key] = this._rowKey(record, data.length);
+      record[DS._rowClassName] = this._rowClassName(record, data.length);
       this._bodyHeight += record[DS._height];
       const children = record.children || [];
       const _expanded =
