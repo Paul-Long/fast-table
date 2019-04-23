@@ -275,9 +275,11 @@ class BaseTable extends React.PureComponent<Props> {
       keys(onRow(record) || {}).forEach(
         (event) => (rowProps[event] = this.fEvents)
       );
-      if (!has(onRow(record), 'onClick')) {
-        rowProps['onClick'] = this.fEvents;
-      }
+      ['onClick', 'onMouseEnter', 'onMouseLeave'].forEach((event) => {
+        if (!has(onRow(record), event)) {
+          rowProps[event] = this.fEvents;
+        }
+      });
       rows.push(Row(rowProps));
     }
     this._children = rows;
