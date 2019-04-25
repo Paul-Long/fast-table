@@ -182,7 +182,8 @@ class BaseTable extends React.PureComponent<Props> {
       rowStyle = {
         position: 'absolute',
         top: record[DS._top],
-        height: record[DS._height]
+        height: record[DS._height],
+        lineHeight: `${record[DS._height] - 1}px`
       };
       if (record[DS._isFixed] === true || record[DS._isFixed] === 'top') {
         rowStyle.top += sizeManager._scrollTop;

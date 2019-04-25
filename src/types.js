@@ -86,30 +86,56 @@ export const TableDefaultParams = {
 };
 
 export const CS = {
-  _path: Symbol('_path'),
-  _pathKey: Symbol('_pathKey'),
-  _currentRow: Symbol('_currentRow'),
-  _width: Symbol('_width'),
-  _minWidth: Symbol('_minWidth'),
-  path: Symbol('path'),
-  rowSpan: Symbol('rowSpan'),
-  colSpan: Symbol('colSpan')
+  _path: String('_path'),
+  _pathKey: String('_pathKey'),
+  _currentRow: String('_currentRow'),
+  _width: String('_width'),
+  _minWidth: String('_minWidth'),
+  path: String('path'),
+  rowSpan: String('rowSpan'),
+  colSpan: String('colSpan')
 };
 
 export const DS = {
-  _index: Symbol('_index'),
-  _showIndex: Symbol('_showIndex'),
-  _path: Symbol('_path'),
-  _expandedLevel: Symbol('_expandedLevel'),
-  _height: Symbol('_height'),
-  key: Symbol('key'),
-  _expandedEnable: Symbol('_expandedEnable'),
-  _isFixed: Symbol('_isFixed'),
-  _top: Symbol('_top'),
-  _expanded: Symbol('_expanded'),
-  _key: Symbol('_key'),
-  _rowClassName: Symbol('_rowClassName')
+  _index: String('_index'),
+  _showIndex: String('_showIndex'),
+  _path: String('_path'),
+  _expandedLevel: String('_expandedLevel'),
+  _height: String('_height'),
+  key: String('key'),
+  _expandedEnable: String('_expandedEnable'),
+  _isFixed: String('_isFixed'),
+  _top: String('_top'),
+  _expanded: String('_expanded'),
+  _key: String('_key'),
+  _rowClassName: String('_rowClassName')
 };
+
+// export const CS = {
+//   _path: Symbol('_path'),
+//   _pathKey: Symbol('_pathKey'),
+//   _currentRow: Symbol('_currentRow'),
+//   _width: Symbol('_width'),
+//   _minWidth: Symbol('_minWidth'),
+//   path: Symbol('path'),
+//   rowSpan: Symbol('rowSpan'),
+//   colSpan: Symbol('colSpan')
+// };
+//
+// export const DS = {
+//   _index: Symbol('_index'),
+//   _showIndex: Symbol('_showIndex'),
+//   _path: Symbol('_path'),
+//   _expandedLevel: Symbol('_expandedLevel'),
+//   _height: Symbol('_height'),
+//   key: Symbol('key'),
+//   _expandedEnable: Symbol('_expandedEnable'),
+//   _isFixed: Symbol('_isFixed'),
+//   _top: Symbol('_top'),
+//   _expanded: Symbol('_expanded'),
+//   _key: Symbol('_key'),
+//   _rowClassName: Symbol('_rowClassName')
+// };
 
 export const rowEvents = [
   'onMouseEnter',

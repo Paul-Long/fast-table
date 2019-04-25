@@ -1,6 +1,6 @@
 {
   "name": "fast-table",
-  "version": "1.4.8-beta.6",
+  "version": "1.4.8-beta.8",
   "description": "react table fast",
   "main": "./lib/index.js",
   "files": [
@@ -9,7 +9,7 @@
     "theme/*.css"
   ],
   "scripts": {
-    "build": "babel src -d lib",
+    "build": "babel src -d lib && gulp build-css",
     "init": "npm i -d --registry=https://registry.npm.taobao.org"
   },
   "repository": {
@@ -48,7 +48,10 @@
     "autoprefixer": "^8.2.0",
     "classnames": "^2.2.5",
     "cssnano": "^3.10.0",
+    "gulp": "^4.0.1",
+    "gulp-less": "^4.0.1",
     "less": "^3.0.1",
+    "less-plugin-autoprefix": "^2.0.0",
     "lodash": "^4.17.5",
     "prettier": "^1.15.3",
     "prop-types": "^15.6.1",

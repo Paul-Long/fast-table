@@ -44,6 +44,7 @@ function HeadCell(props: HeadCellProps) {
     style.flex = 1;
   }
   style.height = (rowSpan || 1) * headerRowHeight;
+  style.lineHeight = `${style.height - 1}px`;
   if (onHeaderCell) {
     style = {...style, ...onHeaderCell(column)};
   }

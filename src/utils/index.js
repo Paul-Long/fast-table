@@ -52,12 +52,15 @@ export function cellAlignStyle(align) {
     switch (align) {
       case 'center':
         style.justifyContent = 'center';
+        style.textAlign = 'center';
         break;
       case 'left':
         style.justifyContent = 'flex-start';
+        style.textAlign = 'left';
         break;
       case 'right':
         style.justifyContent = 'flex-end';
+        style.textAlign = 'right';
         break;
     }
   }
