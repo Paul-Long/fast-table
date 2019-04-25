@@ -88,8 +88,18 @@ function HeadCell(props: HeadCellProps) {
   );
 
   if (children.length > 0) {
+    let style = {};
+    if (current !== 0) {
+      style.display = 'inline-block';
+      style.float = 'left';
+    }
     return (
-      <div className={current === 0 ? 'row-group' : ''} key={key} fixed={fixed}>
+      <div
+        className={current === 0 ? 'row-group' : ''}
+        key={key}
+        style={style}
+        fixed={fixed}
+      >
         {cell}
         <div className='col-group'>
           <Sortable parent={column} columns={children} onDrag={onDrag}>
