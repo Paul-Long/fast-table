@@ -151,6 +151,7 @@ export default class DataManager {
       record[DS._path] = path;
       record[DS._expandedLevel] = level;
       record[DS._height] = height;
+      record[DS._key] = this._rowKey(record, index);
       record[DS._expandedEnable] = children.length > 0;
       if (this.isFixed(record)) {
         record[DS._isFixed] = record['isFixed'];
@@ -179,7 +180,6 @@ export default class DataManager {
       const record = dataSource[index];
       record[DS._showIndex] = data.length;
       record[DS._top] = this._bodyHeight;
-      record[DS._key] = this._rowKey(record, data.length);
       record[DS._rowClassName] = this._rowClassName(record, data.length);
       this._bodyHeight += record[DS._height];
       const children = record.children || [];
@@ -205,7 +205,7 @@ export default class DataManager {
     } else if (record['key']) {
       return String(record['key']);
     }
-    return String(index);
+    return String(record[DS._path]);
   };
 
   _rowClassName = (record, index, level) => {

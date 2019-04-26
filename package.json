@@ -1,6 +1,6 @@
 {
   "name": "fast-table",
-  "version": "1.4.8-beta.9",
+  "version": "1.4.8-beta.10",
   "description": "react table fast",
   "main": "./lib/index.js",
   "files": [
