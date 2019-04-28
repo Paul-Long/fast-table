@@ -68,6 +68,9 @@ function BodyTable(props: Props, {manager, props: baseProps, getProps}) {
     delete style.overflowX;
     delete style.overflowY;
     fixed === 'left' && (style.width = columnManager.getWidth(fixed));
+    if (fixed === 'right' && sizeManager._hasScrollY) {
+      style.width = columnManager.getWidth(fixed) + sizeManager.scrollSizeY();
+    }
     return (
       <div
         key='bodyTable'

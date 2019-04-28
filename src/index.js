@@ -362,10 +362,15 @@ export default class Table extends React.PureComponent<TableParams> {
 
   getClassName = () => {
     const {prefixCls, className, fixedHeader, bordered} = this.props;
+    let flag = false;
+    if (this.sizeManager._hasScrollX) {
+      flag = !(this['bodyTable'] && this['bodyTable'].scrollLeft !== 0);
+    }
     return classNames(prefixCls, className, {
       [`${prefixCls}-fixed-header`]: fixedHeader,
       bordered: bordered,
-      [`${prefixCls}-expanded`]: this.dataManager.isExpanded()
+      [`${prefixCls}-expanded`]: this.dataManager.isExpanded(),
+      [`${prefixCls}-scroll-position-left`]: flag
     });
   };
 
