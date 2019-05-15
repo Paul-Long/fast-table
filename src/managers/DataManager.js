@@ -9,15 +9,10 @@ export default class DataManager {
   _hasExpanded = false;
   _data = [];
 
-  constructor(props) {
-    this.prefixCls = props.prefixCls;
-    this.getRowHeight = props.getRowHeight;
-    this.fixedHeader = props.fixedHeader;
-    this.rowHeight = props.rowHeight;
-    this.expandedRowKeys = props.expandedRowKeys || [];
-    this.rowKey = props.rowKey;
-    this.rowClassName = props.rowClassName;
-    this.reset(props.dataSource);
+  constructor({getProps}) {
+    this.getProps = getProps;
+    this.expandedRowKeys = getProps('expandedRowKeys') || [];
+    this.reset(getProps('dataSource'));
   }
 
   getData = () => {
@@ -74,7 +69,7 @@ export default class DataManager {
     this._hasExpanded = _data.some(
       (d) => !this.isFixed(d) && (d.children || []).length > 0
     );
-    if (!this.fixedHeader) {
+    if (!this.getProps('fixedHeader')) {
       this._data = _data;
     } else {
       const dataBase = _data.filter((d) => {
@@ -139,9 +134,10 @@ export default class DataManager {
 
   _getData = (dataSource, level = 0, parentPath) => {
     dataSource = dataSource || [];
+    const getRowHeight = this.getProps('getRowHeight');
+    const rowHeight = this.getProps('rowHeight');
     for (let index = 0; index < dataSource.length; index++) {
-      const height =
-        this.getRowHeight(dataSource[index], index) * this.rowHeight;
+      const height = getRowHeight(dataSource[index], index) * rowHeight;
       const path = `${
         parentPath === undefined ? index : `${parentPath}-${index}`
       }`;
@@ -197,7 +193,7 @@ export default class DataManager {
   };
 
   _rowKey = (record, index) => {
-    const rowKey = this.rowKey;
+    const rowKey = this.getProps('rowKey');
     if (typeof rowKey === 'function') {
       return String(rowKey(record, index));
     } else if (typeof rowKey === 'string') {
@@ -210,15 +206,16 @@ export default class DataManager {
 
   _rowClassName = (record, index, level) => {
     let className = '';
-    const rowClassName = this.rowClassName;
+    const rowClassName = this.getProps('rowClassName');
     if (typeof rowClassName === 'function') {
       className = rowClassName(record, index);
     } else if (rowClassName === 'string') {
       className = rowClassName || '';
     }
-    return classNames('tr', `${this.prefixCls}-row`, className, {
-      [`${this.prefixCls}-expanded-row-${level}`]: this._hasExpanded,
-      [`${this.prefixCls}-row-fixed`]: record[DS._isFixed]
+    const prefixCls = this.getProps('prefixCls');
+    return classNames('tr', `${prefixCls}-row`, className, {
+      [`${prefixCls}-expanded-row-${level}`]: this._hasExpanded,
+      [`${prefixCls}-row-fixed`]: record[DS._isFixed]
     });
   };
 }

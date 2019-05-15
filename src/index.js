@@ -42,7 +42,7 @@ export default class Table extends React.PureComponent<TableParams> {
     this.refreshAble = true;
     this.showCount = props.defaultShowCount || 20;
     this.columnManager = new ColumnManager(props);
-    this.dataManager = new DataManager(props);
+    this.dataManager = new DataManager({getProps: this.getProps});
     this.sortManager = new SortManager({
       columns: this.columnManager.groupedColumns(),
       sortMulti: props.sortMulti
