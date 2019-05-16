@@ -89,10 +89,23 @@ export default class Table extends React.PureComponent<TableParams> {
   componentWillReceiveProps(nextProps) {
     if (!shallowEqual(nextProps.dataSource, this.props.dataSource)) {
       this.dataManager.reset(nextProps.dataSource);
+      const dh = this.sizeManager._dataHeight;
       this.sizeManager.update({
         _dataHeight: this.dataManager._bodyHeight,
         _dataEmpty: this.dataManager.isEmpty()
       });
+      if (
+        nextProps.pullDown &&
+        dh < this.sizeManager._dataHeight &&
+        this.sizeManager._hasScrollY &&
+        this.sizeManager._scrollTop < 5
+      ) {
+        const top = this.sizeManager._dataHeight - dh;
+        this.sizeManager.update({
+          _scrollTop: this.sizeManager._scrollTop + top
+        });
+        this.updateScrollTop({scrollTop: this.sizeManager._scrollTop});
+      }
       this.cacheManager.reset();
       this.getShowCount();
       this.resetShowData();

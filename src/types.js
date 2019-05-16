@@ -21,6 +21,7 @@ export type TableParams = {
   useScrollY: boolean,
   hoverEnable: boolean,
   headerSortable: boolean,
+  pullDown: boolean,
 
   rowClassName: Function,
   emptyText: Function | React.Node,
@@ -62,6 +63,7 @@ export const TableDefaultParams = {
   useScrollY: true,
   hoverEnable: true,
   headerSortable: false,
+  pullDown: false,
 
   getRowHeight: () => 1,
   rowClassName: () => '',
