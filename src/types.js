@@ -36,6 +36,7 @@ export type TableParams = {
   onSort: Function,
   onScroll: Function,
   onHeaderSortable: Function,
+  onWheel: Function,
 
   rowHeight: number,
   headerRowHeight: number,

@@ -64,6 +64,14 @@ function BodyTable(props: Props, {manager, props: baseProps, getProps}) {
     scrollRef = 'fixedColumnsBodyRight';
   }
 
+  const bodyProps = {
+    ref: saveRef(scrollRef),
+    onScroll: handleBodyScroll
+  };
+  if (getProps('onWheel')) {
+    bodyProps.onWheel = getProps('onWheel');
+  }
+
   if (fixed) {
     delete style.overflowX;
     delete style.overflowY;
@@ -79,13 +87,12 @@ function BodyTable(props: Props, {manager, props: baseProps, getProps}) {
       >
         <div
           className={`${prefixCls}-body-inner`}
-          ref={saveRef(scrollRef)}
           style={{
             height: '100%',
             overflowY: sizeManager._hasScrollY ? 'scroll' : 'hidden',
             overflowX: sizeManager._hasScrollX ? 'scroll' : 'hidden'
           }}
-          onScroll={handleBodyScroll}
+          {...bodyProps}
         >
           {baseTable}
         </div>
@@ -96,9 +103,8 @@ function BodyTable(props: Props, {manager, props: baseProps, getProps}) {
     <div
       key='bodyTable'
       className={`${prefixCls}-body`}
-      ref={saveRef(scrollRef)}
       style={style}
-      onScroll={handleBodyScroll}
+      {...bodyProps}
     >
       {baseTable}
     </div>
