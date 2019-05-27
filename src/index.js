@@ -92,9 +92,12 @@ export default class Table extends React.PureComponent<TableParams> {
       const dh = this.sizeManager._dataHeight;
       this.sizeManager.update({
         _dataHeight: this.dataManager._bodyHeight,
-        _dataEmpty: this.dataManager.isEmpty(),
-        _scrollTop: dh === 0 ? 0 : this.sizeManager._scrollTop
+        _dataEmpty: this.dataManager.isEmpty()
       });
+      if (dh !== 0 && this.sizeManager._dataHeight === 0) {
+        this.sizeManager.update({_scrollTop: 0});
+        this.updateScrollTop({scrollTop: 0});
+      }
       if (
         nextProps.pullDown &&
         dh < this.sizeManager._dataHeight &&
@@ -283,6 +286,8 @@ export default class Table extends React.PureComponent<TableParams> {
       }
     );
   };
+
+  updateScrollTopEnable = (nextProps) => {};
 
   handleBodyScrollTop = (e) => {
     const target = e.target;
