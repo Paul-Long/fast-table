@@ -10,6 +10,7 @@ type Props = {
   prefixCls: string,
   headerRowHeight: number,
   onHeaderRow: Function,
+  SelectIcon: React.Element<*>,
   onDrag: Function
 };
 
@@ -22,7 +23,8 @@ function TableHeader(props: Props) {
     headerRowHeight,
     prefixCls,
     onHeaderRow,
-    onDrag
+    onDrag,
+    SelectIcon
   } = props;
   let children = columns.map((column, index) =>
     HeadCell({
@@ -34,7 +36,9 @@ function TableHeader(props: Props) {
       onSort,
       fixed: column.fixed,
       onHeaderRow,
-      onDrag
+      onDrag,
+      SelectIcon:
+        index === 0 && fixed !== 'right' && SelectIcon ? SelectIcon : null
     })
   );
   if (!fixed) {

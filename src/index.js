@@ -13,6 +13,7 @@ import DataManager from './managers/DataManager';
 import SortManager from './managers/SortManager';
 import SizeManager from './managers/SizeManager';
 import CacheManager from './managers/CacheManager';
+import SelectManager from './managers/SelectManager';
 import AutoSizer from './AutoSizer';
 import {create, Provider} from './mini-store';
 import {DS, TableDefaultParams, TableParams} from './types';
@@ -58,6 +59,11 @@ export default class Table extends React.PureComponent<TableParams> {
       ...this.columnManager.headerSize()
     });
 
+    this.selectManager = new SelectManager({
+      getProps: this.getProps,
+      update: this.updateAll
+    });
+
     this.store = create({
       currentHoverKey: null,
       orders: this.sortManager.enabled()
@@ -77,7 +83,8 @@ export default class Table extends React.PureComponent<TableParams> {
         dataManager: this.dataManager,
         sortManager: this.sortManager,
         sizeManager: this.sizeManager,
-        cacheManager: this.cacheManager
+        cacheManager: this.cacheManager,
+        selectManager: this.selectManager
       },
       expandChange: this.handleExpandChange,
       updateScrollLeft: this.updateScrollLeft,
@@ -90,6 +97,9 @@ export default class Table extends React.PureComponent<TableParams> {
     if (!shallowEqual(nextProps.dataSource, this.props.dataSource)) {
       this.dataManager.reset(nextProps.dataSource);
       const dh = this.sizeManager._dataHeight;
+      this.selectManager.count = this.selectManager.getKeys(
+        this.dataManager.getData()
+      ).length;
       this.sizeManager.update({
         _dataHeight: this.dataManager._bodyHeight,
         _dataEmpty: this.dataManager.isEmpty()
@@ -134,6 +144,9 @@ export default class Table extends React.PureComponent<TableParams> {
       this.getShowCount();
       this.resetShowData();
     }
+    if (!shallowEqual(nextProps.rowSelection, this.props.rowSelection)) {
+      this.selectManager.updateSelection(nextProps.rowSelection);
+    }
   }
 
   componentDidUpdate() {
@@ -141,6 +154,7 @@ export default class Table extends React.PureComponent<TableParams> {
   }
 
   updateAll = () => {
+    this.cacheManager.reset();
     this.resetShowData();
   };
 
@@ -376,6 +390,7 @@ export default class Table extends React.PureComponent<TableParams> {
   };
 
   registerForce = (name, fn) => {
+    console.log(name);
     this._forceTable[name || 'body'] = fn;
   };
 
@@ -396,7 +411,12 @@ export default class Table extends React.PureComponent<TableParams> {
   renderTable = (options) => {
     const {fixed} = options;
     const headTable = (
-      <HeadTable key='head' fixed={fixed} saveRef={this.saveRef} />
+      <HeadTable
+        key='head'
+        fixed={fixed}
+        saveRef={this.saveRef}
+        registerForce={this.registerForce}
+      />
     );
     const bodyTable = (
       <BodyTable

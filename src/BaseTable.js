@@ -5,6 +5,7 @@ import Row from './TableRow';
 import {connect} from './mini-store';
 import renderExpandedIcon from './ExpandedIcon';
 import Cell from './TableCell';
+import Select from './Select';
 import {CS, DS, eventsMap} from './types';
 import {cellAlignStyle, isInvalidRenderCellText, has, keys} from './utils';
 
@@ -35,10 +36,17 @@ class BaseTable extends React.PureComponent<Props> {
 
   componentWillMount() {
     this._forceCount = 0;
-    const {registerForce, fixed} = this.props;
+    const {registerForce, fixed, hasHead, hasBody} = this.props;
     const {sizeManager} = this.context.manager;
     if (registerForce) {
-      registerForce(fixed, this.recomputeBody);
+      let name = fixed;
+      if (hasHead) {
+        name += '-head';
+      }
+      if (hasBody) {
+        name += '-body';
+      }
+      registerForce(name, this.recomputeBody);
     }
     this._startIndex = sizeManager._startIndex;
     this._stopIndex = sizeManager._stopIndex;
@@ -169,9 +177,12 @@ class BaseTable extends React.PureComponent<Props> {
   };
 
   recomputeBody = ({startIndex, stopIndex}) => {
-    this._startIndex = startIndex;
-    this._stopIndex = stopIndex;
-    this.forceUpdate();
+    const {hasBody, fixed} = this.props;
+    if (hasBody) {
+      this._startIndex = startIndex;
+      this._stopIndex = stopIndex;
+    }
+    if (fixed !== 'right') this.forceUpdate();
   };
 
   getRowStyle = (record, key) => {
@@ -205,10 +216,46 @@ class BaseTable extends React.PureComponent<Props> {
     return rowStyle;
   };
 
+  h_selectAll = () => {
+    const {selectManager, dataManager} = this.context.manager;
+    const keys = selectManager.getKeys(dataManager.getData());
+    selectManager.selectAll(keys);
+  };
+
+  r_selectAll = () => {
+    const {prefixCls} = this.context.props;
+    const {selectManager, dataManager} = this.context.manager;
+    const keys = selectManager.getKeys(dataManager.getData());
+    selectManager.count = keys.length;
+    return Select({
+      prefixCls,
+      selected: selectManager.selectedAll,
+      type: 'checkbox',
+      onClick: this.h_selectAll
+    });
+  };
+
+  r_select = (record) => {
+    const {prefixCls} = this.context.props;
+    const {selectManager} = this.context.manager;
+    const selected = selectManager.selectedKeys.includes(record[DS._key]);
+    return Select({
+      prefixCls,
+      selected,
+      type: selectManager.type,
+      onClick: () => selectManager.select(record, !selected)
+    });
+  };
+
   renderCells = (props, record) => {
     const {fixed} = props;
     const {prefixCls, indentSize} = this.context.props;
-    const {dataManager, cacheManager, columnManager} = this.context.manager;
+    const {
+      dataManager,
+      cacheManager,
+      columnManager,
+      selectManager
+    } = this.context.manager;
     const columns = columnManager.bodyColumns(fixed);
     const hasExpanded = dataManager._hasExpanded;
     const cells = [];
@@ -231,6 +278,9 @@ class BaseTable extends React.PureComponent<Props> {
             record,
             onClick: this.fExpanded
           });
+        }
+        if (selectManager.enable && fixed !== 'right' && i === 0) {
+          cellProps.SelectIcon = this.r_select(record, fixed);
         }
         cacheManager.setCell(cellKey, Cell(cellProps));
         cell = cacheManager.getCell(cellKey);
@@ -287,15 +337,32 @@ class BaseTable extends React.PureComponent<Props> {
     return this._children;
   };
 
-  render() {
-    const {hasHead, hasBody, fixed, orders} = this.props;
-    const {columnManager, sizeManager} = this.context.manager;
-    const {
+  r_header = () => {
+    const {hasHead, fixed, orders} = this.props;
+    const {columnManager, selectManager} = this.context.manager;
+    const {prefixCls, headerRowHeight, onHeaderRow} = this.context.props;
+    if (!hasHead) return null;
+    const props = {
+      columns: columnManager.headColumns(fixed),
+      fixed,
+      onSort: this.fSort,
+      orders,
       prefixCls,
       headerRowHeight,
-      rowHeight,
-      onHeaderRow
-    } = this.context.props;
+      onHeaderRow,
+      onDrag: this.fDrag
+    };
+    if (selectManager.useSelectAll) {
+      props.SelectIcon = this.r_selectAll();
+      props.selectedAll = selectManager.selectedAll;
+    }
+    return TableHeader(props);
+  };
+
+  render() {
+    const {hasBody, fixed} = this.props;
+    const {columnManager, sizeManager} = this.context.manager;
+    const {rowHeight} = this.context.props;
     let body;
     if (hasBody) {
       body = (
@@ -313,18 +380,7 @@ class BaseTable extends React.PureComponent<Props> {
     if (!fixed) {
       style.minWidth = '100%';
     }
-    const header =
-      hasHead &&
-      TableHeader({
-        columns: columnManager.headColumns(fixed),
-        fixed,
-        onSort: this.fSort,
-        orders,
-        prefixCls,
-        headerRowHeight,
-        onHeaderRow,
-        onDrag: this.fDrag
-      });
+    const header = this.r_header();
     return (
       <div className='table' style={style}>
         {header}

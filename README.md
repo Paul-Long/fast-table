@@ -43,6 +43,7 @@ npm install fast-table --save-dev
 - 固定行至顶部或者底部
 - 子表格订制
 - 表头自由排序
+- 表格数据选择
 
 # API
 
@@ -83,6 +84,7 @@ npm install fast-table --save-dev
 | [sortMulti](#sortmulti)                       | multi sort enable              | Boolean                        | false            |
 | [style](#style)                               | table style                    | Object                         | {}               |
 | [useScrollY](#usescrolly)                     | use y Scroll                   | Boolean                        | true             |
+| [rowSelection](#rowselection)                 | Row selection, config          | Object                         | null             |
 
 # Column Props
 
@@ -107,6 +109,15 @@ npm install fast-table --save-dev
 | props   | describe  | type                                 | default value |
 | ------- | --------- | ------------------------------------ | ------------- |
 | isFixed | fixed row | `true` or String(`top` or `bottom` ) | -             |
+
+# Row Selection
+
+| props        | describe                                                        | type                                      | default value |
+| ------------ | --------------------------------------------------------------- | ----------------------------------------- | ------------- |
+| selectedKeys | controlled selected row keys                                    | string[]                                  | []            |
+| onSelect     | callback executed when select one row                           | Function(record, selected, selkectedKeys) |               |
+| type         | select model, checkbox(`multi-select`) or radio(`radio-select`) | `checkbox` or `radio`                     | checkbox      |
+| useSelectAll | select all enable                                               | `boolean`                                 | false         |
 
 ## bordered
 
@@ -237,6 +248,10 @@ table style.
 ## useScrollY
 
 use scroll Y.
+
+## rowselection
+
+Row selection
 
 # 示例
 

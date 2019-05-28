@@ -9,7 +9,7 @@ type Props = {
 
 function HeadTable(props: Props, {manager, props: baseProps}) {
   const {fixedHeader, prefixCls, showHeader} = baseProps;
-  const {saveRef, fixed} = props;
+  const {saveRef, fixed, registerForce} = props;
   const {sizeManager, columnManager} = manager;
   const headStyle = {};
   if (fixedHeader && showHeader) {
@@ -33,6 +33,7 @@ function HeadTable(props: Props, {manager, props: baseProps}) {
           hasHead
           hasBody={false}
           fixed={fixed}
+          registerForce={registerForce}
           columns={columnManager.headColumns(fixed)}
         />
       </div>

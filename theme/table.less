@@ -157,6 +157,30 @@
   .has-child {
     float: none;
   }
+  &-select {
+    display: inline-block;
+    line-height: 1;
+    background: #0e1a18;
+    border: 1px solid #136c5e;
+    margin-right: 5px;
+    width: 1em;
+    height: 1em;
+    cursor: pointer;
+  }
+  &-select.selected {
+    border: none;
+    background: transparent;
+    & > svg {
+      color: #ff9200;
+      border-radius: 2px;
+    }
+  }
+  &-select-checkbox {
+    border-radius: 2px;
+  }
+  &-select-radio {
+    border-radius: 50%;
+  }
 }
 
 .@{tablePrefixCls}-expanded {

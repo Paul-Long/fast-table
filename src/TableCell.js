@@ -4,12 +4,13 @@ import classNames from 'classnames';
 type Props = {
   className: string,
   ExpandedIcon: React.Element<*>,
+  SelectIcon: React.Element<*>,
   style: Object,
   children: any
 };
 
 function Cell(props: Props) {
-  const {className, ExpandedIcon, style, children, key} = props;
+  const {className, ExpandedIcon, SelectIcon, style, children, key} = props;
 
   const newProps = {
     key,
@@ -18,6 +19,7 @@ function Cell(props: Props) {
   };
   return (
     <div {...newProps}>
+      {SelectIcon}
       {ExpandedIcon}
       {children}
     </div>

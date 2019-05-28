@@ -170,6 +170,30 @@
 .vt .has-child {
   float: none;
 }
+.vt-select {
+  display: inline-block;
+  line-height: 1;
+  background: #0e1a18;
+  border: 1px solid #136c5e;
+  margin-right: 5px;
+  width: 1em;
+  height: 1em;
+  cursor: pointer;
+}
+.vt-select.selected {
+  border: none;
+  background: transparent;
+}
+.vt-select.selected > svg {
+  color: #ff9200;
+  border-radius: 2px;
+}
+.vt-select-checkbox {
+  border-radius: 2px;
+}
+.vt-select-radio {
+  border-radius: 50%;
+}
 .vt-expanded-icon {
   width: 12px;
   height: 12px;

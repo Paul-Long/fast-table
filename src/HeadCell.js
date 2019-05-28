@@ -13,6 +13,7 @@ type HeadCellProps = {
   fixed: string,
   headerRowHeight: number,
   orders: Object,
+  SelectIcon: React.Element<*>,
   onSort: Function,
   onHeaderRow: Function,
   onDrag: Function
@@ -29,7 +30,8 @@ function HeadCell(props: HeadCellProps) {
     onSort,
     fixed,
     onHeaderRow,
-    onDrag
+    onDrag,
+    SelectIcon
   } = props;
   const children = column.children || [];
   const {dataIndex, align, title, sortEnable, onHeaderCell} = column;
@@ -82,6 +84,7 @@ function HeadCell(props: HeadCellProps) {
 
   const cell = (
     <div {...cellProps}>
+      {SelectIcon}
       {text}
       {sorter}
     </div>

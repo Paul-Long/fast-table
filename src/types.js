@@ -4,6 +4,13 @@ function defaultFunction() {
   return {};
 }
 
+type RowSelection = {
+  selectedRowKeys: Array<string>,
+  type: string,
+  onSelect: Function,
+  useSelectAll: boolean
+};
+
 export type TableParams = {
   prefixCls: string,
   columns: Array<Object>,
@@ -11,6 +18,8 @@ export type TableParams = {
   expandedRowKeys: Array<string>,
 
   className: string,
+  rowKey: string | Function,
+  rowSelection: RowSelection,
 
   showHeader: boolean,
   bordered: boolean,
