@@ -9,9 +9,10 @@ type SelectProps = {
 };
 
 export default function Select(props: SelectProps) {
-  const {prefixCls, selected, onClick, type} = props;
+  const {prefixCls, selected, onClick, type, disabled} = props;
   const cls = classNames(`${prefixCls}-select`, `${prefixCls}-select-${type}`, {
-    selected
+    selected,
+    [`${prefixCls}-select-disabled`]: disabled
   });
   let children = null;
   if (selected) {
@@ -19,7 +20,9 @@ export default function Select(props: SelectProps) {
   }
   function click(event) {
     event.stopPropagation();
-    onClick(event);
+    if (!disabled) {
+      onClick(event);
+    }
   }
   return (
     <div

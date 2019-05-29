@@ -8,7 +8,8 @@ type RowSelection = {
   selectedRowKeys: Array<string>,
   type: string,
   onSelect: Function,
-  useSelectAll: boolean
+  useSelectAll: boolean,
+  disabled: Array<string>
 };
 
 export type TableParams = {

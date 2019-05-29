@@ -6,6 +6,7 @@ export default class SelectManager {
   _useSelectAll = false;
   _enable = false;
   _selectedAll = false;
+  _disabled = [];
   _count = 0;
   constructor(props) {
     this.getProps = props.getProps;
@@ -60,6 +61,10 @@ export default class SelectManager {
     this.update();
   };
 
+  disabled = (record) => {
+    return this._disabled.includes(record[DS._key]);
+  };
+
   select = (record, selected) => {
     const {onSelect, type} = this.getProps('rowSelection');
     const t = type || this._type;
@@ -96,12 +101,13 @@ export default class SelectManager {
   getSelection = (rowSelection) => {
     this._enable = !!rowSelection;
     if (this._enable) {
-      ['selectedKeys', 'type', 'useSelectAll'].forEach((k) => {
+      ['selectedKeys', 'type', 'useSelectAll', 'disabled'].forEach((k) => {
         if (Object.prototype.hasOwnProperty.call(rowSelection, k)) {
           this[`_${k}`] = rowSelection[k];
         }
       });
       this._selectedKeys = this._selectedKeys || [];
+      this._disabled = (this._disabled || []).map((d) => d + '');
       this._type = this._type || 'checkbox';
       if (this._type === 'radio' && this._selectedKeys.length > 1) {
         this._selectedKeys = [];

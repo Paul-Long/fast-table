@@ -194,6 +194,10 @@
 .vt-select-radio {
   border-radius: 50%;
 }
+.vt-select-disabled {
+  border-color: #888;
+  cursor: not-allowed;
+}
 .vt-expanded-icon {
   width: 12px;
   height: 12px;

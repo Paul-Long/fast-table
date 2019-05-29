@@ -242,6 +242,7 @@ class BaseTable extends React.PureComponent<Props> {
     return Select({
       prefixCls,
       selected,
+      disabled: selectManager.disabled(record),
       type: selectManager.type,
       onClick: () => selectManager.select(record, !selected)
     });
