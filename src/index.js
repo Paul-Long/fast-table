@@ -94,6 +94,11 @@ export default class Table extends React.PureComponent<TableParams> {
   }
 
   componentWillReceiveProps(nextProps) {
+    if (!shallowEqual(nextProps.showStartIndex, this.props.showStartIndex)) {
+      this.sizeManager.update({
+        _showStartIndex: nextProps.showStartIndex
+      });
+    }
     if (!shallowEqual(nextProps.dataSource, this.props.dataSource)) {
       this.dataManager.reset(nextProps.dataSource);
       const dh = this.sizeManager._dataHeight;
@@ -151,6 +156,7 @@ export default class Table extends React.PureComponent<TableParams> {
 
   componentDidUpdate() {
     this.setScrollPositionClassName();
+    this.skipIndex();
   }
 
   updateAll = () => {
@@ -336,6 +342,33 @@ export default class Table extends React.PureComponent<TableParams> {
     }
   };
 
+  skipIndex = () => {
+    const dataSource = this.dataManager.showData() || [];
+    if (this.sizeManager._showStartIndex > 0 && dataSource.length > 0) {
+      const state = {};
+      state.startIndex = this.sizeManager._showStartIndex;
+      state.stopIndex = state.startIndex + this.showCount + 2;
+      if (state.stopIndex > dataSource.length - 1) {
+        state.stopIndex = dataSource.length - 1;
+        state.startIndex = state.stopIndex - this.showCount - 2;
+      }
+      this.lastScrollTop = dataSource[state.startIndex][DS._top];
+      this.updateScrollTop({
+        scrollTop: dataSource[state.startIndex][DS._top]
+      });
+      this.sizeManager.update({
+        _startIndex: state.startIndex,
+        _stopIndex: state.stopIndex,
+        _showStartIndex: 0
+      });
+      for (let key in this._forceTable) {
+        if (this._forceTable.hasOwnProperty(key) && this._forceTable[key]) {
+          this._forceTable[key](state);
+        }
+      }
+    }
+  };
+
   resetShowData = () => {
     let scrollTop = this.sizeManager._scrollTop;
     const {rowHeight} = this.props;
@@ -390,7 +423,6 @@ export default class Table extends React.PureComponent<TableParams> {
   };
 
   registerForce = (name, fn) => {
-    console.log(name);
     this._forceTable[name || 'body'] = fn;
   };
 

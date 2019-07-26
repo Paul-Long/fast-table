@@ -20,6 +20,7 @@ class SizeManager {
   _hasScrollY = false;
   _dataEmpty = true;
   _clientBodyHeight = 0;
+  _showStartIndex = 0;
 
   constructor({
     showHeader,
@@ -28,13 +29,15 @@ class SizeManager {
     footer,
     dataSource,
     useScrollY,
-    fixedHeader
+    fixedHeader,
+    showStartIndex
   }) {
     this.showHeader = showHeader;
     this.fixedHeader = fixedHeader;
     this.footerHeight = footer ? footerHeight : 0;
     this.rowHeight = rowHeight;
     this.useScrollY = useScrollY;
+    this._showStartIndex = showStartIndex;
     dataSource = dataSource || [];
     this._dataEmpty = dataSource.length === 0;
     this._emptyTextHeight = this._dataEmpty ? rowHeight : 0;

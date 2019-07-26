@@ -52,11 +52,15 @@ export default class SelectManager {
   };
 
   selectAll = (keys) => {
+    const {onSelect, type} = this.getProps('rowSelection');
     this._selectedAll = !this._selectedAll;
     if (this._selectedAll) {
       this._selectedKeys = keys;
     } else {
       this._selectedKeys = [];
+    }
+    if (typeof onSelect === 'function') {
+      onSelect(null, this._selectedAll, this._selectedKeys);
     }
     this.update();
   };
