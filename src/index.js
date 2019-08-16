@@ -99,6 +99,9 @@ export default class Table extends React.PureComponent<TableParams> {
         _showStartIndex: nextProps.showStartIndex
       });
     }
+    if (!shallowEqual(nextProps.rowSelection, this.props.rowSelection)) {
+      this.selectManager.updateSelection(nextProps.rowSelection);
+    }
     if (!shallowEqual(nextProps.dataSource, this.props.dataSource)) {
       this.dataManager.reset(nextProps.dataSource);
       const dh = this.sizeManager._dataHeight;
@@ -148,9 +151,6 @@ export default class Table extends React.PureComponent<TableParams> {
       this.cacheManager.reset();
       this.getShowCount();
       this.resetShowData();
-    }
-    if (!shallowEqual(nextProps.rowSelection, this.props.rowSelection)) {
-      this.selectManager.updateSelection(nextProps.rowSelection);
     }
   }
 

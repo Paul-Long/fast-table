@@ -72,7 +72,7 @@ class BaseTable extends React.PureComponent<Props> {
     sortManager.setOrder(key, order, (orders) => {
       this.props.store.setState({orders});
       if (typeof onSort === 'function') {
-        onSort(orders, order);
+        onSort(orders, key, order);
       }
     });
   };
