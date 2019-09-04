@@ -177,12 +177,12 @@ class BaseTable extends React.PureComponent<Props> {
   };
 
   recomputeBody = ({startIndex, stopIndex}) => {
-    const {hasBody, fixed} = this.props;
+    const {hasBody} = this.props;
     if (hasBody) {
       this._startIndex = startIndex;
       this._stopIndex = stopIndex;
     }
-    if (fixed !== 'right') this.forceUpdate();
+    this.forceUpdate();
   };
 
   getRowStyle = (record, key) => {
