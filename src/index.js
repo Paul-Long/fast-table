@@ -359,7 +359,8 @@ export default class Table extends React.PureComponent<TableParams> {
       this.sizeManager.update({
         _startIndex: state.startIndex,
         _stopIndex: state.stopIndex,
-        _showStartIndex: 0
+        _showStartIndex: 0,
+        _scrollTop: dataSource[state.startIndex][DS._top]
       });
       for (let key in this._forceTable) {
         if (this._forceTable.hasOwnProperty(key) && this._forceTable[key]) {
