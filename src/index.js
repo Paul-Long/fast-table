@@ -236,6 +236,7 @@ export default class Table extends React.PureComponent<TableParams> {
 
   setScrollPositionClassName() {
     const node = this['bodyTable'];
+    if (!node) return;
     const scrollToLeft = node.scrollLeft === 0;
     const scrollToRight =
       node.scrollLeft + 1 >=
