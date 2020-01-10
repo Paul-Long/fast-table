@@ -16,37 +16,25 @@
   overflow: hidden;
   position: relative;
   display: block;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   line-height: 1.2;
   color: #ffebc8;
   cursor: default;
-}
-.vt table {
-  position: relative;
-}
-.vt table thead,
-.vt table tbody {
-  display: block;
-}
-.vt table thead tr,
-.vt table tbody tr {
-  position: relative;
-}
-.vt table tr > th {
-  margin: 0;
-  padding: 0;
 }
 .vt-content {
   background: #1E2B29;
 }
 .vt-empty-text {
   color: #9ab9b9;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   background: #1E2B29;
 }
 .vt-footer {
   background: #1E2B29;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 .vt-header {
   background: #121a19;
@@ -55,6 +43,8 @@
 }
 .vt-header .row-group {
   display: inline-block;
+  -webkit-transition: all 50ms;
+  -o-transition: all 50ms;
   transition: all 50ms;
   float: left;
 }
@@ -150,18 +140,26 @@
 }
 .vt .tr {
   overflow: hidden;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: row;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
   width: 100%;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 .vt .th,
 .vt .td {
   display: inline-block;
   overflow: hidden;
   white-space: nowrap;
-  text-overflow: ellipsis;
-  box-sizing: border-box;
+  -o-text-overflow: ellipsis;
+     text-overflow: ellipsis;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   vertical-align: middle;
   padding: 0 6px;
   height: 100%;
@@ -207,7 +205,8 @@
   position: relative;
   color: #0a0f0e;
   display: inline-block;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 .vt-expanded-icon:not(.expanded) {
   background: #f9c152;
@@ -217,9 +216,11 @@
 }
 .vt.vt-scroll-position-left .vt-fixed-right,
 .vt.vt-scroll-position-middle .vt-fixed-right {
-  box-shadow: -6px 0 6px -4px rgba(0, 0, 0, 0.4);
+  -webkit-box-shadow: -6px 0 6px -4px rgba(0, 0, 0, 0.4);
+          box-shadow: -6px 0 6px -4px rgba(0, 0, 0, 0.4);
 }
 .vt.vt-scroll-position-right .vt-fixed-left,
 .vt.vt-scroll-position-middle .vt-fixed-left {
-  box-shadow: 6px 0 6px -4px rgba(0, 0, 0, 0.4);
+  -webkit-box-shadow: 6px 0 6px -4px rgba(0, 0, 0, 0.4);
+          box-shadow: 6px 0 6px -4px rgba(0, 0, 0, 0.4);
 }

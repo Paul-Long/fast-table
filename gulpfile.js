@@ -1,21 +1,14 @@
 const gulp = require('gulp');
 const less = require('gulp-less');
-const autoprefix = require('less-plugin-autoprefix')({
-  browsers: ['last 5 versions'],
-  cascade: true
-});
+const LessAutoprefix = require('less-plugin-autoprefix');
+const autoprefix = new LessAutoprefix({browsers: ['last 5 versions']});
 
 gulp.task('build-css', function() {
   return gulp
     .src('./theme/table.less')
     .pipe(
       less({
-        plugins: [
-          require('autoprefixer')({
-            browsers: ['>0%']
-          }),
-          require('cssnano')
-        ]
+        plugins: [autoprefix]
       })
     )
     .pipe(gulp.dest('./theme/'));
