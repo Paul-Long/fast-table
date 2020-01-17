@@ -304,6 +304,7 @@ export default class ColumnManager {
     this.leftWidth = sumBy(leftColumns, _width);
     this.rightWidth = sumBy(rightColumns, _width);
     const average = max([floor((wrapperWidth - baseWidth) / len), 0]);
+    let cols = [];
     const update = (columns, fixed = false) => {
       return columns.map((column) => {
         const width = column[_width];
@@ -311,6 +312,9 @@ export default class ColumnManager {
         if (children.length > 0) {
           column.children = update(children);
           column[_width] = sumBy(column.children, _width);
+          if (cols.length > 0) {
+            cols.push(column);
+          }
         } else {
           if (
             !leftColumns.some((c) => c[_pathKey] === column[_pathKey]) &&
@@ -320,6 +324,9 @@ export default class ColumnManager {
           }
           if (isNumber(column.maxWidth) && !isNaN(column.maxWidth)) {
             column[_width] = min([column.maxWidth, column[_width]]);
+          }
+          if (last && last[_pathKey] === column[_pathKey]) {
+            cols.push(column);
           }
         }
         if (column[_currentRow] === 0) {
@@ -337,12 +344,21 @@ export default class ColumnManager {
     if (last) {
       last[_width] = max([
         wrapperWidth -
-          this.leftWidth -
-          this.rightWidth -
-          centerWidth +
-          last[_width],
+        this.leftWidth -
+        this.rightWidth -
+        centerWidth +
+        last[_width],
         last[_width]
       ]);
+      if (cols.length > 1) {
+        cols = cols.slice(1);
+        cols.forEach(c => {
+          const children = c.children || [];
+          if (children.length > 0) {
+            c[_width] = sumBy(children, _width);
+          }
+        });
+      }
     }
     this.hasOverflowX = this.width > wrapperWidth;
     return result;

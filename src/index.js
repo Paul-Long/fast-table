@@ -129,6 +129,7 @@ export default class Table extends React.PureComponent<TableParams> {
         this.updateScrollTop({scrollTop: this.sizeManager._scrollTop});
       }
       this.cacheManager.reset();
+      this.updateColumn();
       this.getShowCount();
       this.resetShowData();
     }
