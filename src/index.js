@@ -94,6 +94,7 @@ export default class Table extends React.PureComponent<TableParams> {
   }
 
   componentWillReceiveProps(nextProps) {
+    const update = new Set();
     if (!shallowEqual(nextProps.showStartIndex, this.props.showStartIndex)) {
       this.sizeManager.update({
         _showStartIndex: nextProps.showStartIndex
@@ -129,9 +130,9 @@ export default class Table extends React.PureComponent<TableParams> {
         this.updateScrollTop({scrollTop: this.sizeManager._scrollTop});
       }
       this.cacheManager.reset();
-      this.updateColumn();
-      this.getShowCount();
-      this.resetShowData();
+      update.add('updateColumn');
+      update.add('getShowCount');
+      update.add('resetShowData');
     }
     if (!shallowEqual(nextProps.columns, this.props.columns)) {
       this.sizeManager.update(this.columnManager.reset(nextProps));
@@ -141,7 +142,7 @@ export default class Table extends React.PureComponent<TableParams> {
       });
       this.store.setState({orders: this.sortManager.enable});
       this.cacheManager.reset();
-      this.updateColumn();
+      update.add('updateColumn');
     }
     if (!shallowEqual(nextProps.expandedRowKeys, this.props.expandedRowKeys)) {
       this.dataManager.resetExpandedRowKeys(nextProps.expandedRowKeys);
@@ -150,9 +151,10 @@ export default class Table extends React.PureComponent<TableParams> {
         _dataEmpty: this.dataManager.isEmpty()
       });
       this.cacheManager.reset();
-      this.getShowCount();
-      this.resetShowData();
+      update.add('getShowCount');
+      update.add('resetShowData');
     }
+    update.forEach((f) => this[f]());
   }
 
   componentDidUpdate() {
@@ -372,8 +374,12 @@ export default class Table extends React.PureComponent<TableParams> {
     }
   };
 
-  resetShowData = () => {
-    let scrollTop = this.sizeManager._scrollTop;
+  resetShowData = (target) => {
+    let _scrollTop = this.sizeManager._scrollTop;
+    if (target) {
+      this.sizeManager.update({_scrollTop: target.scrollTop});
+    }
+    const scrollTop = this.sizeManager._scrollTop;
     const {rowHeight} = this.props;
     const dataSource = this.dataManager.showData() || [];
     const state = {};
@@ -388,10 +394,10 @@ export default class Table extends React.PureComponent<TableParams> {
           break;
         }
       }
-      state.startIndex = Math.max(0, startIndex - 2);
+      state.startIndex = Math.max(0, startIndex - 1);
       state.stopIndex = Math.min(
-        startIndex + this.showCount + 2,
-        dataSource.length - 1
+        state.startIndex + this.showCount + 2,
+        dataSource.length
       );
     }
     this.sizeManager.update({
@@ -400,7 +406,13 @@ export default class Table extends React.PureComponent<TableParams> {
     });
     for (let key in this._forceTable) {
       if (this._forceTable.hasOwnProperty(key) && this._forceTable[key]) {
-        this._forceTable[key](state);
+        if (target) {
+          if (key.endsWith('body')) {
+            this._forceTable[key](state);
+          }
+        } else {
+          this._forceTable[key](state);
+        }
       }
     }
   };
@@ -418,7 +430,6 @@ export default class Table extends React.PureComponent<TableParams> {
       _dataHeight: this.dataManager._bodyHeight
     });
     this.resetShowData();
-    this.forceUpdate();
   };
 
   saveRef = (name) => (node) => {
@@ -518,7 +529,7 @@ export default class Table extends React.PureComponent<TableParams> {
       textAlign: 'center'
     };
     const scrollSizeX = this.sizeManager.scrollSizeX();
-    if (scrollSizeX > 0 && (fixedHeader && showHeader)) {
+    if (scrollSizeX > 0 && fixedHeader && showHeader) {
       style.marginTop = `${scrollSizeX}px`;
     }
     return typeof emptyText === 'function' ? (

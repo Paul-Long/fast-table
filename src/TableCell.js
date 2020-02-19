@@ -10,11 +10,10 @@ type Props = {
 };
 
 function Cell(props: Props) {
-  const {className, ExpandedIcon, SelectIcon, style, children, key} = props;
+  const {className, ExpandedIcon, SelectIcon, style, children} = props;
 
   const newProps = {
-    key,
-    className: classNames('td', key, className),
+    className: classNames('td', className),
     style
   };
   return (

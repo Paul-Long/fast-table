@@ -35,6 +35,7 @@ class BaseTable extends React.PureComponent<Props> {
   };
 
   componentWillMount() {
+    this.start = new Date().getTime();
     this._forceCount = 0;
     const {registerForce, fixed, hasHead, hasBody} = this.props;
     const {sizeManager} = this.context.manager;
@@ -51,13 +52,6 @@ class BaseTable extends React.PureComponent<Props> {
     this._startIndex = sizeManager._startIndex;
     this._stopIndex = sizeManager._stopIndex;
     this.renderRows(this.props);
-  }
-
-  componentWillUpdate(nextProps, nextState, nextContext) {
-    const {hasBody} = nextProps;
-    if (hasBody) {
-      this.renderRows(nextProps);
-    }
   }
 
   fExpanded = (event) => {
@@ -177,10 +171,14 @@ class BaseTable extends React.PureComponent<Props> {
   };
 
   recomputeBody = ({startIndex, stopIndex}) => {
+    this.start = new Date().getTime();
     const {hasBody} = this.props;
     if (hasBody) {
       this._startIndex = startIndex;
       this._stopIndex = stopIndex;
+    }
+    if (hasBody) {
+      this.renderRows(this.props);
     }
     this.forceUpdate();
   };
@@ -269,8 +267,7 @@ class BaseTable extends React.PureComponent<Props> {
         const cellProps = {
           key: cellKey,
           className: columns[i].className,
-          style: this.getCellStyle(columns[i], record),
-          children: this.getCellText(columns[i], record)
+          style: this.getCellStyle(columns[i], record)
         };
         if (hasExpanded && fixed !== 'right' && i === 0) {
           cellProps.ExpandedIcon = renderExpandedIcon({
@@ -283,8 +280,10 @@ class BaseTable extends React.PureComponent<Props> {
         if (selectManager.enable && fixed !== 'right' && i === 0) {
           cellProps.SelectIcon = this.r_select(record, fixed);
         }
-        cacheManager.setCell(cellKey, Cell(cellProps));
-        cell = cacheManager.getCell(cellKey);
+        cell = (
+          <Cell {...cellProps}>{this.getCellText(columns[i], record)}</Cell>
+        );
+        cacheManager.setCell(cellKey, cell);
       }
       cells.push(cell);
     }
@@ -306,11 +305,11 @@ class BaseTable extends React.PureComponent<Props> {
     const {prefixCls, onRow} = this.context.props;
     const {dataManager} = this.context.manager;
     const showData = dataManager.showData();
-    const dataSource = showData.filter(
-      (d, index) =>
-        (index >= this._startIndex && index <= this._stopIndex) ||
-        dataManager.isFixed(d)
-    );
+    let dataSource = showData.slice(this._startIndex, this._stopIndex);
+    const fixedData = dataManager.getFixedData() || [];
+    dataSource = dataSource
+      .filter((d) => !dataManager.isFixed(d))
+      .concat(fixedData);
     for (let index = 0; index < dataSource.length; index++) {
       const record = dataSource[index];
       const cells = this.renderRowChildren(props, record);
@@ -321,8 +320,7 @@ class BaseTable extends React.PureComponent<Props> {
         cells,
         record,
         hovered: currentHoverKey === record[DS._key],
-        style: this.getRowStyle(record, key),
-        children: cells
+        style: this.getRowStyle(record, key)
       };
       keys(onRow(record) || {}).forEach(
         (event) => (rowProps[event] = this.fEvents)
@@ -332,7 +330,7 @@ class BaseTable extends React.PureComponent<Props> {
           rowProps[event] = this.fEvents;
         }
       });
-      rows.push(Row(rowProps));
+      rows.push(<Row {...rowProps}>{cells}</Row>);
     }
     this._children = rows;
     return this._children;

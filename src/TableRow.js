@@ -11,12 +11,11 @@ type Props = {
 };
 
 function Row(props: Props) {
-  const {prefixCls, hovered, children, style, record, key} = props;
+  const {prefixCls, hovered, children, style, record} = props;
   const rowClass = classNames(record[DS._rowClassName], {
     [`${prefixCls}-hover`]: hovered
   });
   const newProps = {
-    key,
     className: rowClass,
     style,
     'data-key': record[DS._key]
