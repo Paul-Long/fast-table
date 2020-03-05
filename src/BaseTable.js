@@ -53,6 +53,9 @@ class BaseTable extends React.PureComponent<Props> {
     this._stopIndex = sizeManager._stopIndex;
     this.renderRows(this.props);
   }
+  componentWillUpdate(np) {
+    if (np.hasBody) this.renderRows(np);
+  }
 
   fExpanded = (event) => {
     event.stopPropagation();
@@ -171,7 +174,6 @@ class BaseTable extends React.PureComponent<Props> {
   };
 
   recomputeBody = ({startIndex, stopIndex}) => {
-    this.start = new Date().getTime();
     const {hasBody} = this.props;
     if (hasBody) {
       this._startIndex = startIndex;
@@ -184,32 +186,25 @@ class BaseTable extends React.PureComponent<Props> {
   };
 
   getRowStyle = (record, key) => {
-    const {sizeManager, cacheManager, dataManager} = this.context.manager;
-
-    let rowStyle = cacheManager.getRowStyle(key);
-    if (!rowStyle || dataManager.isFixed(record)) {
-      rowStyle = {
-        position: 'absolute',
-        top: record[DS._top],
-        height: record[DS._height],
-        lineHeight: `${record[DS._height] - 1}px`
-      };
-      if (record[DS._isFixed] === true || record[DS._isFixed] === 'top') {
-        rowStyle.top += sizeManager._scrollTop;
-        rowStyle.zIndex = 1;
-      } else if (record[DS._isFixed] === 'bottom') {
-        if (sizeManager._hasScrollY) {
-          rowStyle.top -=
-            sizeManager._dataHeight +
-            sizeManager.scrollSizeX() -
-            sizeManager._scrollTop -
-            sizeManager._clientBodyHeight;
-        }
-        rowStyle.zIndex = 1;
+    const {sizeManager} = this.context.manager;
+    let rowStyle = {
+      position: 'absolute',
+      top: record[DS._top],
+      height: record[DS._height],
+      lineHeight: `${record[DS._height] - 1}px`
+    };
+    if (record[DS._isFixed] === true || record[DS._isFixed] === 'top') {
+      rowStyle.top += sizeManager._scrollTop;
+      rowStyle.zIndex = 1;
+    } else if (record[DS._isFixed] === 'bottom') {
+      if (sizeManager._hasScrollY) {
+        rowStyle.top -=
+          sizeManager._dataHeight +
+          sizeManager.scrollSizeX() -
+          sizeManager._scrollTop -
+          sizeManager._clientBodyHeight;
       }
-      if (!record[DS._isFixed]) {
-        cacheManager.setRowStyle(key, rowStyle);
-      }
+      rowStyle.zIndex = 1;
     }
     return rowStyle;
   };
@@ -249,12 +244,7 @@ class BaseTable extends React.PureComponent<Props> {
   renderCells = (props, record) => {
     const {fixed} = props;
     const {prefixCls, indentSize} = this.context.props;
-    const {
-      dataManager,
-      cacheManager,
-      columnManager,
-      selectManager
-    } = this.context.manager;
+    const {dataManager, columnManager, selectManager} = this.context.manager;
     const columns = columnManager.bodyColumns(fixed);
     const hasExpanded = dataManager._hasExpanded;
     const cells = [];
@@ -262,29 +252,24 @@ class BaseTable extends React.PureComponent<Props> {
       const cellKey = `Row[${record[DS._path]}]-Col[${
         columns[i][CS._pathKey]
       }]-${i}_${fixed || ''}-${this._forceCount}`;
-      let cell = cacheManager.getCell(cellKey);
-      if (!cell || record[DS._isFixed]) {
-        const cellProps = {
-          key: cellKey,
-          className: columns[i].className,
-          style: this.getCellStyle(columns[i], record)
-        };
-        if (hasExpanded && fixed !== 'right' && i === 0) {
-          cellProps.ExpandedIcon = renderExpandedIcon({
-            prefixCls,
-            indentSize,
-            record,
-            onClick: this.fExpanded
-          });
-        }
-        if (selectManager.enable && fixed !== 'right' && i === 0) {
-          cellProps.SelectIcon = this.r_select(record, fixed);
-        }
-        cell = (
-          <Cell {...cellProps}>{this.getCellText(columns[i], record)}</Cell>
-        );
-        cacheManager.setCell(cellKey, cell);
+      let cell;
+      const cellProps = {
+        key: cellKey,
+        className: columns[i].className,
+        style: this.getCellStyle(columns[i], record)
+      };
+      if (hasExpanded && fixed !== 'right' && i === 0) {
+        cellProps.ExpandedIcon = renderExpandedIcon({
+          prefixCls,
+          indentSize,
+          record,
+          onClick: this.fExpanded
+        });
       }
+      if (selectManager.enable && fixed !== 'right' && i === 0) {
+        cellProps.SelectIcon = this.r_select(record, fixed);
+      }
+      cell = <Cell {...cellProps}>{this.getCellText(columns[i], record)}</Cell>;
       cells.push(cell);
     }
     return cells;
@@ -322,7 +307,7 @@ class BaseTable extends React.PureComponent<Props> {
         hovered: currentHoverKey === record[DS._key],
         style: this.getRowStyle(record, key)
       };
-      keys(onRow(record) || {}).forEach(
+      keys(onRow(record) || {}, record[DS._index]).forEach(
         (event) => (rowProps[event] = this.fEvents)
       );
       ['onClick', 'onMouseEnter', 'onMouseLeave'].forEach((event) => {

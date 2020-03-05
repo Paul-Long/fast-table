@@ -168,15 +168,20 @@ export default class DataManager {
   _showData = (dataSource, data) => {
     dataSource = dataSource || [];
     data = data || [];
-    if (data.length === 0) {
-      this._bodyHeight = 0;
+    if (this._hasExpanded) {
+      if (data.length === 0) {
+        this._bodyHeight = 0;
+      }
     }
     const expandedKeys = this.expandedRowKeys || [];
     for (let index = 0; index < dataSource.length; index++) {
       const record = dataSource[index];
-      record[DS._showIndex] = data.length;
+      record[DS._showIndex] = this._hasExpanded ? data.length : index;
       record[DS._top] = this._bodyHeight;
-      record[DS._rowClassName] = this._rowClassName(record, data.length);
+      record[DS._rowClassName] = this._rowClassName(
+        record,
+        record[DS._showIndex]
+      );
       this._bodyHeight += record[DS._height];
       const children = record.children || [];
       const _expanded =
@@ -184,12 +189,12 @@ export default class DataManager {
         expandedKeys.indexOf(record[DS._key]) > -1 &&
         children.length > 0;
       record[DS._expanded] = _expanded;
-      data.push(record);
+      this._hasExpanded && data.push(record);
       if (_expanded) {
         data = this._showData(children, data);
       }
     }
-    return data;
+    return this._hasExpanded ? data : dataSource;
   };
 
   _rowKey = (record, index) => {
