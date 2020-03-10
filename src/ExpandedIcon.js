@@ -52,7 +52,7 @@ export default function renderExpandedIcon(props: ExpandedIconProps) {
       style={{
         display: 'inline-block',
         textAlign: 'left',
-        verticalAlign: 'middle'
+        overflow: 'hidden'
       }}
     >
       <span
