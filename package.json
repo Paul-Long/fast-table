@@ -9,7 +9,7 @@
     "theme/*.css"
   ],
   "scripts": {
-    "deploy": "babel src -d lib && gulp build-css",
+    "build": "babel src -d lib && gulp build-css",
     "init": "npm i -d --registry=https://registry.npm.taobao.org"
   },
   "repository": {
