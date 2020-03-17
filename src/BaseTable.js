@@ -292,6 +292,12 @@ class BaseTable extends React.PureComponent<Props> {
     const showData = dataManager.showData();
     let dataSource = showData.slice(this._startIndex, this._stopIndex);
     const fixedData = dataManager.getFixedData() || [];
+    let top = undefined,
+      bottom = undefined;
+    fixedData.forEach((fd) => {
+      if (fd[DS._isFixed] === true || fd[DS._isFixed] === 'top') top = fd;
+      if (fd[DS._isFixed] === 'bottom' && bottom === undefined) bottom = fd;
+    });
     dataSource = dataSource
       .filter((d) => !dataManager.isFixed(d))
       .concat(fixedData);
@@ -307,6 +313,8 @@ class BaseTable extends React.PureComponent<Props> {
         hovered: currentHoverKey === record[DS._key],
         style: this.getRowStyle(record, key)
       };
+      if (top === record) rowProps.isTop = true;
+      if (bottom === record) rowProps.isBottom = true;
       keys(onRow(record) || {}, record[DS._index]).forEach(
         (event) => (rowProps[event] = this.fEvents)
       );

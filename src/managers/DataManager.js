@@ -150,7 +150,8 @@ export default class DataManager {
       record[DS._key] = this._rowKey(record, index);
       record[DS._expandedEnable] = children.length > 0;
       if (this.isFixed(record)) {
-        record[DS._isFixed] = record['isFixed'];
+        record[DS._isFixed] =
+          record['isFixed'] === true ? 'top' : record['isFixed'];
       }
       if (children.length > 0) {
         record['children'] = this._getData(children, level + 1, path);
@@ -220,7 +221,7 @@ export default class DataManager {
     const prefixCls = this.getProps('prefixCls');
     return classNames('tr', `${prefixCls}-row`, className, {
       [`${prefixCls}-expanded-row-${level}`]: this._hasExpanded,
-      [`${prefixCls}-row-fixed`]: record[DS._isFixed]
+      [`${prefixCls}-row-fixed`]: !!record[DS._isFixed]
     });
   };
 }

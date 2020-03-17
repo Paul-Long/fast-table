@@ -40,6 +40,7 @@ export default class Table extends React.PureComponent<TableParams> {
     this.lastScrollTop = 0;
     this.lastScrollLeft = 0;
     this.refreshAble = true;
+    this.position = [];
     this.showCount = props.defaultShowCount || 20;
     this.columnManager = new ColumnManager(props);
     this.dataManager = new DataManager({getProps: this.getProps});
@@ -59,7 +60,7 @@ export default class Table extends React.PureComponent<TableParams> {
 
     this.selectManager = new SelectManager({
       getProps: this.getProps,
-      update: this.updateAll
+      update: this.resetShowData
     });
 
     this.store = create({
@@ -85,11 +86,10 @@ export default class Table extends React.PureComponent<TableParams> {
       },
       expandChange: this.handleExpandChange,
       updateScrollLeft: this.updateScrollLeft,
-      update: this.updateAll,
+      update: this.resetShowData,
       getProps: this.getProps
     };
   }
-
   componentWillReceiveProps(nextProps) {
     const update = new Set();
     if (!shallowEqual(nextProps.showStartIndex, this.props.showStartIndex)) {
@@ -152,17 +152,11 @@ export default class Table extends React.PureComponent<TableParams> {
   }
 
   componentDidUpdate() {
-    this.setScrollPositionClassName();
+    this.setPositionClass();
     this.skipIndex();
   }
 
-  updateAll = () => {
-    this.resetShowData();
-  };
-
-  getProps = (prop) => {
-    return this.props[prop];
-  };
+  getProps = (prop) => this.props[prop];
 
   getShowCount = () => {
     const {showHeader} = this.props;
@@ -207,48 +201,64 @@ export default class Table extends React.PureComponent<TableParams> {
     }
   };
 
-  setScrollPosition(position) {
-    this.scrollPosition = position;
-    const {tableNode} = this;
-    if (tableNode) {
-      const {prefixCls} = this.props;
-      if (position === 'clear') {
-        classes(tableNode).remove(
-          new RegExp(`^${prefixCls}-scroll-position-.+$`)
-        );
-      } else if (position === 'both') {
-        classes(tableNode)
-          .remove(new RegExp(`^${prefixCls}-scroll-position-.+$`))
-          .add(`${prefixCls}-scroll-position-left`)
-          .add(`${prefixCls}-scroll-position-right`);
-      } else {
-        classes(tableNode)
-          .remove(new RegExp(`^${prefixCls}-scroll-position-.+$`))
-          .add(`${prefixCls}-scroll-position-${position}`);
+  setPositionClass = (tg) => {
+    let target = tg;
+    if (!target) {
+      target = this['bodyTable'];
+    }
+    if (!target) return;
+    const left = target.scrollLeft;
+    const top = target.scrollTop;
+    const clientWidth = target.clientWidth;
+    const clientHeight = target.clientHeight;
+    const scrollHeight = target.scrollHeight;
+    const scrollWidth = target.scrollWidth;
+    let position = {};
+    let xp;
+    if (!this.sizeManager._hasScrollX) {
+      xp = 'clear';
+    } else {
+      if (left === 0) {
+        xp = 'x-left';
+      } else if (left + clientWidth < scrollWidth) {
+        xp = 'x-middle';
+      } else if (left + clientWidth === scrollWidth) {
+        xp = 'x-right';
       }
     }
-  }
-
-  setScrollPositionClassName() {
-    const node = this['bodyTable'];
-    if (!node) return;
-    const scrollToLeft = node.scrollLeft === 0;
-    const scrollToRight =
-      node.scrollLeft + 1 >=
-      node.children[0].getBoundingClientRect().width -
-        node.getBoundingClientRect().width;
-    if (!this.sizeManager._hasScrollX) {
-      this.setScrollPosition('clear');
-    } else if (scrollToLeft && scrollToRight) {
-      this.setScrollPosition('both');
-    } else if (scrollToLeft) {
-      this.setScrollPosition('left');
-    } else if (scrollToRight) {
-      this.setScrollPosition('right');
-    } else if (this.scrollPosition !== 'middle') {
-      this.setScrollPosition('middle');
+    if (xp) position.xp = xp;
+    let yp;
+    if (!this.sizeManager._hasScrollY) {
+      yp = 'clear';
+    } else {
+      if (top === 0) {
+        yp = 'y-top';
+      } else if (top + clientHeight < scrollHeight) {
+        yp = 'y-middle';
+      } else if (top + clientHeight === scrollHeight) {
+        yp = 'y-bottom';
+      }
     }
-  }
+    if (yp) position.yp = yp;
+    if (this.position.xp !== position.xp || this.position.yp !== position.yp) {
+      this.position = position;
+      const {tableNode} = this;
+      if (tableNode) {
+        const {prefixCls} = this.props;
+        let cs = classes(tableNode);
+        if (position.xp) {
+          cs.remove(new RegExp(`^${prefixCls}-scroll-position-x-.+$`));
+          position.xp !== 'clear' &&
+            cs.add(`${prefixCls}-scroll-position-${position.xp}`);
+        }
+        if (position.yp) {
+          cs.remove(new RegExp(`^${prefixCls}-scroll-position-y-.+$`));
+          position.yp !== 'clear' &&
+            cs.add(`${prefixCls}-scroll-position-${position.yp}`);
+        }
+      }
+    }
+  };
 
   handleBodyScroll = (e) => {
     const {onScroll} = this.props;
@@ -257,6 +267,11 @@ export default class Table extends React.PureComponent<TableParams> {
     if (typeof onScroll === 'function') {
       onScroll(e);
     }
+
+    if (e.target !== e.currentTarget) {
+      return;
+    }
+    this.setPositionClass(e.target);
   };
 
   handleBodyScrollLeft = (e) => {
@@ -269,7 +284,7 @@ export default class Table extends React.PureComponent<TableParams> {
       if (target === bodyTable && headTable) {
         headTable.scrollLeft = target.scrollLeft;
       }
-      this.setScrollPositionClassName();
+      // this.setScrollPositionClassName();
     }
     this.lastScrollLeft = target.scrollLeft;
     this.sizeManager.update({_scrollLeft: this.lastScrollLeft});
@@ -287,7 +302,8 @@ export default class Table extends React.PureComponent<TableParams> {
       if (bodyTable) {
         bodyTable.scrollLeft = scrollLeft;
       }
-      this.setScrollPositionClassName();
+      // this.setScrollPositionClassName();
+      this.setPositionClass();
     }
     this.lastScrollLeft = scrollLeft;
     this.sizeManager.update({_scrollLeft: this.lastScrollLeft});
@@ -367,7 +383,6 @@ export default class Table extends React.PureComponent<TableParams> {
   };
 
   resetShowData = (target) => {
-    let _scrollTop = this.sizeManager._scrollTop;
     if (target) {
       this.sizeManager.update({_scrollTop: target.scrollTop});
     }
@@ -433,15 +448,12 @@ export default class Table extends React.PureComponent<TableParams> {
 
   getClassName = () => {
     const {prefixCls, className, fixedHeader, bordered} = this.props;
-    let flag = false;
-    if (this.sizeManager._hasScrollX) {
-      flag = !(this['bodyTable'] && this['bodyTable'].scrollLeft !== 0);
-    }
     return classNames(prefixCls, className, {
       [`${prefixCls}-fixed-header`]: fixedHeader,
       bordered: bordered,
       [`${prefixCls}-expanded`]: this.dataManager.isExpanded(),
-      [`${prefixCls}-scroll-position-left`]: flag
+      [`${prefixCls}-scroll-position-y-top`]:
+        this.sizeManager._hasScrollY && this.sizeManager._scrollTop === 0
     });
   };
 

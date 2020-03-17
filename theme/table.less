@@ -68,6 +68,12 @@
       background: @tableRowHoverColor !important;
     }
   }
+  &-row-fixed-top:last-child {
+    box-shadow: 0 6px 6px 0 rgba(0, 0, 0, 0.4);
+  }
+  &-row-fixed-bottom:first-child {
+    box-shadow: 0 6px 6px 0 rgba(0, 0, 0, 0.4);
+  }
   &-sorter {
     margin-left: 5px;
     padding-left: 5px;
@@ -208,16 +214,28 @@
 }
 
 .@{tablePrefixCls} {
-  &.@{tablePrefixCls}-scroll-position-left,
-  &.@{tablePrefixCls}-scroll-position-middle {
+  &.@{tablePrefixCls}-scroll-position-x-left,
+  &.@{tablePrefixCls}-scroll-position-x-middle {
     .@{tablePrefixCls}-fixed-right {
       box-shadow: -6px 0 6px -4px rgba(0, 0, 0, 0.4);
     }
   }
-  &.@{tablePrefixCls}-scroll-position-right,
-  &.@{tablePrefixCls}-scroll-position-middle {
+  &.@{tablePrefixCls}-scroll-position-x-right,
+  &.@{tablePrefixCls}-scroll-position-x-middle {
     .@{tablePrefixCls}-fixed-left {
       box-shadow: 6px 0 6px -4px rgba(0, 0, 0, 0.4);
+    }
+  }
+  &.@{tablePrefixCls}-scroll-position-y-top,
+  &.@{tablePrefixCls}-scroll-position-y-middle {
+    .@{tablePrefixCls}-fixed-bottom {
+      box-shadow: 0 -2px 4px 0 rgba(0, 0, 0, 0.4);
+    }
+  }
+  &.@{tablePrefixCls}-scroll-position-y-bottom,
+  &.@{tablePrefixCls}-scroll-position-y-middle {
+    .@{tablePrefixCls}-fixed-top {
+      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4);
     }
   }
 }
