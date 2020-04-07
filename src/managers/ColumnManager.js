@@ -344,15 +344,15 @@ export default class ColumnManager {
     if (last) {
       last[_width] = max([
         wrapperWidth -
-        this.leftWidth -
-        this.rightWidth -
-        centerWidth +
-        last[_width],
+          this.leftWidth -
+          this.rightWidth -
+          centerWidth +
+          last[_width],
         last[_width]
       ]);
       if (cols.length > 1) {
         cols = cols.slice(1);
-        cols.forEach(c => {
+        cols.forEach((c) => {
           const children = c.children || [];
           if (children.length > 0) {
             c[_width] = sumBy(children, _width);

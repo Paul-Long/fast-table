@@ -67,6 +67,7 @@ export default class Table extends React.PureComponent<TableParams> {
       currentHoverKey: null,
       orders: this.sortManager.enabled()
     });
+    this.scrollTo = this.scrollTo.bind(this);
   }
 
   state = {
@@ -154,6 +155,17 @@ export default class Table extends React.PureComponent<TableParams> {
   componentDidUpdate() {
     this.setPositionClass();
     this.skipIndex();
+  }
+
+  scrollTo(t) {
+    const target = this['bodyTable'];
+    if (!target) return;
+    const clientHeight = target.clientHeight;
+    const scrollHeight = target.scrollHeight;
+    let scrollTop = Math.min(t, scrollHeight - clientHeight);
+    this.updateScrollTop({scrollTop});
+    this.sizeManager.update({_scrollTop: scrollTop});
+    this.resetShowData();
   }
 
   getProps = (prop) => this.props[prop];
