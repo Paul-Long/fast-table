@@ -494,8 +494,7 @@ export default class Table extends React.PureComponent<TableParams> {
   fixedClassName = (fixed) => `${this.props.prefixCls}-fixed-${fixed}`;
 
   renderMainTable = () => {
-    const table = this.renderTable({});
-    return [table, this.renderEmptyText()];
+    return this.renderTable({});
   };
 
   renderLeftFixedTable = () => {
@@ -547,16 +546,14 @@ export default class Table extends React.PureComponent<TableParams> {
     if (scrollSizeX > 0 && fixedHeader && showHeader) {
       style.marginTop = `${scrollSizeX}px`;
     }
-    return typeof emptyText === 'function' ? (
+    return (
       <div
         key='table-empty-text'
         className={`${prefixCls}-empty-text`}
         style={style}
       >
-        {emptyText()}
+        {typeof emptyText === 'function' ? emptyText() : emptyText}
       </div>
-    ) : (
-      emptyText
     );
   };
 

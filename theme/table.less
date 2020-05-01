@@ -10,27 +10,18 @@
   line-height: 1.2;
   color: @textColor;
   cursor: default;
-  //table {
-  //  position: relative;
-  //  thead,
-  //  tbody {
-  //    display: block;
-  //    tr {
-  //      position: relative;
-  //    }
-  //  }
-  //  tr > th {
-  //    margin: 0;
-  //    padding: 0;
-  //  }
-  //}
   &-content {
     background: @tableBgColor;
+    position: relative;
   }
   &-empty-text {
     color: @emptyTextColor;
     box-sizing: border-box;
     background: @tableBgColor;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
   }
   &-footer {
     background: @tableBgColor;

@@ -1,4 +1,4 @@
-@import (reference) "variable";
+@import (reference) 'variable';
 
 .borderBottom() {
   border-bottom: 1px solid @tableBorderColor;
@@ -9,16 +9,13 @@
 }
 
 .@{tablePrefixCls}.bordered {
-  .td, .th {
+  .td,
+  .th {
     position: relative;
     .borderRight();
     .borderBottom();
   }
   .@{tablePrefixCls}-footer {
-    position: relative;
-    .borderBottom();
-  }
-  .@{tablePrefixCls}-empty-text {
     position: relative;
     .borderBottom();
   }

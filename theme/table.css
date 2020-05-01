@@ -8,10 +8,6 @@
   position: relative;
   border-bottom: 1px solid #000000;
 }
-.vt.bordered .vt-empty-text {
-  position: relative;
-  border-bottom: 1px solid #000000;
-}
 .vt {
   overflow: hidden;
   position: relative;
@@ -24,12 +20,17 @@
 }
 .vt-content {
   background: #1E2B29;
+  position: relative;
 }
 .vt-empty-text {
   color: #9ab9b9;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   background: #1E2B29;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 .vt-footer {
   background: #1E2B29;

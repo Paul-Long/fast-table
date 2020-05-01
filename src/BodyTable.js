@@ -54,7 +54,7 @@ function BodyTable(props: Props, {manager, props: baseProps, getProps}) {
     style.maxHeight = bodyMaxHeight;
   }
   if (scrollSize > 0 && fixed) {
-    style.marginBottom = `-${scrollSize}px`;
+    style.marginBottom = `-${height > 0 ? scrollSize : 0}px`;
     style.paddingBottom = '0px';
   }
   let scrollRef = 'bodyTable';
@@ -99,6 +99,42 @@ function BodyTable(props: Props, {manager, props: baseProps, getProps}) {
       </div>
     );
   }
+  if (style.height === 0 && empty) {
+    style.height = getProps('rowHeight') + scrollSize;
+  }
+
+  function empty() {
+    const {
+      emptyText,
+      dataSource,
+      rowHeight,
+      prefixCls,
+      fixedHeader,
+      showHeader
+    } = baseProps;
+    if (dataSource && dataSource.length > 0) {
+      return null;
+    }
+    const emptyStyle = {
+      height: rowHeight,
+      lineHeight: rowHeight + 'px',
+      flex: `0 1 ${rowHeight}px`,
+      textAlign: 'center',
+      bottom: 0
+    };
+    if (scrollSize > 0 && fixedHeader && showHeader) {
+      emptyStyle.bottom = scrollSize;
+    }
+    return (
+      <div
+        key='table-empty-text'
+        className={`${prefixCls}-empty-text`}
+        style={emptyStyle}
+      >
+        {typeof emptyText === 'function' ? emptyText() : emptyText}
+      </div>
+    );
+  }
   return (
     <div
       key='bodyTable'
@@ -107,6 +143,7 @@ function BodyTable(props: Props, {manager, props: baseProps, getProps}) {
       {...bodyProps}
     >
       {baseTable}
+      {empty()}
     </div>
   );
 }
