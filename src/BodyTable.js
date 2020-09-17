@@ -11,13 +11,7 @@ type Props = {
 
 function BodyTable(props: Props, {manager, props: baseProps, getProps}) {
   const {columnManager, sizeManager} = manager;
-  const {
-    prefixCls,
-    fixedHeader,
-    showHeader,
-    dataSource,
-    bodyMaxHeight
-  } = baseProps;
+  const {prefixCls, fixedHeader, showHeader, dataSource, bodyMaxHeight} = baseProps;
   const {saveRef, fixed, handleBodyScroll, registerForce} = props;
   const baseTable = (
     <BaseTable
@@ -31,8 +25,7 @@ function BodyTable(props: Props, {manager, props: baseProps, getProps}) {
   let height = 0;
   if (dataSource && dataSource.length > 0) {
     height = sizeManager._wrapperHeight - sizeManager.footerHeight;
-    height =
-      height - (showHeader && fixedHeader ? sizeManager._headerHeight : 0);
+    height = height - (showHeader && fixedHeader ? sizeManager._headerHeight : 0);
   }
   let dataHeight = sizeManager._dataHeight;
   if (showHeader) {
@@ -80,11 +73,7 @@ function BodyTable(props: Props, {manager, props: baseProps, getProps}) {
       style.width = columnManager.getWidth(fixed) + sizeManager.scrollSizeY();
     }
     return (
-      <div
-        key='bodyTable'
-        className={`${prefixCls}-body-outer`}
-        style={{...style}}
-      >
+      <div key='bodyTable' className={`${prefixCls}-body-outer`} style={{...style}}>
         <div
           className={`${prefixCls}-body-inner`}
           style={{
@@ -104,14 +93,7 @@ function BodyTable(props: Props, {manager, props: baseProps, getProps}) {
   }
 
   function empty() {
-    const {
-      emptyText,
-      dataSource,
-      rowHeight,
-      prefixCls,
-      fixedHeader,
-      showHeader
-    } = baseProps;
+    const {emptyText, dataSource, rowHeight, prefixCls, fixedHeader, showHeader} = baseProps;
     if (dataSource && dataSource.length > 0) {
       return null;
     }
@@ -126,22 +108,13 @@ function BodyTable(props: Props, {manager, props: baseProps, getProps}) {
       emptyStyle.bottom = scrollSize;
     }
     return (
-      <div
-        key='table-empty-text'
-        className={`${prefixCls}-empty-text`}
-        style={emptyStyle}
-      >
+      <div key='table-empty-text' className={`${prefixCls}-empty-text`} style={emptyStyle}>
         {typeof emptyText === 'function' ? emptyText() : emptyText}
       </div>
     );
   }
   return (
-    <div
-      key='bodyTable'
-      className={`${prefixCls}-body`}
-      style={style}
-      {...bodyProps}
-    >
+    <div key='bodyTable' className={`${prefixCls}-body`} style={style} {...bodyProps}>
       {baseTable}
       {empty()}
     </div>
