@@ -335,6 +335,7 @@ export default class Table extends React.PureComponent<TableParams> {
     }
     const {headTable} = this;
     if (this.lastScrollTop !== target.scrollTop && target !== headTable) {
+      this.lastScrollTop = target.scrollTop;
       this.updateScrollTop(target);
       this.sizeManager.update({_scrollTop: target.scrollTop});
       this.resetShowData(target);
@@ -342,7 +343,6 @@ export default class Table extends React.PureComponent<TableParams> {
         this.scrollRefresh(target);
       }
     }
-    this.lastScrollTop = target.scrollTop;
   };
 
   scrollRefresh = (target) => {
@@ -407,8 +407,8 @@ export default class Table extends React.PureComponent<TableParams> {
           break;
         }
       }
-      state.startIndex = Math.max(0, startIndex - 5);
-      state.stopIndex = Math.min(state.startIndex + this.showCount + 5, dataSource.length);
+      state.startIndex = Math.max(0, startIndex - 10);
+      state.stopIndex = Math.min(state.startIndex + this.showCount + 10, dataSource.length);
     }
     this.sizeManager.update({
       _startIndex: state.startIndex,

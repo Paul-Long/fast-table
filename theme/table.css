@@ -54,7 +54,6 @@
   position: relative;
 }
 .vt-body {
-  overflow-y: scroll;
   background: #1E2B29;
 }
 .vt-row-0 {

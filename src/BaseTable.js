@@ -90,9 +90,7 @@ class BaseTable extends React.PureComponent<Props> {
       events[func](event);
     }
     if (event.type === 'click') {
-      expandedRowByClick &&
-        record[DS._expandedEnable] &&
-        expandChange(record[DS._key]);
+      expandedRowByClick && record[DS._expandedEnable] && expandChange(record[DS._key]);
     } else if (event.type === 'mouseenter') {
       this.fHover(true, record[DS._key]);
     } else if (event.type === 'mouseleave') {
@@ -113,9 +111,7 @@ class BaseTable extends React.PureComponent<Props> {
     const {update} = this.context;
     const {onHeaderSortable} = this.context.props;
     const {columnManager} = this.context.manager;
-    columnManager.updateGroupedColumns(
-      this.updateColumn(columnManager.groupedColumns(), parent, columns)
-    );
+    columnManager.updateGroupedColumns(this.updateColumn(columnManager.groupedColumns(), parent, columns));
     this._forceCount += 1;
     if (typeof update === 'function') {
       update();
@@ -199,10 +195,7 @@ class BaseTable extends React.PureComponent<Props> {
     } else if (record[DS._isFixed] === 'bottom') {
       if (sizeManager._hasScrollY) {
         rowStyle.top -=
-          sizeManager._dataHeight +
-          sizeManager.scrollSizeX() -
-          sizeManager._scrollTop -
-          sizeManager._clientBodyHeight;
+          sizeManager._dataHeight + sizeManager.scrollSizeX() - sizeManager._scrollTop - sizeManager._clientBodyHeight;
       }
       rowStyle.zIndex = 1;
     }
@@ -249,9 +242,9 @@ class BaseTable extends React.PureComponent<Props> {
     const hasExpanded = dataManager._hasExpanded;
     const cells = [];
     for (let i = 0; i < columns.length; i++) {
-      const cellKey = `Row[${record[DS._path]}]-Col[${
-        columns[i][CS._pathKey]
-      }]-${i}_${fixed || ''}-${this._forceCount}`;
+      const cellKey = `Row[${record[DS._path]}]-Col[${columns[i][CS._pathKey]}]-${i}_${fixed || ''}-${
+        this._forceCount
+      }`;
       let cell;
       const cellProps = {
         key: cellKey,
@@ -298,9 +291,7 @@ class BaseTable extends React.PureComponent<Props> {
       if (fd[DS._isFixed] === true || fd[DS._isFixed] === 'top') top = fd;
       if (fd[DS._isFixed] === 'bottom' && bottom === undefined) bottom = fd;
     });
-    dataSource = dataSource
-      .filter((d) => !dataManager.isFixed(d))
-      .concat(fixedData);
+    dataSource = dataSource.filter((d) => !dataManager.isFixed(d)).concat(fixedData);
     for (let index = 0; index < dataSource.length; index++) {
       const record = dataSource[index];
       const cells = this.renderRowChildren(props, record);
@@ -315,9 +306,7 @@ class BaseTable extends React.PureComponent<Props> {
       };
       if (top === record) rowProps.isTop = true;
       if (bottom === record) rowProps.isBottom = true;
-      keys(onRow(record) || {}, record[DS._index]).forEach(
-        (event) => (rowProps[event] = this.fEvents)
-      );
+      keys(onRow(record) || {}, record[DS._index]).forEach((event) => (rowProps[event] = this.fEvents));
       ['onClick', 'onMouseEnter', 'onMouseLeave'].forEach((event) => {
         if (!has(onRow(record), event)) {
           rowProps[event] = this.fEvents;
@@ -358,10 +347,7 @@ class BaseTable extends React.PureComponent<Props> {
     let body;
     if (hasBody) {
       body = (
-        <div
-          className='tbody'
-          style={{height: sizeManager._dataHeight, minHeight: rowHeight}}
-        >
+        <div className='tbody' style={{height: sizeManager._dataHeight, minHeight: rowHeight}}>
           {this._children}
         </div>
       );
@@ -385,7 +371,7 @@ class BaseTable extends React.PureComponent<Props> {
 export default connect((state) => {
   const {currentHoverKey, orders} = state;
   return {
-    currentHoverKey,
+    // currentHoverKey,
     orders
   };
 })(BaseTable);

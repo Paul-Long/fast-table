@@ -39,9 +39,7 @@ function BodyTable(props: Props, {manager, props: baseProps, getProps}) {
     height = dataHeight;
   }
   const style = {
-    height,
-    overflowY: sizeManager._hasScrollY ? 'scroll' : 'hidden',
-    overflowX: sizeManager._hasScrollX ? 'scroll' : 'hidden'
+    height
   };
   if (bodyMaxHeight) {
     style.maxHeight = bodyMaxHeight;
@@ -66,8 +64,6 @@ function BodyTable(props: Props, {manager, props: baseProps, getProps}) {
   }
 
   if (fixed) {
-    delete style.overflowX;
-    delete style.overflowY;
     fixed === 'left' && (style.width = columnManager.getWidth(fixed));
     if (fixed === 'right' && sizeManager._hasScrollY) {
       style.width = columnManager.getWidth(fixed) + sizeManager.scrollSizeY();
@@ -114,9 +110,18 @@ function BodyTable(props: Props, {manager, props: baseProps, getProps}) {
     );
   }
   return (
-    <div key='bodyTable' className={`${prefixCls}-body`} style={style} {...bodyProps}>
-      {baseTable}
-      {empty()}
+    <div key='bodyTable' className={`${prefixCls}-body`} style={style}>
+      <div
+        style={{
+          height: '100%',
+          overflowY: sizeManager._hasScrollY ? 'scroll' : 'hidden',
+          overflowX: sizeManager._hasScrollX ? 'scroll' : 'hidden'
+        }}
+        {...bodyProps}
+      >
+        {baseTable}
+        {empty()}
+      </div>
     </div>
   );
 }
