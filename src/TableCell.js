@@ -20,7 +20,7 @@ function Cell(props: Props) {
     <div {...newProps}>
       {SelectIcon}
       {ExpandedIcon}
-      <div style={{display: 'inline-block', overflow: 'hidden'}}>{children}</div>
+      <div style={{display: 'inline-block', overflow: 'hidden', height: '100%'}}>{children}</div>
     </div>
   );
 }
