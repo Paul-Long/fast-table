@@ -55,9 +55,7 @@ export default function renderExpandedIcon(props: ExpandedIconProps) {
         overflow: 'hidden'
       }}
     >
-      <span
-        style={{width: expandedLevel * indentSize, display: 'inline-block'}}
-      />
+      <span style={{width: expandedLevel * indentSize, display: 'inline-block'}} />
       {icon || <span style={{width: indentSize, display: 'inline-block'}} />}
     </div>
   );

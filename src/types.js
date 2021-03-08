@@ -168,7 +168,7 @@ export const eventsMap = {
   mouseenter: 'onMouseEnter',
   mouseleave: 'onMouseLeave',
   click: 'onClick',
-  doubleclick: 'onDoubleClick',
+  dblclick: 'onDoubleClick',
   blur: 'onBlur',
   focus: 'onFocus',
   animationstart: 'onAnimationStart',

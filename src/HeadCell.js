@@ -75,11 +75,7 @@ function HeadCell(props: HeadCellProps) {
     });
   }
   if (sortEnable && children.length === 0) {
-    cellProps.onClick = () =>
-      onSort(
-        column.dataIndex,
-        order === 'desc' || order === true ? 'asc' : 'desc'
-      );
+    cellProps.onClick = () => onSort(column.dataIndex, order === 'desc' || order === true ? 'asc' : 'desc');
   }
 
   const cell = (
@@ -97,12 +93,7 @@ function HeadCell(props: HeadCellProps) {
       style.float = 'left';
     }
     return (
-      <div
-        className={current === 0 ? 'row-group' : ''}
-        key={key}
-        style={style}
-        fixed={fixed}
-      >
+      <div className={current === 0 ? 'row-group' : ''} key={key} style={style} fixed={fixed}>
         {cell}
         <div className='col-group'>
           <Sortable parent={column} columns={children} onDrag={onDrag}>

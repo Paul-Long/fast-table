@@ -20,9 +20,7 @@ export default class DataManager {
   };
 
   getFixedData = () => {
-    return this._cache('getFixedData', () =>
-      this._getFixedData(this.showData())
-    );
+    return this._cache('getFixedData', () => this._getFixedData(this.showData()));
   };
 
   showData = () => {
@@ -57,18 +55,12 @@ export default class DataManager {
     if ((record.children || []).length > 0) {
       return false;
     }
-    return (
-      record['isFixed'] === true ||
-      record['isFixed'] === 'top' ||
-      record['isFixed'] === 'bottom'
-    );
+    return record['isFixed'] === true || record['isFixed'] === 'top' || record['isFixed'] === 'bottom';
   };
 
   reset = (data) => {
     const _data = data || [];
-    this._hasExpanded = _data.some(
-      (d) => !this.isFixed(d) && (d.children || []).length > 0
-    );
+    this._hasExpanded = _data.some((d) => !this.isFixed(d) && (d.children || []).length > 0);
     if (!this.getProps('fixedHeader')) {
       this._data = _data;
     } else {
@@ -78,10 +70,7 @@ export default class DataManager {
       });
       const topData = _data.filter((d) => {
         const children = d.children || [];
-        return (
-          (d['isFixed'] === true || d['isFixed'] === 'top') &&
-          children.length === 0
-        );
+        return (d['isFixed'] === true || d['isFixed'] === 'top') && children.length === 0;
       });
       const bottomData = _data.filter((d) => {
         const children = d.children || [];
@@ -138,9 +127,7 @@ export default class DataManager {
     const rowHeight = this.getProps('rowHeight');
     for (let index = 0; index < dataSource.length; index++) {
       const height = getRowHeight(dataSource[index], index) * rowHeight;
-      const path = `${
-        parentPath === undefined ? index : `${parentPath}-${index}`
-      }`;
+      const path = `${parentPath === undefined ? index : `${parentPath}-${index}`}`;
       const record = dataSource[index];
       const children = record['children'] || [];
       record[DS._index] = index;
@@ -150,8 +137,7 @@ export default class DataManager {
       record[DS._key] = this._rowKey(record, index);
       record[DS._expandedEnable] = children.length > 0;
       if (this.isFixed(record)) {
-        record[DS._isFixed] =
-          record['isFixed'] === true ? 'top' : record['isFixed'];
+        record[DS._isFixed] = record['isFixed'] === true ? 'top' : record['isFixed'];
       }
       if (children.length > 0) {
         record['children'] = this._getData(children, level + 1, path);
@@ -179,16 +165,10 @@ export default class DataManager {
       const record = dataSource[index];
       record[DS._showIndex] = this._hasExpanded ? data.length : index;
       record[DS._top] = this._bodyHeight;
-      record[DS._rowClassName] = this._rowClassName(
-        record,
-        record[DS._showIndex]
-      );
+      record[DS._rowClassName] = this._rowClassName(record, record[DS._showIndex]);
       this._bodyHeight += record[DS._height];
       const children = record.children || [];
-      const _expanded =
-        expandedKeys.length > 0 &&
-        expandedKeys.indexOf(record[DS._key]) > -1 &&
-        children.length > 0;
+      const _expanded = expandedKeys.length > 0 && expandedKeys.indexOf(record[DS._key]) > -1 && children.length > 0;
       record[DS._expanded] = _expanded;
       this._hasExpanded && data.push(record);
       if (_expanded) {

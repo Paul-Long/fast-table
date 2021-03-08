@@ -15,17 +15,7 @@ type Props = {
 };
 
 function TableHeader(props: Props) {
-  const {
-    columns,
-    orders,
-    onSort,
-    fixed,
-    headerRowHeight,
-    prefixCls,
-    onHeaderRow,
-    onDrag,
-    SelectIcon
-  } = props;
+  const {columns, orders, onSort, fixed, headerRowHeight, prefixCls, onHeaderRow, onDrag, SelectIcon} = props;
   let children = columns.map((column, index) =>
     HeadCell({
       key: `HeadCol${index}`,
@@ -37,8 +27,7 @@ function TableHeader(props: Props) {
       fixed: column.fixed,
       onHeaderRow,
       onDrag,
-      SelectIcon:
-        index === 0 && fixed !== 'right' && SelectIcon ? SelectIcon : null
+      SelectIcon: index === 0 && fixed !== 'right' && SelectIcon ? SelectIcon : null
     })
   );
   if (!fixed) {

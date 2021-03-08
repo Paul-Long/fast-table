@@ -81,9 +81,7 @@ export default class SelectManager {
           }
         }
       } else {
-        this._selectedKeys = this._selectedKeys.filter(
-          (k) => !keys.includes(k)
-        );
+        this._selectedKeys = this._selectedKeys.filter((k) => !keys.includes(k));
       }
     } else if (t === 'radio') {
       if (this._selectedKeys.includes(record[DS._key])) {
