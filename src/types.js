@@ -34,6 +34,7 @@ export type TableParams = {
   pullDown: boolean,
 
   rowClassName: Function,
+  rowProps: Function,
   emptyText: Function | React.Node,
   expandedRowRender: Function,
   footer: Function,
@@ -77,6 +78,7 @@ export const TableDefaultParams = {
   headerSortable: false,
   pullDown: false,
 
+  roProps: () => ({}),
   getRowHeight: () => 1,
   rowClassName: () => '',
   emptyText: () => '暂无数据',
@@ -173,5 +175,8 @@ export const eventsMap = {
   focus: 'onFocus',
   animationstart: 'onAnimationStart',
   animationend: 'onAnimationEnd',
-  transitionend: 'onTransitionEnd'
+  transitionend: 'onTransitionEnd',
+  dragstart: 'onDragStart',
+  drag: 'onDrag',
+  dragend: 'onDragEnd'
 };

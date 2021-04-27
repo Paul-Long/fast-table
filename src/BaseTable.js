@@ -280,7 +280,7 @@ class BaseTable extends React.PureComponent<Props> {
   renderRows = (props) => {
     const rows = [];
     const {fixed, currentHoverKey} = props;
-    const {prefixCls, onRow} = this.context.props;
+    const {prefixCls, onRow, rowProps} = this.context.props;
     const {dataManager} = this.context.manager;
     const showData = dataManager.showData();
     let dataSource = showData.slice(this._startIndex, this._stopIndex);
@@ -296,13 +296,18 @@ class BaseTable extends React.PureComponent<Props> {
       const record = dataSource[index];
       const cells = this.renderRowChildren(props, record);
       const key = `Row_${fixed || ''}_${record[DS._path]}_${this._forceCount}`;
+      let defineProps = {};
+      if (typeof rowProps === 'function') {
+        defineProps = rowProps(record, index + this._startIndex);
+      }
       const rowProps = {
         key,
         prefixCls,
         cells,
         record,
         hovered: currentHoverKey === record[DS._key],
-        style: this.getRowStyle(record, key)
+        style: this.getRowStyle(record, key),
+        ...(defineProps || {})
       };
       if (top === record) rowProps.isTop = true;
       if (bottom === record) rowProps.isBottom = true;
