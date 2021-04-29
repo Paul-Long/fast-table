@@ -103,6 +103,7 @@ npm install fast-table --save-dev
 | sortEnable   | sort enable                         | Boolean                                                |               |
 | title        | header cell text                    | String or ReactNode                                    |               |
 | width        | width                               | String `or` Number                                     | -             |
+| onColSpan    | merge cell                          | Function(column, record):Number                        |               |
 
 # DataSource Props
 
@@ -321,3 +322,5 @@ ReactDOM.render(
   - 添加向前添加数据滚动条位置设置
 - 1.4.8-beta.16
   - fixed onClick bug
+- 1.4.8-beta-42
+  - 添加水平单元格合并

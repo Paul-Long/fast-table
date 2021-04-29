@@ -178,5 +178,6 @@ export const eventsMap = {
   transitionend: 'onTransitionEnd',
   dragstart: 'onDragStart',
   drag: 'onDrag',
-  dragend: 'onDragEnd'
+  dragend: 'onDragEnd',
+  contextmenu: 'onContextMenu'
 };

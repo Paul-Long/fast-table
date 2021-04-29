@@ -242,15 +242,36 @@ class BaseTable extends React.PureComponent<Props> {
     const hasExpanded = dataManager._hasExpanded;
     const cells = [];
     for (let i = 0; i < columns.length; i++) {
-      const cellKey = `Row[${record[DS._path]}]-Col[${columns[i][CS._pathKey]}]-${i}_${fixed || ''}-${
+      const col = columns[i];
+      const cellKey = `Row[${record[DS._path]}]-Col[${col[CS._pathKey]}]-${i}_${fixed || ''}-${
         this._forceCount
       }`;
       let cell;
       const cellProps = {
         key: cellKey,
-        className: columns[i].className,
-        style: this.getCellStyle(columns[i], record)
+        className: col.className,
+        style: this.getCellStyle(col, record)
       };
+      if (selectManager.enable && fixed !== 'right' && i === 0) {
+        cellProps.SelectIcon = this.r_select(record, fixed);
+      }
+      if (typeof col.onColSpan === 'function') {
+        let span = col.onColSpan(col, record);
+        if (typeof span !== 'number' || isNaN(span)) {
+          span = 1;
+        }
+        if (span > 1) {
+          let spanWidth = 0;
+          for (let j = 0; j < span; j += 1) {
+            const {width} = this.getCellStyle(columns[i], record);
+            if (typeof width === 'number') spanWidth += width;
+            if (j < span - 1) {
+              i += 1;
+            }
+          }
+          cellProps.style.width = spanWidth;
+        }
+      }
       if (hasExpanded && fixed !== 'right' && i === 0) {
         cellProps.ExpandedIcon = renderExpandedIcon({
           prefixCls,
@@ -259,10 +280,7 @@ class BaseTable extends React.PureComponent<Props> {
           onClick: this.fExpanded
         });
       }
-      if (selectManager.enable && fixed !== 'right' && i === 0) {
-        cellProps.SelectIcon = this.r_select(record, fixed);
-      }
-      cell = <Cell {...cellProps}>{this.getCellText(columns[i], record)}</Cell>;
+      cell = <Cell {...cellProps}>{this.getCellText(col, record)}</Cell>;
       cells.push(cell);
     }
     return cells;
