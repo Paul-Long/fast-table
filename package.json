@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "babel src -d lib && gulp build-css",
-    "init": "npm i -d --registry=https://registry.npm.taobao.org"
+    "init": "npm i -d --registry=https://registry.npmmirror.com"
   },
   "repository": {
     "type": "git",
